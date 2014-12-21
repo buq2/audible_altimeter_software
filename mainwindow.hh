@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include "display_buffer.hh"
 #include "ui_main.hh"
+#include "sensors.hh"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,7 @@ private:
     QGraphicsScene *scene_;
     UiMain ui_main_;
     DisplayBuffer display_buffer_;
+    Sensors sensors_;
 };
 
 #endif // MAINWINDOW_HH

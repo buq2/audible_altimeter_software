@@ -12,8 +12,8 @@ class UiMenu
     UiMenu();
 
     void Render(DisplayBuffer *buffer);
-
     void KeyPress(const UiBase::KeyCode key, const bool down);
+    void Tick100ms();
  private:
     MenuItem root;
     MenuItem *current_;

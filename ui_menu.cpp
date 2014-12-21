@@ -26,6 +26,8 @@ UiMenu::UiMenu()
 
 void UiMenu::Render(DisplayBuffer *buffer)
 {
+
+
     std::cout << "---------" << std::endl;
     for (int i = 0; i < current_->GetNumberOfItems(); ++i) {
 
@@ -68,4 +70,9 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
         break;
     }
     }
+}
+
+void UiMenu::Tick100ms()
+{
+
 }

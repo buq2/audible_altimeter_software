@@ -27,21 +27,7 @@ DisplayBuffer::DisplayBuffer(const uint8_t width, const uint8_t height)
       data_(new uint8_t[width_*height_/8]),
       stride_(width_/8)
 {
-    memset(data_,0,GetNumberOfBytes());
-    font_ = &FontStyle_impact_huge;
-    RenderText(3,0,"12345");
-    font_ = &FontStyle_impact;
-    RenderText(3,40,"Descent: 26 ft/");
-    RenderText(3,55,"Alt  : 390");
-    RenderText(3,70,"Climb: 1150");
-    //RenderText(0,0,"Test test");
-    //RenderText(0,19,"Test test");
-    //RenderText(0,19*2,"Test test");
-    //RenderText(0,19*3,"Test test");
-    //RenderText(0,19*4,"Test test");
-    //for (int i = 0; i < 8; ++i) {
-    //    ModifyPixel(i,i,PIXEL_SET);
-    //}
+    Clear();
 }
 
 DisplayBuffer::~DisplayBuffer()
@@ -70,11 +56,9 @@ int DisplayBuffer::GetHeight()
     return height_;
 }
 
-void DisplayBuffer::RenderText(const uint8_t x, const uint8_t y, char *str)
+void DisplayBuffer::RenderText(const fontStyle_t &font, const uint8_t x, const uint8_t y, char *str)
 {
     uint8_t current_x = x;
-
-    fontStyle_t font = *font_;
 
     const int len = strlen(str);
     for (int i = 0; i < len; ++i) {
@@ -157,4 +141,9 @@ void DisplayBuffer::BlitRow(const uint8_t x, const uint8_t y, const uint8_t *pix
             ++bit;
         }
     }
+}
+
+void DisplayBuffer::Clear()
+{
+    memset(data_,0,GetNumberOfBytes());
 }

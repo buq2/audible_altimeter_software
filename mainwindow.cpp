@@ -11,7 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     qt_ui(new Ui::MainWindow),
     view_(new QGraphicsView(this)),
-    display_buffer_(128,128)
+    display_buffer_(128,128),
+    ui_main_(&sensors_)
 {
     qt_ui->setupUi(this);
     qt_ui->centralWidget->setLayout(new QHBoxLayout);
