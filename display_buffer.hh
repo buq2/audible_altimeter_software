@@ -1,15 +1,16 @@
-#ifndef MEGAUI_HH
-#define MEGAUI_HH
+#ifndef DISPLAY_BUFFER_HH
+#define DISPLAY_BUFFER_HH
 
 #include <QPixmap>
 #include <stdint.h>
 #include "fonts/fontlibrary.h"
 
-class Megaui
+class DisplayBuffer
 {
-public:
-    Megaui(const uint8_t width, const uint8_t height);
-    ~Megaui();
+ public:
+    DisplayBuffer(const uint8_t width, const uint8_t height);
+    ~DisplayBuffer();
+
     QPixmap GetPixmap() const;
     int GetNumberOfBytes();
     int GetWidth();
@@ -24,17 +25,12 @@ public:
     void ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op);
     bool GetPixel(const uint8_t x, const uint8_t y);
     void BlitRow(const uint8_t x, const uint8_t y, const uint8_t *data, const uint8_t width_bits);
-
-    void KeyUp(const bool pressed);
-    void KeyDown(const bool pressed);
-    void KeyLeft(const bool pressed);
-    void KeyRight(const bool pressed);
-private:
+ private:
     uint8_t width_;
     uint8_t height_;
     uint8_t stride_;
     uint8_t *data_;
     fontStyle_t *font_;
-};
+}; //class DisplayBuffer
 
-#endif // MEGAUI_HH
+#endif //ifndef DISPLAY_BUFFER_HH

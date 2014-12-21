@@ -5,31 +5,34 @@
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <iostream>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
+    qt_ui(new Ui::MainWindow),
     view_(new QGraphicsView(this)),
-    megaui_(128,128)
+    display_buffer_(128,128)
 {
-    ui->setupUi(this);
-
-
-    ui->centralWidget->setLayout(new QHBoxLayout);
-    ui->centralWidget->layout()->addWidget(view_);
+    qt_ui->setupUi(this);
+    qt_ui->centralWidget->setLayout(new QHBoxLayout);
+    qt_ui->centralWidget->layout()->addWidget(view_);
 
     scene_ = new QGraphicsScene(view_);
     view_->setScene(scene_);
     view_->setFocusPolicy( Qt::NoFocus ); //otherwise arrow keys will be captured
-    graphics_pixmap_ = scene_->addPixmap(megaui_.GetPixmap());
+    graphics_pixmap_ = scene_->addPixmap(display_buffer_.GetPixmap());
 
-    view_->ensureVisible(0,0,megaui_.GetWidth(),megaui_.GetHeight(),5);
+    view_->ensureVisible(0,0,display_buffer_.GetWidth(),display_buffer_.GetHeight(),5);
     view_->scale(1,1);
+
+    QTimer *timer_100ms = new QTimer;
+    connect(timer_100ms, SIGNAL(timeout()), this, SLOT(Tick100ms()));
+    timer_100ms->start(100);
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+    delete qt_ui;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -39,16 +42,16 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
     switch(event->key()) {
     case Qt::Key_Up:
-        megaui_.KeyUp(true);
+        ui_main_.KeyPress(UiBase::KEY_UP, true);
         break;
     case Qt::Key_Down:
-        megaui_.KeyDown(true);
+        ui_main_.KeyPress(UiBase::KEY_DOWN, true);
         break;
     case Qt::Key_Left:
-        megaui_.KeyLeft(true);
+        ui_main_.KeyPress(UiBase::KEY_LEFT, true);
         break;
     case Qt::Key_Right:
-        megaui_.KeyRight(true);
+        ui_main_.KeyPress(UiBase::KEY_RIGHT, true);
         break;
     }
 }
@@ -60,16 +63,28 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     }
     switch(event->key()) {
     case Qt::Key_Up:
-        megaui_.KeyUp(false);
+        ui_main_.KeyPress(UiBase::KEY_UP, false);
         break;
     case Qt::Key_Down:
-        megaui_.KeyDown(false);
+        ui_main_.KeyPress(UiBase::KEY_DOWN, false);
         break;
     case Qt::Key_Left:
-        megaui_.KeyLeft(false);
+        ui_main_.KeyPress(UiBase::KEY_LEFT, false);
         break;
     case Qt::Key_Right:
-        megaui_.KeyRight(false);
+        ui_main_.KeyPress(UiBase::KEY_RIGHT, false);
         break;
     }
+    Refresh();
+}
+
+void MainWindow::Refresh()
+{
+}
+
+void MainWindow::Tick100ms()
+{
+    ui_main_.Tick100ms();
+    ui_main_.Render(&display_buffer_);
+    graphics_pixmap_->setPixmap(display_buffer_.GetPixmap());
 }

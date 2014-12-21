@@ -20,8 +20,13 @@ QT5_WRAP_UI(GUI_UI_MOC
 
 ADD_EXECUTABLE(audible_gui
     main.cpp
+    menu_item.cpp menu_item.hh
     mainwindow.cpp mainwindow.hh
-    megaui.cpp megaui.hh
+    ui_base.cpp ui_base.hh
+    ui_menu.cpp ui_menu.hh
+    ui_altimeter.cpp ui_altimeter.hh
+    ui_main.cpp ui_main.hh
+    display_buffer.cpp display_buffer.hh
     fonts/fontlibrary.h fonts/fontlibrary.c
     ${GUI_UI_MOC}
     ${GUI_HH_MOC}

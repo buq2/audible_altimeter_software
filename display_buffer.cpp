@@ -1,4 +1,5 @@
-#include "megaui.hh"
+#include "display_buffer.hh"
+
 #include <QImage>
 #include <cstring>
 #include <iostream>
@@ -19,7 +20,7 @@ uint8_t BitFlip(uint8_t n )
    return (bit_flip_lookup[n&0x0F] << 4) | bit_flip_lookup[n>>4];
 }
 
-Megaui::Megaui(const uint8_t width, const uint8_t height)
+DisplayBuffer::DisplayBuffer(const uint8_t width, const uint8_t height)
     :
       width_(width),
       height_(height),
@@ -43,33 +44,33 @@ Megaui::Megaui(const uint8_t width, const uint8_t height)
     //}
 }
 
-Megaui::~Megaui()
+DisplayBuffer::~DisplayBuffer()
 {
     delete data_;
 }
 
-QPixmap Megaui::GetPixmap() const
+QPixmap DisplayBuffer::GetPixmap() const
 {
     QImage img((uchar*)data_,width_, height_,QImage::Format_MonoLSB);
     return QPixmap::fromImage(img);
 }
 
-int Megaui::GetNumberOfBytes()
+int DisplayBuffer::GetNumberOfBytes()
 {
     return width_*height_/8;
 }
 
-int Megaui::GetWidth()
+int DisplayBuffer::GetWidth()
 {
     return width_;
 }
 
-int Megaui::GetHeight()
+int DisplayBuffer::GetHeight()
 {
     return height_;
 }
 
-void Megaui::RenderText(const uint8_t x, const uint8_t y, char *str)
+void DisplayBuffer::RenderText(const uint8_t x, const uint8_t y, char *str)
 {
     uint8_t current_x = x;
 
@@ -99,7 +100,7 @@ void Megaui::RenderText(const uint8_t x, const uint8_t y, char *str)
     }
 }
 
-void Megaui::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)
+void DisplayBuffer::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)
 {
     if (x >= width_ || y >= height_) {
         return;
@@ -122,7 +123,7 @@ void Megaui::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate
     *byte_ptr = data;
 }
 
-bool Megaui::GetPixel(const uint8_t x, const uint8_t y)
+bool DisplayBuffer::GetPixel(const uint8_t x, const uint8_t y)
 {
     if (x >= width_ || y >= height_) {
         return false;
@@ -134,7 +135,7 @@ bool Megaui::GetPixel(const uint8_t x, const uint8_t y)
     return data & (1 << bit);
 }
 
-void Megaui::BlitRow(const uint8_t x, const uint8_t y, const uint8_t *pixels, const uint8_t width_bits)
+void DisplayBuffer::BlitRow(const uint8_t x, const uint8_t y, const uint8_t *pixels, const uint8_t width_bits)
 {
     if (x >= width_ || y >= height_) {
         return;
@@ -156,24 +157,4 @@ void Megaui::BlitRow(const uint8_t x, const uint8_t y, const uint8_t *pixels, co
             ++bit;
         }
     }
-}
-
-void Megaui::KeyUp(const bool pressed)
-{
-    std::cout << "Up: " << pressed << std::endl;
-}
-
-void Megaui::KeyDown(const bool pressed)
-{
-    std::cout << "Down: " << pressed << std::endl;
-}
-
-void Megaui::KeyLeft(const bool pressed)
-{
-    std::cout << "Left: " << pressed << std::endl;
-}
-
-void Megaui::KeyRight(const bool pressed)
-{
-    std::cout << "Right: " << pressed << std::endl;
 }

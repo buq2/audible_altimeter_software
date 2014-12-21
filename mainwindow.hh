@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QGraphicsView>
-#include "megaui.hh"
+#include "display_buffer.hh"
+#include "ui_main.hh"
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,13 +19,16 @@ public:
     ~MainWindow();
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent *event);
-
+    void Refresh();
+public slots:
+    void Tick100ms();
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *qt_ui;
     QGraphicsView *view_;
     QGraphicsPixmapItem *graphics_pixmap_;
     QGraphicsScene *scene_;
-    Megaui megaui_;
+    UiMain ui_main_;
+    DisplayBuffer display_buffer_;
 };
 
 #endif // MAINWINDOW_HH
