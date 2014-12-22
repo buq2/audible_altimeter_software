@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <stdint.h>
 
 class MenuItem
 {
@@ -10,11 +11,11 @@ class MenuItem
     MenuItem();
     MenuItem(MenuItem *parent, const std::string &label);
 
-    int GetNumberOfItems();
+    uint8_t GetNumberOfItems();
     MenuItem *GetItem(const int i);
     void AddItem(MenuItem *item);
     std::string GetLabel();
-    int GetSelectedItemIndex();
+    uint8_t GetSelectedItemIndex();
     void Next();
     void Previous();
     MenuItem *GetParent();
@@ -22,7 +23,7 @@ class MenuItem
     MenuItem *parent_;
     std::string label_;
     std::vector<MenuItem*> items_;
-    int selected_sub_;
+    uint8_t selected_sub_;
 }; //class MenuItem
 
 #endif //ifndef MENU_ITEM_HH

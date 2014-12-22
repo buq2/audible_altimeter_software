@@ -16,7 +16,7 @@ MenuItem::MenuItem(MenuItem *parent, const std::string &label)
     parent_->AddItem(this);
 }
 
-int MenuItem::GetNumberOfItems()
+uint8_t MenuItem::GetNumberOfItems()
 {
     return items_.size();
 }
@@ -36,7 +36,7 @@ std::string MenuItem::GetLabel()
     return label_;
 }
 
-int MenuItem::GetSelectedItemIndex()
+uint8_t MenuItem::GetSelectedItemIndex()
 {
     return selected_sub_;
 }
@@ -44,15 +44,15 @@ int MenuItem::GetSelectedItemIndex()
 void MenuItem::Next()
 {
     selected_sub_++;
-    selected_sub_ = std::min(selected_sub_,GetNumberOfItems()-1);
+    selected_sub_ = std::min(selected_sub_,(uint8_t)(GetNumberOfItems()-1));
 }
 
 void MenuItem::Previous()
 {
-    --selected_sub_;
-    if (selected_sub_ < 0) {
-        selected_sub_ = 0;
+    if (selected_sub_ == 0) {
+        return;
     }
+    --selected_sub_;
 }
 
 MenuItem *MenuItem::GetParent()

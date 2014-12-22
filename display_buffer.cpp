@@ -42,17 +42,17 @@ QPixmap DisplayBuffer::GetPixmap() const
     return QPixmap::fromImage(img);
 }
 
-int DisplayBuffer::GetNumberOfBytes()
+uint16_t DisplayBuffer::GetNumberOfBytes() const
 {
     return width_*height_/8;
 }
 
-int DisplayBuffer::GetWidth()
+uint8_t DisplayBuffer::GetWidth() const
 {
     return width_;
 }
 
-int DisplayBuffer::GetHeight()
+uint8_t DisplayBuffer::GetHeight() const
 {
     return height_;
 }
@@ -121,6 +121,12 @@ uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const 
 {
     // Currently not using str
     return font.GlyphHeight*scale_y;
+}
+
+uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y)
+{
+    const char *str = "";
+    CalculateTextHeightPixels(font, scale_y, str);
 }
 
 void DisplayBuffer::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)

@@ -12,14 +12,15 @@ class DisplayBuffer
     ~DisplayBuffer();
 
     QPixmap GetPixmap() const;
-    int GetNumberOfBytes();
-    int GetWidth();
-    int GetHeight();
+    uint16_t GetNumberOfBytes() const;
+    uint8_t GetWidth() const;
+    uint8_t GetHeight() const;
     void RenderText(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str);
     void RenderText_AlignRight(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str);
     void RenderText_AlignCenter(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str);
     static uint8_t CalculateTextWidthPixels(const fontStyle_t &font, const uint8_t scale_x, const char *str);
     static uint8_t CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, const char *str);
+    static uint8_t CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y);
     typedef enum PixelManipulate_t {
         PIXEL_SET,
         PIXEL_CLEAR,

@@ -15,9 +15,16 @@ class UiMain
     void Render(DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
+
+    typedef enum UiSelection_t
+    {
+        UI_SELECTION_ALTIMETER,
+        UI_SELECTION_MENU
+    } UiSelection;
  private:
     UiAltimeter altimeter_;
     UiMenu menu_;
+    UiSelection ui_selection_;
 }; //class UiMain
 
 #endif //ifndef UI_MAIN_HH
