@@ -28,7 +28,7 @@ class UiAltimeter
  private:
     Sensors *sensors_;
     char altitude_string_[6]; //"-9999" + null
-    char altitude_string_long_[15]; //"Alt: -9999 m/s" + null
+    char altitude_string_long_[13]; //"Alt: -9999 m" + null
     char altitude_change_rate_string_long_[20]; //"Descent: 999.9 ft/s" + null
     char temperature_string_long_[14]; //"Temp: -999 °F"
 };

@@ -22,10 +22,12 @@ UiAltimeter::UiAltimeter(Sensors *sensors)
 void UiAltimeter::Render(DisplayBuffer *buffer)
 {
     buffer->Clear();
-    buffer->RenderText(FontStyle_impact_huge, 3,0,GetAltitudeString());
-    buffer->RenderText(FontStyle_impact,3,40,GetAltitudeChangeStringLong());
-    buffer->RenderText(FontStyle_impact,3,55,GetAltitudeStringLong());
-    buffer->RenderText(FontStyle_impact,3,70,GetTemperatureStringLong());
+    //buffer->RenderText(FontStyle_impact_huge, 3,0,GetAltitudeString());
+    //buffer->RenderText(FontStyle_impact_huge, 3,0,1,2,GetAltitudeString());
+    buffer->RenderText_AlignCenter(FontStyle_impact_huge, buffer->GetWidth()/2,0,1,2,GetAltitudeString());
+    buffer->RenderText(FontStyle_impact,3,40+28,1,1,GetAltitudeChangeStringLong());
+    buffer->RenderText(FontStyle_impact,3,55+28,1,1,GetAltitudeStringLong());
+    buffer->RenderText(FontStyle_impact,3,70+28,1,1,GetTemperatureStringLong());
 }
 
 void UiAltimeter::KeyPress(const UiBase::KeyCode key, const bool down)
@@ -52,7 +54,7 @@ char *UiAltimeter::GetAltitudeStringLong()
 {
     int16_t alt = sensors_->GetAltitudeMeters();
     alt = std::max(MIN_UI_ALTITUDE,std::min(MAX_UI_ALTITUDE, alt));
-    sprintf(altitude_string_long_,"Alt: %d m/s",alt);
+    sprintf(altitude_string_long_,"Alt: %d m",alt);
     return altitude_string_long_;
 }
 
