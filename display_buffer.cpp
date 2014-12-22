@@ -57,7 +57,7 @@ int DisplayBuffer::GetHeight()
     return height_;
 }
 
-void DisplayBuffer::RenderText(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str)
+void DisplayBuffer::RenderText(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str)
 {
     uint8_t current_x = x;
 
@@ -82,19 +82,19 @@ void DisplayBuffer::RenderText(const fontStyle_t &font, const uint8_t x, const u
     }
 }
 
-void DisplayBuffer::RenderText_AlignRight(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str)
+void DisplayBuffer::RenderText_AlignRight(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str)
 {
     const uint8_t width_bits = CalculateTextWidthPixels(font, scale_x, str);
     RenderText(font, x - width_bits, y, scale_x, scale_y, str);
 }
 
-void DisplayBuffer::RenderText_AlignCenter(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str)
+void DisplayBuffer::RenderText_AlignCenter(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, const char *str)
 {
     const uint8_t width_bits = CalculateTextWidthPixels(font, scale_x, str);
     RenderText(font, x - width_bits/2, y, scale_x, scale_y, str);
 }
 
-uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const uint8_t scale_x, char *str)
+uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const uint8_t scale_x, const char *str)
 {
     // Calculate text full width in bits
     uint8_t text_width_bits = 0;
@@ -117,7 +117,7 @@ uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const u
     return text_width_bits;
 }
 
-uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, char *str)
+uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, const char *str)
 {
     // Currently not using str
     return font.GlyphHeight*scale_y;

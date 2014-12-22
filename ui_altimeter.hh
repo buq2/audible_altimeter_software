@@ -27,10 +27,6 @@ class UiAltimeter
     void RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row);
  private:
     Sensors *sensors_;
-
-
-
-
 };
 
 #endif //ifndef UI_ALTIMETER_HH
