@@ -18,8 +18,8 @@ class DisplayBuffer
     void RenderText(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str);
     void RenderText_AlignRight(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str);
     void RenderText_AlignCenter(const fontStyle_t &font, const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y, char *str);
-    uint8_t CalculateTextWidthPixels(const fontStyle_t &font, const uint8_t scale_x, char *str);
-
+    static uint8_t CalculateTextWidthPixels(const fontStyle_t &font, const uint8_t scale_x, char *str);
+    static uint8_t CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, char *str);
     typedef enum PixelManipulate_t {
         PIXEL_SET,
         PIXEL_CLEAR,

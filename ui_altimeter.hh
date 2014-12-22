@@ -21,16 +21,16 @@ class UiAltimeter
     static int16_t MAX_UI_TEMPERATURE;
     static int16_t MIN_UI_TEMPERATURE;
  private:
-    char *GetAltitudeString();
-    char *GetAltitudeStringLong();
-    char *GetAltitudeChangeStringLong();
-    char *GetTemperatureStringLong();
+    void RenderAltitude(DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitudeLong(DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitudeChangeLong(DisplayBuffer *buffer, uint8_t *row);
+    void RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row);
  private:
     Sensors *sensors_;
-    char altitude_string_[6]; //"-9999" + null
-    char altitude_string_long_[13]; //"Alt: -9999 m" + null
-    char altitude_change_rate_string_long_[20]; //"Descent: 999.9 ft/s" + null
-    char temperature_string_long_[14]; //"Temp: -999 °F"
+
+
+
+
 };
 
 #endif //ifndef UI_ALTIMETER_HH

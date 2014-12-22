@@ -117,6 +117,12 @@ uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const u
     return text_width_bits;
 }
 
+uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, char *str)
+{
+    // Currently not using str
+    return font.GlyphHeight*scale_y;
+}
+
 void DisplayBuffer::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)
 {
     if (x >= width_ || y >= height_) {
