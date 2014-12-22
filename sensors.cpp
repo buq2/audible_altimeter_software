@@ -2,7 +2,7 @@
 
 Sensors::Sensors()
     :
-      altitude_m_(4000),
+      altitude_m_(9999),
       altitude_change_dm_per_s_(13),
       temperature_c_(21)
 {
@@ -12,7 +12,7 @@ Sensors::Sensors()
 int16_t Sensors::GetAltitudeMeters()
 {
     // Debug code
-    --altitude_m_;
+    altitude_m_ -= 20;
     return altitude_m_;
 }
 

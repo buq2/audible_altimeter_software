@@ -14,7 +14,8 @@ int16_t UiAltimeter::MIN_UI_TEMPERATURE = -999;
 
 UiAltimeter::UiAltimeter(Sensors *sensors)
     :
-      sensors_(sensors)
+      sensors_(sensors),
+      mode_(ALTIMETER_UI_MODE_COMPLEX)
 {
 
 }
@@ -22,11 +23,15 @@ UiAltimeter::UiAltimeter(Sensors *sensors)
 void UiAltimeter::Render(DisplayBuffer *buffer)
 {
     buffer->Clear();
-    uint8_t y = 0;
-    RenderAltitude(buffer, &y);
-    RenderAltitudeLong(buffer, &y);
-    RenderAltitudeChangeLong(buffer, &y);
-    RenderTemperatureLong(buffer, &y);
+    switch(mode_) {
+    case ALTIMETER_UI_MODE_COMPLEX:
+        RenderComplex(buffer);
+        break;
+    case ALTIMETER_UI_MODE_FREE_FALL:
+    default:
+        RenderSimpleFreeFall(buffer);
+        break;
+    }
 }
 
 void UiAltimeter::KeyPress(const UiBase::KeyCode key, const bool down)
@@ -37,6 +42,28 @@ void UiAltimeter::KeyPress(const UiBase::KeyCode key, const bool down)
 void UiAltimeter::Tick100ms()
 {
 
+}
+
+void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
+{
+    uint8_t y = 0;
+    RenderAltitude(buffer, &y);
+    RenderAltitudeLong(buffer, &y);
+    RenderAltitudeChangeLong(buffer, &y);
+    RenderTemperatureLong(buffer, &y);
+}
+
+void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
+{
+    int16_t alt = sensors_->GetAltitudeMeters();
+    char str[6];
+    sprintf(str,"%d.%d",alt/1000, std::abs((alt/100)%10) );
+    const uint8_t scale_x = 2;
+    const uint8_t scale_y = 2;
+    const uint8_t xpos = buffer->GetWidth()/2;
+    const uint8_t ypos = buffer->GetHeight()/2 - DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact_huge, scale_y, str)/2;
+    buffer->RenderText_AlignCenter(FontStyle_impact_huge, xpos,
+                                   ypos, scale_x, scale_y, str);
 }
 
 void UiAltimeter::RenderAltitude(DisplayBuffer *buffer, uint8_t *row)
