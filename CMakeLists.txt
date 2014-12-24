@@ -20,6 +20,7 @@ QT5_WRAP_UI(GUI_UI_MOC
 
 ADD_EXECUTABLE(audible_gui
     main.cpp
+    config.cpp config.hh
     sensors.cpp sensors.hh
     menu_item.cpp menu_item.hh
     mainwindow.cpp mainwindow.hh
