@@ -6,21 +6,29 @@ const uint8_t menu_font_scale_y = 1;
 
 UiMenu::UiMenu()
     :
+      active_item_(this),
       menu_font_(&FontStyle_vcr_tiny),
       selected_sub_(0)
 {
-    current_ = this;
 }
 
 UiMenu::UiMenu(UiMenu *parent)
     :
-      UiMenuItem(parent)
+      UiMenuItem(parent),
+      active_item_(this),
+      menu_font_(&FontStyle_vcr_tiny),
+      selected_sub_(0)
 {
 
 }
 
 void UiMenu::Render(DisplayBuffer *buffer)
 {
+    if (active_item_ != this) {
+        active_item_->Render(buffer);
+        return;
+    }
+
     buffer->Clear();
 
     const uint8_t max_rows = GetNumberOfMenuRows(*buffer);
@@ -41,8 +49,8 @@ void UiMenu::Render(DisplayBuffer *buffer)
     const uint8_t xpos_select = 3;
     const uint8_t xpos = DisplayBuffer::CalculateTextWidthPixels(*menu_font_, menu_font_scale_x, select_str)
             + xpos_select + 3;
-    for (int i = start; i <= end; ++i) {
 
+    for (int i = start; i <= end; ++i) {
         if (i == selected) {
 
             buffer->RenderText(*menu_font_, xpos_select, ypos,
@@ -73,6 +81,11 @@ void UiMenu::Render(DisplayBuffer *buffer)
 
 void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
 {
+    if (active_item_ != this) {
+        active_item_->KeyPress(key,down);
+        return;
+    }
+
     if (!down) {
         return;
     }
@@ -86,17 +99,18 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
         break;
     case UiBase::KEY_LEFT:
     {
-        UiMenuItem *parent = current_->GetParent();
-        if (NULL != parent) {
-            current_ = parent;
+        UiMenuItem *parent = GetParent();
+        if (NULL == parent) {
+            return;
         }
+        ((UiMenu*)parent)->Activate();
         break;
     }
     case UiBase::KEY_RIGHT:
     {
         UiMenuItem *sub = GetItem(GetSelectedItemIndex());
         if (NULL != sub) {
-            current_ = sub;
+            active_item_ = sub;
         }
         break;
     }
@@ -130,6 +144,11 @@ void UiMenu::Previous()
         return;
     }
     --selected_sub_;
+}
+
+void UiMenu::Activate()
+{
+    active_item_ = this;
 }
 
 uint8_t UiMenu::GetNumberOfItems()

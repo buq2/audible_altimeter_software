@@ -2,16 +2,26 @@
 #define UI_CONFIG_ITEM_ENUM_HH
 
 #include "ui_menu_item.hh"
+#include "config.hh"
 
-template <typename T>
-class UiConfigItemEnum
+class UiConfigItemEnumBase
         :
         public UiMenuItem
 {
  public:
+    UiConfigItemEnumBase(UiMenu *parent);
+    virtual void NextEnumValue() = 0;
+};
+
+template <typename T>
+class UiConfigItemEnum
+        :
+        public UiConfigItemEnumBase
+{
+ public:
     UiConfigItemEnum(UiMenu *parent, const char *label)
         :
-          UiMenuItem(parent),
+          UiConfigItemEnumBase(parent),
           label_(label)
     {
     }
@@ -29,6 +39,11 @@ class UiConfigItemEnum
     const char *GetLabelValue()
     {
         return ToString(*ptr_);
+    }
+
+    void NextEnumValue()
+    {
+        *ptr_ = NextEnum(*ptr_);
     }
  private:
     T *ptr_;

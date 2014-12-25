@@ -13,8 +13,8 @@ class UiMenu
     UiMenu();
     UiMenu(UiMenu *parent);
 
-    void Render(DisplayBuffer *buffer);
-    void KeyPress(const UiBase::KeyCode key, const bool down);
+    virtual void Render(DisplayBuffer *buffer);
+    virtual void KeyPress(const UiBase::KeyCode key, const bool down);
 
     uint8_t GetNumberOfItems();
     UiMenuItem *GetItem(const uint8_t i);
@@ -23,11 +23,12 @@ class UiMenu
 
     void Next();
     void Previous();
+    void Activate();
  private:
     uint8_t GetNumberOfMenuRows(const DisplayBuffer &buffer);
     uint8_t GetMenuRowHeight();
  private:
-    UiMenuItem *current_;
+    UiMenuItem *active_item_;
     fontStyle_t *menu_font_;
     std::vector<UiMenuItem*> items_;
     uint8_t selected_sub_;

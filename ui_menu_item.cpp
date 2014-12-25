@@ -1,5 +1,6 @@
 #include "ui_menu_item.hh"
 #include "ui_menu.hh"
+#include <iostream>
 
 UiMenuItem::UiMenuItem()
     :
@@ -16,12 +17,10 @@ UiMenuItem::UiMenuItem(UiMenu *parent)
 
 void UiMenuItem::Render(DisplayBuffer *buffer)
 {
-
 }
 
 void UiMenuItem::KeyPress(const UiBase::KeyCode key, const bool down)
 {
-
 }
 
 const char *UiMenuItem::GetLabel()
