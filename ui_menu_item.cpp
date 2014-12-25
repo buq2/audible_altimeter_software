@@ -1,17 +1,15 @@
 #include "ui_menu_item.hh"
+#include "ui_menu.hh"
 
 UiMenuItem::UiMenuItem()
     :
-    parent_(NULL),
-    selected_sub_(0)
+    parent_(NULL)
 {
 }
 
-UiMenuItem::UiMenuItem(UiMenuItem *parent, const std::string &label)
+UiMenuItem::UiMenuItem(UiMenu *parent)
     :
-    parent_(parent),
-    label_(label),
-    selected_sub_(0)
+    parent_(parent)
 {
     parent_->AddItem(this);
 }
@@ -26,46 +24,24 @@ void UiMenuItem::KeyPress(const UiBase::KeyCode key, const bool down)
 
 }
 
-uint8_t UiMenuItem::GetNumberOfItems()
+const char *UiMenuItem::GetLabel()
 {
-    return items_.size();
+    static const char label[] = "";
+    return label;
 }
 
-UiMenuItem *UiMenuItem::GetItem(const int i)
+const char *UiMenuItem::GetLabelValue()
 {
-    return items_[i];
-}
-
-void UiMenuItem::AddItem(UiMenuItem *item)
-{
-    items_.push_back(item);
-}
-
-std::string UiMenuItem::GetLabel()
-{
-    return label_;
-}
-
-uint8_t UiMenuItem::GetSelectedItemIndex()
-{
-    return selected_sub_;
-}
-
-void UiMenuItem::Next()
-{
-    selected_sub_++;
-    selected_sub_ = std::min(selected_sub_,(uint8_t)(GetNumberOfItems()-1));
-}
-
-void UiMenuItem::Previous()
-{
-    if (selected_sub_ == 0) {
-        return;
-    }
-    --selected_sub_;
+    static const char label_value[] = "";
+    return label_value;
 }
 
 UiMenuItem *UiMenuItem::GetParent()
 {
     return parent_;
+}
+
+Config *UiMenuItem::GetConfig()
+{
+    return parent_->GetConfig();
 }

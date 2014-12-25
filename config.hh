@@ -7,35 +7,40 @@ struct Config
 {
     typedef enum
     {
-        AltitudeUnitModeMeters,
-        AltitudeUnitModeFeets,
+        AltitudeUnitModeMeters = 0,
+        AltitudeUnitModeFeets = 1,
+        AltitudeUnitModeNumberOfEnums = 2
     } AltitudeDisplayUnitMode;
 
     typedef enum
     {
-        SpeedUnitModeMetersPerSecond,
-        SpeedUnitModeKilometersPerHour,
-        SpeedUnitModeFeetsPerSecond,
-        SpeedUnitModeMilesPerHour,
+        SpeedUnitModeMetersPerSecond = 0,
+        SpeedUnitModeKilometersPerHour = 1,
+        SpeedUnitModeFeetsPerSecond = 2,
+        SpeedUnitModeMilesPerHour = 3,
+        SpeedUnitModeNumberOfEnums = 4
     } SpeedDisplayUnitMode;
 
     typedef enum
     {
-        TemperatureModeCelcius,
-        TemperatureModeFahrenheit
+        TemperatureModeCelcius = 0,
+        TemperatureModeFahrenheit = 1,
+        TemperatureModeNumberOfEnums = 2
     } TemperatureMode;
 
     typedef enum
     {
-        DisplayOrientationNormal,
-        DisplayOrientation180Rotated
+        DisplayOrientationNormal = 0,
+        DisplayOrientation180Rotated = 1,
+        DisplayOrientationNumberOfEnums = 2
     } DisplayOrientation;
 
     typedef enum
     {
-        FontSizeSmall,
-        FontSizeMedium,
-        FontSizeLarge,
+        FontSizeSmall = 0,
+        FontSizeMedium = 1,
+        FontSizeLarge = 2,
+        FontSizeNumberOfEnums = 3
     } FontSize;
 
     struct AltitudeAlarm
@@ -136,5 +141,54 @@ struct Config
     AltitudeAlarm alarms_canopy[3];
     FontSize menu_font_size;
 }; //struct Config
+
+template<typename T>
+const char *ToString(const T en)
+{
+    static const char str[] = "<error>";
+    return str;
+}
+
+template<>
+const char *ToString(const Config::AltitudeDisplayUnitMode en);
+
+template<>
+const char *ToString(const Config::SpeedDisplayUnitMode en);
+
+template<>
+const char *ToString(const Config::TemperatureMode en);
+
+template<>
+const char *ToString(const Config::DisplayOrientation en);
+
+template<>
+const char *ToString(const Config::AltitudeAlarm en);
+
+template<>
+const char *ToString(const Config::FontSize en);
+
+template<typename T>
+T NextEnum(const T en)
+{
+    return en;
+}
+
+template<>
+Config::AltitudeDisplayUnitMode NextEnum(const Config::AltitudeDisplayUnitMode en);
+
+template<>
+Config::SpeedDisplayUnitMode NextEnum(const Config::SpeedDisplayUnitMode en);
+
+template<>
+Config::TemperatureMode NextEnum(const Config::TemperatureMode en);
+
+template<>
+Config::DisplayOrientation NextEnum(const Config::DisplayOrientation en);
+
+template<>
+Config::AltitudeAlarm NextEnum(const Config::AltitudeAlarm en);
+
+template<>
+Config::FontSize NextEnum(const Config::FontSize en);
 
 #endif //ifndef CONFIG_HH

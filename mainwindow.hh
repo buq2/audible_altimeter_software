@@ -31,6 +31,7 @@ private:
     UiMain ui_main_;
     DisplayBuffer display_buffer_;
     Sensors sensors_;
+    Config config_;
 };
 
 #endif // MAINWINDOW_HH

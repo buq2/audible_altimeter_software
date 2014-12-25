@@ -5,6 +5,9 @@
 #include <vector>
 #include <stdint.h>
 #include "ui_base.hh"
+#include "config.hh"
+
+class UiMenu;
 
 class UiMenuItem
         :
@@ -12,24 +15,19 @@ class UiMenuItem
 {
  public:
     UiMenuItem();
-    UiMenuItem(UiMenuItem *parent, const std::string &label);
+    UiMenuItem(UiMenu *parent);
 
     virtual void Render(DisplayBuffer *buffer);
     virtual void KeyPress(const KeyCode key, const bool down);
 
-    uint8_t GetNumberOfItems();
-    UiMenuItem *GetItem(const int i);
-    void AddItem(UiMenuItem *item);
-    std::string GetLabel();
-    uint8_t GetSelectedItemIndex();
-    void Next();
-    void Previous();
+    virtual const char *GetLabel();
+    virtual const char *GetLabelValue();
+
     UiMenuItem *GetParent();
+    virtual Config *GetConfig();
+ protected:
  private:
-    UiMenuItem *parent_;
-    std::string label_;
-    std::vector<UiMenuItem*> items_;
-    uint8_t selected_sub_;
+    UiMenu *parent_;
 }; //class MenuItem
 
 #endif //ifndef MENU_ITEM_HH

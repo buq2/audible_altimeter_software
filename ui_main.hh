@@ -11,7 +11,7 @@ class UiMain
         public UiBase
 {
  public:
-    UiMain(Sensors *sensors);
+    UiMain(Config *config, Sensors *sensors);
     void Render(DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();

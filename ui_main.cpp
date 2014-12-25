@@ -1,10 +1,11 @@
 #include "ui_main.hh"
 #include <iostream>
 
-UiMain::UiMain(Sensors *sensors)
+UiMain::UiMain(Config *config, Sensors *sensors)
     :
       altimeter_(sensors),
-      ui_selection_(UI_SELECTION_MENU)
+      ui_selection_(UI_SELECTION_MENU),
+      menu_(config)
 {
 
 }
