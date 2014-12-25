@@ -16,6 +16,7 @@ class MainMenu
  public:
     MainMenu(Config *config);
     virtual Config *GetConfig();
+    bool IsAtMainMenu() const;
  private:
     Config *config_;
     UiDisplayMenu display_;

@@ -93,28 +93,23 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
     switch(key) {
     case UiBase::KEY_UP:
         Previous();
-        break;
+        return;
     case UiBase::KEY_DOWN:
         Next();
-        break;
-    case UiBase::KEY_LEFT:
-    {
-        UiMenuItem *parent = GetParent();
-        if (NULL == parent) {
-            return;
-        }
-        ((UiMenu*)parent)->Activate();
-        break;
-    }
+        return;
     case UiBase::KEY_RIGHT:
     {
         UiMenuItem *sub = GetItem(GetSelectedItemIndex());
         if (NULL != sub) {
             active_item_ = sub;
+            active_item_->Activated();
+
         }
-        break;
+        return;
     }
     }
+
+    UiMenuItem::KeyPress(key,down);
 }
 
 uint8_t UiMenu::GetNumberOfMenuRows(const DisplayBuffer &buffer)
@@ -130,6 +125,11 @@ uint8_t UiMenu::GetMenuRowHeight()
 uint8_t UiMenu::GetSelectedItemIndex()
 {
     return selected_sub_;
+}
+
+UiMenuItem *UiMenu::GetActiveItem() const
+{
+    return active_item_;
 }
 
 void UiMenu::Next()

@@ -20,6 +20,7 @@ class UiMenu
     UiMenuItem *GetItem(const uint8_t i);
     void AddItem(UiMenuItem *item);
     uint8_t GetSelectedItemIndex();
+    UiMenuItem *GetActiveItem() const;
 
     void Next();
     void Previous();

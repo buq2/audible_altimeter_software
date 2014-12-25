@@ -21,6 +21,15 @@ void UiMenuItem::Render(DisplayBuffer *buffer)
 
 void UiMenuItem::KeyPress(const UiBase::KeyCode key, const bool down)
 {
+    if (!down) {
+        return;
+    }
+
+    UiMenuItem *parent = GetParent();
+    if (NULL == parent) {
+        return;
+    }
+    ((UiMenu*)parent)->Activate();
 }
 
 const char *UiMenuItem::GetLabel()
@@ -43,4 +52,9 @@ UiMenuItem *UiMenuItem::GetParent()
 Config *UiMenuItem::GetConfig()
 {
     return parent_->GetConfig();
+}
+
+void UiMenuItem::Activated()
+{
+
 }

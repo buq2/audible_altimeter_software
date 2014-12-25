@@ -2,6 +2,7 @@
 #define UI_ALARMS_MENU
 
 #include "ui_menu.hh"
+#include "ui_config_item_altitude_alarm.hh"
 
 class UiAlarmsMenu
         :
@@ -10,6 +11,9 @@ class UiAlarmsMenu
  public:
     UiAlarmsMenu(UiMenu *parent);
     const char *GetLabel();
+ private:
+    UiConfigItemAltitudeAlarm free_fly_[3];
+    UiConfigItemAltitudeAlarm canopy_[3];
 }; //class UiAlarmsMenu
 
 #endif //ifndef UI_ALARMS_MENU

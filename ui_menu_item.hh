@@ -25,6 +25,7 @@ class UiMenuItem
 
     UiMenuItem *GetParent();
     virtual Config *GetConfig();
+    virtual void Activated();
  protected:
  private:
     UiMenu *parent_;

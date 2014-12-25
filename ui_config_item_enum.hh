@@ -3,6 +3,7 @@
 
 #include "ui_menu_item.hh"
 #include "config.hh"
+#include "ui_menu.hh"
 
 class UiConfigItemEnumBase
         :
@@ -44,6 +45,12 @@ class UiConfigItemEnum
     void NextEnumValue()
     {
         *ptr_ = NextEnum(*ptr_);
+    }
+
+    void Activated()
+    {
+        NextEnumValue();
+        ((UiMenu*)GetParent())->Activate();
     }
  private:
     T *ptr_;

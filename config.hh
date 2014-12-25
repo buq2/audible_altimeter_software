@@ -2,9 +2,12 @@
 #define CONFIG_HH
 
 #include <stdint.h>
+#include "fonts/fontlibrary.h"
 
 struct Config
 {
+    fontStyle_t *GetIntChangeFont() const;
+
     typedef enum
     {
         AltitudeUnitModeMeters = 0,
@@ -45,16 +48,24 @@ struct Config
 
     struct AltitudeAlarm
     {
+        typedef enum
+        {
+            AlarmAmplitudeWeak = 0,
+            AlarmAmplitudeMedium = 1,
+            AlarmAmplitudeStrong = 2,
+            AlarmAmplitudeNumberOfEnums = 3
+        } AlarmAmplitude;
+
         AltitudeAlarm()
             :
               altitude(4000),
-              amplitude(127),
+              amplitude(AlarmAmplitudeMedium),
               enabled(false)
         {
         }
 
         int16_t altitude;
-        uint8_t amplitude;
+        AlarmAmplitude amplitude;
         bool enabled;
     };
 
@@ -166,6 +177,9 @@ const char *ToString(const Config::AltitudeAlarm en);
 
 template<>
 const char *ToString(const Config::FontSize en);
+
+template<>
+const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en);
 
 template<typename T>
 T NextEnum(const T en)

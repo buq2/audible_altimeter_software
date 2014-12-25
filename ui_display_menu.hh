@@ -11,7 +11,6 @@ class UiDisplayMenu
  public:
     UiDisplayMenu(UiMenu *parent);
     const char *GetLabel();
-    virtual void KeyPress(const UiBase::KeyCode key, const bool down);
  private:
     UiConfigItemEnum<Config::AltitudeDisplayUnitMode> altitude_;
     UiConfigItemEnum<Config::SpeedDisplayUnitMode> speed_;

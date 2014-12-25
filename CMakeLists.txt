@@ -40,6 +40,9 @@ ADD_EXECUTABLE(audible_gui
     ui_log_admin_menu.cpp ui_log_admin_menu.hh
 
     ui_config_item_enum.cpp ui_config_item_enum.hh
+    ui_config_item_altitude_alarm.cpp ui_config_item_altitude_alarm.hh
+    ui_config_item_int.cpp ui_config_item_int.hh
+    ui_config_item_bool.cpp ui_config_item_bool.hh
 
     display_buffer.cpp display_buffer.hh
     fonts/fontlibrary.h fonts/fontlibrary.c

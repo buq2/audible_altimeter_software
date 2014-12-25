@@ -24,19 +24,3 @@ const char *UiDisplayMenu::GetLabel()
     return label;
 }
 
-void UiDisplayMenu::KeyPress(const UiBase::KeyCode key, const bool down)
-{
-    if (down) {
-        switch (key) {
-        case UiBase::KEY_RIGHT:
-        {
-            UiMenuItem *sub = GetItem(GetSelectedItemIndex());
-            ((UiConfigItemEnumBase*)sub)->NextEnumValue();
-            return;
-        }
-        }
-    }
-
-    UiMenu::KeyPress(key,down);
-}
-

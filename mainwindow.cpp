@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     graphics_pixmap_ = scene_->addPixmap(display_buffer_.GetPixmap());
 
     view_->ensureVisible(0,0,display_buffer_.GetWidth(),display_buffer_.GetHeight(),5);
-    view_->scale(1,1);
+    view_->scale(3,3);
 
     QTimer *timer_100ms = new QTimer;
     connect(timer_100ms, SIGNAL(timeout()), this, SLOT(Tick100ms()));

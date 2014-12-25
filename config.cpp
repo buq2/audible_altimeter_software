@@ -105,12 +105,35 @@ const char *ToString(const Config::FontSize en)
     }
 }
 
+template<>
+const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en)
+{
+    switch(en) {
+    case Config::AltitudeAlarm::AlarmAmplitudeWeak:
+    {
+        static const char str[] = "Weak";
+        return str;
+    }
+    case Config::AltitudeAlarm::AlarmAmplitudeMedium:
+    {
+        static const char str[] = "Medium";
+        return str;
+    }
+    default:
+    case Config::AltitudeAlarm::AlarmAmplitudeStrong:
+    {
+        static const char str[] = "Strong";
+        return str;
+    }
+    }
+}
+
 #define ENUM_MACRO(T,MAXNUM) \
 template<> \
 T NextEnum(const T en)\
 {\
     const T next = (T)(en+1);\
-    if (en == MAXNUM) {\
+    if (next == MAXNUM) {\
         return (T)0;\
     }\
     return next;\
@@ -121,3 +144,9 @@ ENUM_MACRO(Config::SpeedDisplayUnitMode, Config::SpeedUnitModeNumberOfEnums);
 ENUM_MACRO(Config::TemperatureMode, Config::TemperatureModeNumberOfEnums);
 ENUM_MACRO(Config::DisplayOrientation, Config::DisplayOrientationNumberOfEnums);
 ENUM_MACRO(Config::FontSize, Config::FontSizeNumberOfEnums);
+ENUM_MACRO(Config::AltitudeAlarm::AlarmAmplitude, Config::AltitudeAlarm::AlarmAmplitudeNumberOfEnums);
+
+fontStyle_t *Config::GetIntChangeFont() const
+{
+    return &FontStyle_impact_huge;
+}

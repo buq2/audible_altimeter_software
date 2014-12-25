@@ -1,4 +1,5 @@
 #include "ui_main_menu.hh"
+#include <iostream>
 
 MainMenu::MainMenu(Config *config)
     :
@@ -15,4 +16,9 @@ MainMenu::MainMenu(Config *config)
 Config *MainMenu::GetConfig()
 {
     return config_;
+}
+
+bool MainMenu::IsAtMainMenu() const
+{
+    return GetActiveItem() == this;
 }
