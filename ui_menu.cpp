@@ -8,37 +8,7 @@ UiMenu::UiMenu()
     :
       menu_font_(&FontStyle_vcr_tiny)
 {
-    MenuItem *m1 = new MenuItem(&root, "item1");
-    MenuItem *m2 = new MenuItem(&root, "item2");
-    MenuItem *m3 = new MenuItem(&root, "item3");
-    MenuItem *m4 = new MenuItem(&root, "item4");
-    MenuItem *m5 = new MenuItem(&root, "item5");
-    MenuItem *m6 = new MenuItem(&root, "item6");
-    MenuItem *m7 = new MenuItem(&root, "item7");
-    MenuItem *m8 = new MenuItem(&root, "item8");
-    MenuItem *m9 = new MenuItem(&root, "item9");
-    MenuItem *m10 = new MenuItem(&root, "item10");
-    MenuItem *m11 = new MenuItem(&root, "item11");
-    MenuItem *m12 = new MenuItem(&root, "item12");
-    MenuItem *m13 = new MenuItem(&root, "item13");
-    MenuItem *m14 = new MenuItem(&root, "item14");
-    MenuItem *m15 = new MenuItem(&root, "item15");
-    MenuItem *m16 = new MenuItem(&root, "item16");
-
-    new MenuItem(m1, "item1-sub1");
-    new MenuItem(m1, "item1-sub2");
-    new MenuItem(m1, "item1-sub3");
-
-    new MenuItem(m2, "item2-abc");
-    new MenuItem(m2, "item2-cde");
-    new MenuItem(m2, "item2-efg");
-
-    new MenuItem(m3, "item3-a");
-    new MenuItem(m3, "item3-b");
-
-    new MenuItem(m4, "item4-a");
-
-    current_ = &root;
+    current_ = this;
 }
 
 void UiMenu::Render(DisplayBuffer *buffer)
@@ -72,7 +42,7 @@ void UiMenu::Render(DisplayBuffer *buffer)
                                select_str);
         }
 
-        MenuItem *item = current_->GetItem(i);
+        UiMenuItem *item = current_->GetItem(i);
 
         buffer->RenderText(*menu_font_, xpos, ypos,
                            menu_font_scale_x, menu_font_scale_y,
@@ -96,7 +66,7 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
         break;
     case UiBase::KEY_LEFT:
     {
-        MenuItem *parent = current_->GetParent();
+        UiMenuItem *parent = current_->GetParent();
         if (NULL != parent) {
             current_ = parent;
         }
@@ -104,18 +74,13 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
     }
     case UiBase::KEY_RIGHT:
     {
-        MenuItem *sub = current_->GetItem(current_->GetSelectedItemIndex());
+        UiMenuItem *sub = current_->GetItem(current_->GetSelectedItemIndex());
         if (NULL != sub) {
             current_ = sub;
         }
         break;
     }
     }
-}
-
-void UiMenu::Tick100ms()
-{
-
 }
 
 uint8_t UiMenu::GetNumberOfMenuRows(const DisplayBuffer &buffer)

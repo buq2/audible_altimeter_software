@@ -3,7 +3,7 @@
 
 #include "ui_base.hh"
 #include "ui_altimeter.hh"
-#include "ui_menu.hh"
+#include "ui_main_menu.hh"
 #include "sensors.hh"
 
 class UiMain
@@ -23,7 +23,7 @@ class UiMain
     } UiSelection;
  private:
     UiAltimeter altimeter_;
-    UiMenu menu_;
+    MainMenu menu_;
     UiSelection ui_selection_;
 }; //class UiMain
 

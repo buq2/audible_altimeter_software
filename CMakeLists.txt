@@ -20,14 +20,25 @@ QT5_WRAP_UI(GUI_UI_MOC
 
 ADD_EXECUTABLE(audible_gui
     main.cpp
+    ui_main_menu.cpp ui_main_menu.hh
     config.cpp config.hh
-    sensors.cpp sensors.hh
-    menu_item.cpp menu_item.hh
+    sensors.cpp sensors.hh    
     mainwindow.cpp mainwindow.hh
+
     ui_base.cpp ui_base.hh
-    ui_menu.cpp ui_menu.hh
+
     ui_altimeter.cpp ui_altimeter.hh
+
+    ui_menu_item.cpp ui_menu_item.hh
     ui_main.cpp ui_main.hh
+    ui_menu.cpp ui_menu.hh
+    ui_log_menu.cpp ui_log_menu.hh
+    ui_alarms_menu.cpp ui_alarms_menu.hh
+    ui_time_date_menu.cpp ui_time_date_menu.hh
+    ui_dz_menu.cpp ui_dz_menu.hh
+    ui_display_menu.cpp ui_display_menu.hh
+    ui_log_admin_menu.cpp ui_log_admin_menu.hh
+
     display_buffer.cpp display_buffer.hh
     fonts/fontlibrary.h fonts/fontlibrary.c
     ${GUI_UI_MOC}
