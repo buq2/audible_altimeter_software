@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <iostream>
 #include <QTimer>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,8 +21,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     scene_ = new QGraphicsScene(view_);
     view_->setScene(scene_);
-    view_->setFocusPolicy( Qt::NoFocus ); //otherwise arrow keys will be captured
-    graphics_pixmap_ = scene_->addPixmap(display_buffer_.GetPixmap());
+    view_->setFocusPolicy(Qt::NoFocus); //otherwise arrow keys will be captured
+
+    graphics_pixmap_ = scene_->addPixmap(GetPixmap());
 
     view_->ensureVisible(0,0,display_buffer_.GetWidth(),display_buffer_.GetHeight(),5);
     view_->scale(3,3);
@@ -76,16 +78,20 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
         ui_main_.KeyPress(UiBase::KEY_RIGHT, false);
         break;
     }
-    Refresh();
-}
-
-void MainWindow::Refresh()
-{
 }
 
 void MainWindow::Tick100ms()
 {
     ui_main_.Tick100ms();
     ui_main_.Render(&display_buffer_);
-    graphics_pixmap_->setPixmap(display_buffer_.GetPixmap());
+    graphics_pixmap_->setPixmap(GetPixmap());
+}
+
+QPixmap MainWindow::GetPixmap()
+{
+    QImage img((uchar*)display_buffer_.GetBuffer(),
+               display_buffer_.GetWidth(),
+               display_buffer_.GetHeight(),
+               QImage::Format_MonoLSB);
+    return QPixmap::fromImage(img);
 }

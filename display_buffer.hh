@@ -1,7 +1,6 @@
 #ifndef DISPLAY_BUFFER_HH
 #define DISPLAY_BUFFER_HH
 
-#include <QPixmap>
 #include <stdint.h>
 #include "fonts/fontlibrary.h"
 
@@ -11,7 +10,7 @@ class DisplayBuffer
     DisplayBuffer(const uint8_t width, const uint8_t height);
     ~DisplayBuffer();
 
-    QPixmap GetPixmap() const;
+    uint8_t *GetBuffer();
     uint16_t GetNumberOfBytes() const;
     uint8_t GetWidth() const;
     uint8_t GetHeight() const;

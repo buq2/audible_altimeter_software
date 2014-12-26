@@ -1,6 +1,4 @@
 #include "display_buffer.hh"
-
-#include <QImage>
 #include <cstring>
 #include <iostream>
 
@@ -36,10 +34,9 @@ DisplayBuffer::~DisplayBuffer()
     delete data_;
 }
 
-QPixmap DisplayBuffer::GetPixmap() const
+uint8_t *DisplayBuffer::GetBuffer()
 {
-    QImage img((uchar*)data_,width_, height_,QImage::Format_MonoLSB);
-    return QPixmap::fromImage(img);
+    return data_;
 }
 
 uint16_t DisplayBuffer::GetNumberOfBytes() const

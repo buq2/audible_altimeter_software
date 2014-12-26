@@ -20,9 +20,10 @@ public:
     ~MainWindow();
     void keyPressEvent(QKeyEvent * event);
     void keyReleaseEvent(QKeyEvent *event);
-    void Refresh();
 public slots:
     void Tick100ms();
+private:
+    QPixmap GetPixmap();
 private:
     Ui::MainWindow *qt_ui;
     QGraphicsView *view_;

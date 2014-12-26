@@ -5,6 +5,7 @@
 #include "config.hh"
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 static const uint8_t font_scale_x = 1;
 static const uint8_t font_scale_y = 1;
