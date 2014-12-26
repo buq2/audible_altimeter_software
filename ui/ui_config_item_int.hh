@@ -83,6 +83,8 @@ class UiConfigItemInt
                 selected_digit_ = 0;
             }
             return;
+        default:
+            break;
         }
 
         UiMenuItem::KeyPress(key,down);

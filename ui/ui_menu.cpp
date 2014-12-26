@@ -107,6 +107,8 @@ void UiMenu::KeyPress(const UiBase::KeyCode key, const bool down)
         }
         return;
     }
+    default:
+        break;
     }
 
     UiMenuItem::KeyPress(key,down);

@@ -34,7 +34,7 @@ void UiAltimeter::Render(DisplayBuffer *buffer)
     }
 }
 
-void UiAltimeter::KeyPress(const UiBase::KeyCode key, const bool down)
+void UiAltimeter::KeyPress(const UiBase::KeyCode /*key*/, const bool /*down*/)
 {
 
 }

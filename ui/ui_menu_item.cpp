@@ -15,11 +15,11 @@ UiMenuItem::UiMenuItem(UiMenu *parent)
     parent_->AddItem(this);
 }
 
-void UiMenuItem::Render(DisplayBuffer *buffer)
+void UiMenuItem::Render(DisplayBuffer */*buffer*/)
 {
 }
 
-void UiMenuItem::KeyPress(const UiBase::KeyCode key, const bool down)
+void UiMenuItem::KeyPress(const UiBase::KeyCode /*key*/, const bool down)
 {
     if (!down) {
         return;

@@ -25,8 +25,8 @@ DisplayBuffer::DisplayBuffer(const uint8_t width, const uint8_t height)
     :
       width_(width),
       height_(height),
-      data_(new uint8_t[width_*height_/8]),
-      stride_(width_/8)
+      stride_(width_/8),
+      data_(new uint8_t[width_*height_/8])
 {
     Clear();
 }
@@ -117,7 +117,7 @@ uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const u
     return text_width_bits;
 }
 
-uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, const char *str)
+uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y, const char */*str*/)
 {
     // Currently not using str
     return font.GlyphHeight*scale_y;
@@ -126,7 +126,7 @@ uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const 
 uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const uint8_t scale_y)
 {
     const char *str = "";
-    CalculateTextHeightPixels(font, scale_y, str);
+    return CalculateTextHeightPixels(font, scale_y, str);
 }
 
 void DisplayBuffer::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)
