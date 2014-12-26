@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsView>
 #include "display_buffer.hh"
-#include "ui_main.hh"
+#include "ui/ui_main.hh"
 #include "sensors.hh"
 
 namespace Ui {
