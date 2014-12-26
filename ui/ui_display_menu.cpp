@@ -1,5 +1,4 @@
 #include "ui_display_menu.hh"
-#include <iostream>
 
 UiDisplayMenu::UiDisplayMenu(UiMenu *parent)
     :

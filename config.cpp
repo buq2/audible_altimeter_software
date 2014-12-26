@@ -1,4 +1,5 @@
 #include "config.hh"
+#include "common.hh"
 
 template<>
 const char *ToString(const Config::AltitudeDisplayUnitMode en)

@@ -1,6 +1,5 @@
 #include "display_buffer.hh"
-#include <cstring>
-#include <iostream>
+#include <string.h>
 
 const bool flip_fonts = true;
 const uint8_t glyph_spacing_pixels = 2;
@@ -23,15 +22,13 @@ DisplayBuffer::DisplayBuffer(const uint8_t width, const uint8_t height)
     :
       width_(width),
       height_(height),
-      stride_(width_/8),
-      data_(new uint8_t[width_*height_/8])
+      stride_(width_/8)
 {
     Clear();
 }
 
 DisplayBuffer::~DisplayBuffer()
 {
-    delete data_;
 }
 
 uint8_t *DisplayBuffer::GetBuffer()

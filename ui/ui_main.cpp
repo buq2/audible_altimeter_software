@@ -1,5 +1,4 @@
 #include "ui_main.hh"
-#include <iostream>
 
 UiMain::UiMain(Config *config, Sensors *sensors)
     :

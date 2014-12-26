@@ -1,8 +1,6 @@
 #ifndef MENU_ITEM_HH
 #define MENU_ITEM_HH
 
-#include <string>
-#include <vector>
 #include <stdint.h>
 #include "ui_base.hh"
 #include "config.hh"

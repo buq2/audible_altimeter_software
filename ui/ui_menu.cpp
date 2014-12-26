@@ -1,5 +1,5 @@
 #include "ui_menu.hh"
-#include <iostream>
+#include "common.hh"
 
 const uint8_t menu_font_scale_x = 1;
 const uint8_t menu_font_scale_y = 1;
@@ -40,7 +40,7 @@ void UiMenu::Render(DisplayBuffer *buffer)
     // Calculate largest reasonable start position
     uint8_t start = selected < preferred_row ? 0 : selected - preferred_row;
     // Calculate end position
-    const uint8_t end = std::min(start + max_rows - 1, num-1);
+    const uint8_t end = MIN(start + max_rows - 1, num-1);
     // Fix start position according to end position
     start = end <= preferred_row*2 ? 0 : end - preferred_row*2;
 
@@ -137,7 +137,7 @@ UiMenuItem *UiMenu::GetActiveItem() const
 void UiMenu::Next()
 {
     selected_sub_++;
-    selected_sub_ = std::min(selected_sub_,(uint8_t)(GetNumberOfItems()-1));
+    selected_sub_ = MIN(selected_sub_,(uint8_t)(GetNumberOfItems()-1));
 }
 
 void UiMenu::Previous()

@@ -1,5 +1,4 @@
 #include "ui_main_menu.hh"
-#include <iostream>
 
 MainMenu::MainMenu(Config *config)
     :

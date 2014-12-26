@@ -37,7 +37,7 @@ class DisplayBuffer
     uint8_t width_;
     uint8_t height_;
     uint8_t stride_;
-    uint8_t *data_;
+    uint8_t data_[128*128/8];
 }; //class DisplayBuffer
 
 #endif //ifndef DISPLAY_BUFFER_HH

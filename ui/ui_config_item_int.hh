@@ -3,9 +3,10 @@
 
 #include "ui_menu_item.hh"
 #include "config.hh"
-#include <cmath>
-#include <cstdio>
-#include <cstring>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include "common.hh"
 
 static const uint8_t font_scale_x = 1;
 static const uint8_t font_scale_y = 1;
@@ -69,13 +70,13 @@ class UiConfigItemInt
         case UiBase::KEY_UP:
         {
             int16_t new_val = (int16_t)*ptr_ + pow(10,selected_digit_);
-            *ptr_ = std::min(new_val,max_val_);
+            *ptr_ = MIN(new_val,max_val_);
             return;
         }
         case UiBase::KEY_DOWN:
         {
             int16_t new_val = (int16_t)*ptr_ - pow(10,selected_digit_);
-            *ptr_ = std::max(new_val,min_val_);
+            *ptr_ = MAX(new_val,min_val_);
             return;
         }
         case UiBase::KEY_RIGHT:

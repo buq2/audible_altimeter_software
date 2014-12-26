@@ -1,6 +1,6 @@
 #include "ui_menu_item.hh"
 #include "ui_menu.hh"
-#include <iostream>
+#include "common.hh"
 
 UiMenuItem::UiMenuItem()
     :

@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
-#include <iostream>
 #include <QTimer>
 #include <QPixmap>
 

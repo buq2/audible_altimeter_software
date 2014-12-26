@@ -31,8 +31,37 @@ class UiMenu
  private:
     UiMenuItem *active_item_;
     fontStyle_t *menu_font_;
-    std::vector<UiMenuItem*> items_;
     uint8_t selected_sub_;
+
+    class MenuItemArray {
+     public:
+        #define MAX_NUM_ITEM_ARRAY 10
+        MenuItemArray()
+            :
+              num_items_(0)
+        {
+        }
+
+        uint8_t size()
+        {
+            return num_items_;
+        }
+
+        void push_back(UiMenuItem *item)
+        {
+            items_[num_items_] = item;
+            ++num_items_;
+        }
+
+        UiMenuItem *operator[](uint8_t index)
+        {
+            return items_[index];
+        }
+     private:
+        uint8_t num_items_;
+        UiMenuItem *items_[MAX_NUM_ITEM_ARRAY];
+    };
+    MenuItemArray items_;
 }; //class UiMenu
 
 #endif //ifdef UI_MENU_HH
