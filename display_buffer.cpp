@@ -1,5 +1,6 @@
 #include "display_buffer.hh"
 #include <string.h>
+#include "common.hh"
 
 const bool flip_fonts = true;
 const uint8_t glyph_spacing_pixels = 2;
@@ -186,7 +187,8 @@ void DisplayBuffer::BlitRow(const uint8_t x, const uint8_t y, const uint8_t scal
     uint8_t bit = 0;
     for (uint8_t i = 0; i < width_bits/8 + 1; ++i) {
         // Get single byte
-        const uint8_t byte = pixels[i];
+        // NOTE: Currently all graphics must be in flash memory of the MCU
+        const uint8_t byte = pgm_read_byte(pixels + i);
         for (uint8_t j = 0; j < 8 && bit < width_bits; ++j) {
             const bool val = byte & (1 << j);
             for (uint8_t scale_x_idx = 0; scale_x_idx < scale_x; ++scale_x_idx) {

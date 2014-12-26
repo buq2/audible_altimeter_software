@@ -4,14 +4,10 @@
 // 
 
 #include <stdint.h>
-#if 0
-#include <avr/pgmspace.h>
-#else
-#define PROGMEM
-#endif
+#include "common.hh"
 #include "fontlibrary.h"
 
-static uint8_t const PROGMEM vcr_Bitmaps[3420] = 
+static uint8_t const PROGMEM vcr_Bitmaps[3420] =
 {
     // ASCII: 32, char width: 3
     0x00, 0x00,  // ---.............
