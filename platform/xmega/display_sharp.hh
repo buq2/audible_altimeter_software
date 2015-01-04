@@ -11,6 +11,7 @@ class DisplaySharp
     bool Setup();
     void WriteBuffer(const DisplayBuffer &buffer);
     void ToggleExtcomin();
+    void Clear();
  private:
     void SetChipSelected(const uint8_t val);
     void SendByte(const uint8_t val);

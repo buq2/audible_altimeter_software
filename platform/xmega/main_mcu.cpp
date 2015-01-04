@@ -87,7 +87,8 @@ int main()
     UiMain ui(&config, &sensors);
 
     display.Setup();
-    
+    display.Clear();
+
     while (1) {
         display.ToggleExtcomin();
         ui.Tick100ms();

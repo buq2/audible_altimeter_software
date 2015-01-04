@@ -15,6 +15,10 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_BINARY_DIR}
     )
 
+ADD_LIBRARY(Common STATIC
+    common.hh common.cpp
+    )
+    
 ADD_SUBDIRECTORY(ui)
 ADD_SUBDIRECTORY(platform)
 
@@ -29,4 +33,5 @@ ADD_EXECUTABLE(audible
 TARGET_LINK_LIBRARIES(audible
     Platform
     Ui
+    Common
     )

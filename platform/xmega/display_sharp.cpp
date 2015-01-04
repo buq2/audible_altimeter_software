@@ -1,6 +1,7 @@
 #include "display_sharp.hh"
 #include <LUFA/Drivers/Peripheral/SPI.h>
 #include <util/delay.h>
+#include "common.hh"
 
 #define SPI_SS_PIN 0b00010000
 #define SPI_MOSI_PIN 0b00100000
@@ -33,8 +34,9 @@ bool DisplaySharp::Setup()
     CS_PORT.OUTCLR = CS_PIN;
 
     // Setup SPI
+    // It seems that even SPI_SPEED_FCPU_DIV_4  could be usable
     SPI_Init(&SPI_VAR,
-             SPI_SPEED_FCPU_DIV_128 | SPI_ORDER_MSB_FIRST | SPI_SCK_LEAD_RISING |
+             SPI_SPEED_FCPU_DIV_128  | SPI_ORDER_MSB_FIRST | SPI_SCK_LEAD_RISING |
             SPI_SAMPLE_TRAILING | SPI_MODE_MASTER);
 
     // Setup VCOM signal
@@ -51,21 +53,26 @@ void DisplaySharp::WriteBuffer(const DisplayBuffer &buffer)
     }
 
     SetChipSelected(1);
-    SendByte(0x80); //Write line command
+    _delay_us(6);
+
+    SendByte(0b10000000); //Write line command
     for (uint8_t y = 0; y < height_; ++y) {
         const uint8_t *data = buffer.GetBufferRow(y);
 
         // Command for line modification
-        SendByte(y+1);
+        SendByte(BitFlip(y+1));
 
         for (uint8_t x = 0; x < width_/8; ++x) {
             SendByte(data[x]);
         }
 
-        // 16 clocks of padding
-        SendByte(0);
+        // 8 clocks of padding
         SendByte(0);
     }
+    // Additional 8 clocks of padding
+    SendByte(0);
+
+    _delay_us(2);
     SetChipSelected(0);
 }
 
@@ -81,12 +88,24 @@ void DisplaySharp::ToggleExtcomin()
     }
 }
 
+void DisplaySharp::Clear()
+{
+    SetChipSelected(1);
+    _delay_us(6);
+
+    SendByte(0b00000100);
+    SendByte(0);
+
+    _delay_us(2);
+    SetChipSelected(0);
+}
+
 void DisplaySharp::SetChipSelected(const uint8_t val)
 {
     if (val == 0) {
-        CS_PORT.OUTCLR = SPI_SS_PIN;
+        CS_PORT.OUTCLR = CS_PIN;
     } else {
-        CS_PORT.OUTSET = SPI_SS_PIN;
+        CS_PORT.OUTSET = CS_PIN;
     }
 }
 

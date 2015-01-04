@@ -1,6 +1,8 @@
 #ifndef COMMON_HH
 #define COMMON_HH
 
+#include <stdint.h>
+
 #ifdef USE_MCU
 #include <avr/pgmspace.h>
 #else
@@ -23,5 +25,7 @@
 #ifndef NULL
 #define NULL 0
 #endif
+
+extern uint8_t BitFlip(uint8_t n);
 
 #endif //ifndef COMMON_HH
