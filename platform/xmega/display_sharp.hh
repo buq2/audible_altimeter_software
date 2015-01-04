@@ -9,7 +9,7 @@ class DisplaySharp
  public:
     DisplaySharp(const uint8_t width, const uint8_t height);
     bool Setup();
-    void WriteBuffer(const DisplayBuffer &buffer);
+    void SetContent(const DisplayBuffer &buffer);
     void ToggleExtcomin();
     void Clear();
  private:

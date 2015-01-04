@@ -93,7 +93,7 @@ int main()
         display.ToggleExtcomin();
         ui.Tick100ms();
         ui.Render(&buffer);
-        display.WriteBuffer(buffer);
+        display.SetContent(buffer);
         CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'A');
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();

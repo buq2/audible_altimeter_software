@@ -46,7 +46,7 @@ bool DisplaySharp::Setup()
     return 0;
 }
 
-void DisplaySharp::WriteBuffer(const DisplayBuffer &buffer)
+void DisplaySharp::SetContent(const DisplayBuffer &buffer)
 {
     if (buffer.GetWidth() != width_ || buffer.GetHeight() != height_) {
         return;
