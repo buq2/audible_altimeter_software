@@ -117,6 +117,18 @@ uint8_t DisplayBuffer::CalculateTextHeightPixels(const fontStyle_t &font, const 
 
 void DisplayBuffer::ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op)
 {
+#ifdef USE_MCU
+    // Flip bit position
+    ModifyBit(x-(x%8)*2+7,y,op);
+    // Same as
+    //ModifyBit((x/8)*8-x%8+7,y,op);
+#else
+    ModifyBit(x,y,op);
+#endif
+}
+
+void DisplayBuffer::ModifyBit(const uint8_t x, const uint8_t y, const DisplayBuffer::PixelManipulate op)
+{
     if (x >= width_ || y >= height_) {
         return;
     }

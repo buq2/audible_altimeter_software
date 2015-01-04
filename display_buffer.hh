@@ -27,6 +27,7 @@ class DisplayBuffer
         PIXEL_TOGGLE
     } PixelManipulate;
     void ModifyPixel(const uint8_t x, const uint8_t y, const PixelManipulate op);
+    void ModifyBit(const uint8_t x, const uint8_t y, const PixelManipulate op);
     bool GetPixel(const uint8_t x, const uint8_t y);
     void BlitGraphics(const uint8_t x, const uint8_t y, const uint8_t scale_x, const uint8_t scale_y,
                       const uint8_t width_bits, const uint8_t stride_bytes, const uint8_t height_rows,
