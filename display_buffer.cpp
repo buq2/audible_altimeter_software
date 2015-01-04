@@ -32,9 +32,14 @@ DisplayBuffer::~DisplayBuffer()
 {
 }
 
-uint8_t *DisplayBuffer::GetBuffer()
+const uint8_t *DisplayBuffer::GetBuffer() const
 {
     return data_;
+}
+
+const uint8_t *DisplayBuffer::GetBufferRow(const uint8_t &row) const
+{
+    return GetBuffer()+width_/8*row;
 }
 
 uint16_t DisplayBuffer::GetNumberOfBytes() const

@@ -9,6 +9,7 @@
 #include "display_buffer.hh"
 #include "sensors.hh"
 #include "ui/ui_main.hh"
+#include "display_sharp.hh"
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -78,13 +79,20 @@ int main()
     GlobalInterruptEnable();
 
     Config config;
-    DisplayBuffer buffer(128,128);
+    const uint8_t width = 96;
+    const uint8_t height = 96;
+    DisplayBuffer buffer(width,height);
+    DisplaySharp display(width,height);
     Sensors sensors;
     UiMain ui(&config, &sensors);
+
+    display.Setup();
     
     while (1) {
+        display.ToggleExtcomin();
         ui.Tick100ms();
         ui.Render(&buffer);
+        display.WriteBuffer(buffer);
         CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'A');
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();

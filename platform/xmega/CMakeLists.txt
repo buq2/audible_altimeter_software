@@ -16,6 +16,7 @@ FILE(GLOB_RECURSE LUFA_USB_C_PLATFORM
 
 ADD_LIBRARY(Platform STATIC
     main_mcu.cpp
+    display_sharp.hh display_sharp.cpp
     ${LUFA_USB_C}
     ${LUFA_USB_C_CORE}
     ${LUFA_USB_C_PLATFORM}

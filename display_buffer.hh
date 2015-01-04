@@ -10,7 +10,8 @@ class DisplayBuffer
     DisplayBuffer(const uint8_t width, const uint8_t height);
     ~DisplayBuffer();
 
-    uint8_t *GetBuffer();
+    const uint8_t *GetBuffer() const;
+    const uint8_t *GetBufferRow(const uint8_t &row) const;
     uint16_t GetNumberOfBytes() const;
     uint8_t GetWidth() const;
     uint8_t GetHeight() const;
