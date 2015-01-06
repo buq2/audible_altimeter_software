@@ -60,7 +60,7 @@ void DisplayBuffer::RenderText(const fontStyle_t &font, const uint8_t x, const u
         const int font_stride = font.GlyphBytesWidth*font.GlyphHeight;
         const uint8_t *ptr_font = (uint8_t *)&font.GlyphBitmaps[pos*font_stride];
 
-        const uint8_t width_bits = font.GlyphWidth[pos];
+        const uint8_t width_bits = pgm_read_byte(font.GlyphWidth + pos);
         const uint8_t height = font.GlyphHeight;
         BlitGraphics(current_x, y, scale_x, scale_y, width_bits, font.GlyphBytesWidth, height, ptr_font);
 
@@ -93,7 +93,7 @@ uint8_t DisplayBuffer::CalculateTextWidthPixels(const fontStyle_t &font, const u
             continue;
         }
 
-        const uint8_t width_bits = font.GlyphWidth[pos];
+        const uint8_t width_bits = pgm_read_byte(font.GlyphWidth + pos);
         text_width_bits += width_bits*scale_x;
         if (i < len-1) {
             text_width_bits += glyph_spacing_pixels;
