@@ -138,13 +138,13 @@ void DisplayBuffer::ModifyBit(const uint8_t x, const uint8_t y, const DisplayBuf
     const uint8_t bit = x % 8;
     switch(op) {
     case PIXEL_SET:
-        data |= 1 << bit;
+        data = BIT_SET(data,bit);
         break;
     case PIXEL_CLEAR:
-        data &= ~(1 << bit);
+        data = BIT_CLEAR(data,bit);
         break;
     case PIXEL_TOGGLE:
-        data ^= 1 << bit;
+        data = BIT_TOGGLE(data,bit);
         break;
     }
     *byte_ptr = data;

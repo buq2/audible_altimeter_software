@@ -26,6 +26,10 @@
 #define NULL 0
 #endif
 
+#define BIT_SET(value,bit)(value | (1 << bit))
+#define BIT_CLEAR(value,bit)(value & (~(1 << bit)))
+#define BIT_TOGGLE(value,bit)(value ^ (1 << bit))
+
 extern uint8_t BitFlip(uint8_t n);
 
 #endif //ifndef COMMON_HH
