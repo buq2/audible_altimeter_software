@@ -8,6 +8,19 @@ class AltimeterMPl3114A2
  public:
     AltimeterMPl3114A2();
 
+    typedef enum {
+        OversampleRate1,
+        OversampleRate2,
+        OversampleRate4,
+        OversampleRate8,
+        OversampleRate16,
+        OversampleRate32,
+        OversampleRate64,
+        OversampleRate128
+    } OversampleRate;
+
+    void SetOversampleRate(const OversampleRate rate);
+
     /// \return 0 for no error
     uint8_t Setup();
 
@@ -45,6 +58,10 @@ class AltimeterMPl3114A2
     bool request_data_called_;
     float altitude_ground_;
     uint8_t configuration_data_;
+
+    float previous_raw_altitude_;
+    float previous_pressure_;
+    float previous_temperature_;
 }; //class AltimeterMPl3114A2
 
 #endif //ifndef ALTIMETER_MPL3114A2

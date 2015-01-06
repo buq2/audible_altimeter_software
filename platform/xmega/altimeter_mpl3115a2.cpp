@@ -14,9 +14,46 @@
 AltimeterMPl3114A2::AltimeterMPl3114A2()
     :
       request_data_called_(false),
-      configuration_data_(0b10011100),
+      configuration_data_(0b10000000),
       altitude_ground_(0.0f)
 {
+}
+
+void AltimeterMPl3114A2::SetOversampleRate(const AltimeterMPl3114A2::OversampleRate rate)
+{
+    if (rate == OversampleRate1) {
+        configuration_data_ = BIT_CLEAR(configuration_data_,3);
+        configuration_data_ = BIT_CLEAR(configuration_data_,4);
+        configuration_data_ = BIT_CLEAR(configuration_data_,5);
+    } else if (rate == OversampleRate2) {
+        configuration_data_ = BIT_SET(configuration_data_,3);
+        configuration_data_ = BIT_CLEAR(configuration_data_,4);
+        configuration_data_ = BIT_CLEAR(configuration_data_,5);
+    } else if (rate == OversampleRate4) {
+        configuration_data_ = BIT_CLEAR(configuration_data_,3);
+        configuration_data_ = BIT_SET(configuration_data_,4);
+        configuration_data_ = BIT_CLEAR(configuration_data_,5);
+    } else if (rate == OversampleRate8) {
+        configuration_data_ = BIT_SET(configuration_data_,3);
+        configuration_data_ = BIT_SET(configuration_data_,4);
+        configuration_data_ = BIT_CLEAR(configuration_data_,5);
+    } else if (rate == OversampleRate16) {
+        configuration_data_ = BIT_CLEAR(configuration_data_,3);
+        configuration_data_ = BIT_CLEAR(configuration_data_,4);
+        configuration_data_ = BIT_SET(configuration_data_,5);
+    } else if (rate == OversampleRate32) {
+        configuration_data_ = BIT_SET(configuration_data_,3);
+        configuration_data_ = BIT_CLEAR(configuration_data_,4);
+        configuration_data_ = BIT_SET(configuration_data_,5);
+    } else if (rate == OversampleRate64) {
+        configuration_data_ = BIT_CLEAR(configuration_data_,3);
+        configuration_data_ = BIT_SET(configuration_data_,4);
+        configuration_data_ = BIT_SET(configuration_data_,5);
+    } else if (rate == OversampleRate128) {
+        configuration_data_ = BIT_SET(configuration_data_,3);
+        configuration_data_ = BIT_SET(configuration_data_,4);
+        configuration_data_ = BIT_SET(configuration_data_,5);
+    }
 }
 
 uint8_t AltimeterMPl3114A2::Setup()
@@ -26,14 +63,15 @@ uint8_t AltimeterMPl3114A2::Setup()
 
     uint8_t address = 0x26;
     uint8_t packet = configuration_data_;
-    BIT_SET(packet,0);
     uint8_t err = TWI_WritePacket(&I2C_PORT, MPL3115A2_ADDRESS_WRITE, I2C_TIMEOUT, &address, 1,
                                   &packet, 1);
     RETURN_ERROR_IF_ERROR(err);
 
+    // Enable "data ready" flags
     address = 0x13;
+    packet = 0x07;
     err = TWI_WritePacket(&I2C_PORT, MPL3115A2_ADDRESS_WRITE, I2C_TIMEOUT, &address, 1,
-                          &configuration_data_, 1);
+                          &packet, 1);
     RETURN_ERROR_IF_ERROR(err);
 
     return 0;
@@ -50,10 +88,18 @@ void AltimeterMPl3114A2::SetMode(const bool altimeter)
 
 uint8_t AltimeterMPl3114A2::RequestDataUpdate()
 {
+    if (request_data_called_) {
+        // Already active
+        return 0;
+    }
+
     //Set Active
+    uint8_t packet = configuration_data_;//0xB9;//configuration_data_;
+    packet = BIT_SET(packet, 1); // Immediate update
+    packet = BIT_CLEAR(packet, 0); // Auto clear immediat update bit
     uint8_t address = 0x26;
     uint8_t err = TWI_WritePacket(&I2C_PORT, MPL3115A2_ADDRESS_WRITE, I2C_TIMEOUT, &address, 1,
-                                  &configuration_data_, 1);
+                                  &packet, 1);
     RETURN_ERROR_IF_ERROR(err);
     request_data_called_ = true;
 
@@ -96,6 +142,7 @@ uint8_t AltimeterMPl3114A2::GetTemperature(float *temperature)
     uint8_t err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
                          &OUT_T_MSB, 1);
     RETURN_ERROR_IF_ERROR(err);
+    request_data_called_ = false; //MSB read -> need to make another request
 
     address = 0x05;
     err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
@@ -104,7 +151,8 @@ uint8_t AltimeterMPl3114A2::GetTemperature(float *temperature)
 
     const int16_t temp_raw = OUT_T_LSB | (((uint16_t)OUT_T_MSB)<<8);
 
-    *temperature = temp_raw/256.0f;;
+    *temperature = temp_raw/256.0f;
+    previous_temperature_ = *temperature;
 
     return 0;
 }
@@ -118,6 +166,7 @@ uint8_t AltimeterMPl3114A2::GetPressurePascals(float *pressure)
     uint8_t err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
                                  &OUT_P_MSB, 1);
     RETURN_ERROR_IF_ERROR(err);
+    request_data_called_ = false; //MSB read -> need to make another request
 
     address = 0x02;
     err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
@@ -133,34 +182,35 @@ uint8_t AltimeterMPl3114A2::GetPressurePascals(float *pressure)
 
     // Convert to altitude in meters
     *pressure = alt_raw/64.0f;
+    previous_pressure_ = *pressure;
 
     return 0;
 }
 
 char *AltimeterMPl3114A2::GetAltitudeMetersString()
 {
-    uint8_t err = 0;
-    if (!request_data_called_) {
-        err = RequestDataUpdate();
-        RETURN_NULL_IF_ERROR(err);
-    }
+    float alt;
+    GetAltitudeMeters(&alt);
 
-    if (DataReady()) {
-        float alt = 0.0f;
-        err = GetPressurePascals(&alt);
-        RETURN_NULL_IF_ERROR(err);
-
-        sprintf(altitude_string_,"%f\n\r",alt);
-        return altitude_string_;
-    }
-
-    return NULL;
+    sprintf(altitude_string_,"%f\n\r",alt);
+    return altitude_string_;
 }
 
 void AltimeterMPl3114A2::ZeroAltitudeLoop()
 {
-    //while (0 != ZeroAltitude()) {
-    //}
+    // It looks like first few samples can have
+    // large error(?)
+    for(uint8_t i = 0; i < 5; ++i) {
+        while (0 != RequestDataUpdate()) {
+        }
+        uint8_t c = 0;
+        while(c < 100 && !DataReady()) {
+            _delay_ms(10);
+            ++c;
+        }
+        while (0 != ZeroAltitude()) {
+        }
+    }
 }
 
 uint8_t AltimeterMPl3114A2::ZeroAltitude()
@@ -177,6 +227,7 @@ uint8_t AltimeterMPl3114A2::GetRawAltitudeMeters(float *altitude)
     uint8_t err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
                                  &OUT_P_MSB, 1);
     RETURN_ERROR_IF_ERROR(err);
+    request_data_called_ = false; //MSB read -> need to make another request
 
     address = 0x02;
     err = TWI_ReadPacket(&I2C_PORT, MPL3115A2_ADDRESS_READ, I2C_TIMEOUT, &address, 1,
@@ -192,6 +243,7 @@ uint8_t AltimeterMPl3114A2::GetRawAltitudeMeters(float *altitude)
 
     // Convert to altitude in meters
     *altitude = ((float)alt_raw)/65536.0f;
+    previous_raw_altitude_ = *altitude;
 
     return 0;
 }

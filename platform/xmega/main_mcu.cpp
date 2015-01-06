@@ -92,15 +92,18 @@ int main()
 
     display.Setup();
     display.Clear();
-    const bool as_altimeter = false;
+    const bool as_altimeter = true;
     alt1.SetMode(as_altimeter);
+    alt1.SetOversampleRate(AltimeterMPl3114A2::OversampleRate128);
     STOP_IF_ERROR(alt1.Setup());
-    alt1.ZeroAltitudeLoop();
 
+    bool sensors_zeroed = false;
     while (1) {
+        alt1.RequestDataUpdate();
         display.ToggleExtcomin();
         ui.Tick100ms();
         ui.Render(&buffer);
+        display.SetContent(buffer);
 
         {
             // Sensor updates
@@ -111,7 +114,13 @@ int main()
             }
         }
 
-        display.SetContent(buffer);
+        if (!sensors_zeroed) {
+            // We should first use all other gizmos before
+            // zeroing the sensors first time
+            sensors_zeroed = true;
+            alt1.ZeroAltitudeLoop();
+        }
+
         CDC_Device_SendString(&VirtualSerial_CDC_Interface, alt1.GetAltitudeMetersString());
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();
