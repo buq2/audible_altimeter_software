@@ -10,9 +10,12 @@
 #include "sensors.hh"
 #include "ui/ui_main.hh"
 #include "display_sharp.hh"
+#include "altimeter_mpl3115a2.hh"
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
+
+#define STOP_IF_ERROR(x) {if(x){while(1){}}}
 
 /** Standard file stream for the CDC interface when set up, so that the virtual CDC COM port can be
  *  used like any regular character stream in the C APIs.
@@ -84,17 +87,32 @@ int main()
     DisplayBuffer buffer(width,height);
     DisplaySharp display(width,height);
     Sensors sensors;
+    AltimeterMPl3114A2 alt1;
     UiMain ui(&config, &sensors);
 
     display.Setup();
     display.Clear();
+    const bool as_altimeter = false;
+    alt1.SetMode(as_altimeter);
+    STOP_IF_ERROR(alt1.Setup());
+    alt1.ZeroAltitudeLoop();
 
     while (1) {
         display.ToggleExtcomin();
         ui.Tick100ms();
         ui.Render(&buffer);
+
+        {
+            // Sensor updates
+            float altitude_meters;
+            uint8_t err = alt1.GetAltitudeMeters(&altitude_meters);
+            if (!err) {
+                sensors.SetAltitudeMeters(altitude_meters);
+            }
+        }
+
         display.SetContent(buffer);
-        CDC_Device_SendByte(&VirtualSerial_CDC_Interface, 'A');
+        CDC_Device_SendString(&VirtualSerial_CDC_Interface, alt1.GetAltitudeMetersString());
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();
     }

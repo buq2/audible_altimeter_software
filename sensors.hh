@@ -10,6 +10,7 @@ class Sensors
     int16_t GetAltitudeMeters();
     int16_t GetAltitudeChangeRateDecimetresPerS();
     int16_t GetTemperatureC();
+    void SetAltitudeMeters(int16_t altitude_meters);
  private:
  private:
     int16_t altitude_m_;

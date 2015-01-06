@@ -11,8 +11,6 @@ Sensors::Sensors()
 
 int16_t Sensors::GetAltitudeMeters()
 {
-    // Debug code
-    altitude_m_ -= 20;
     return altitude_m_;
 }
 
@@ -24,4 +22,9 @@ int16_t Sensors::GetAltitudeChangeRateDecimetresPerS()
 int16_t Sensors::GetTemperatureC()
 {
     return temperature_c_;
+}
+
+void Sensors::SetAltitudeMeters(int16_t altitude_meters)
+{
+    altitude_m_ = altitude_meters;
 }

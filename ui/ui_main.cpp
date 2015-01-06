@@ -4,7 +4,7 @@ UiMain::UiMain(Config *config, Sensors *sensors)
     :
       altimeter_(sensors),
       menu_(config),
-      ui_selection_(UI_SELECTION_MENU)
+      ui_selection_(UI_SELECTION_ALTIMETER)
 {
 
 }
