@@ -34,4 +34,4 @@ ADD_DEFINITIONS(-DUSE_LUFA_CONFIG_HEADER) #Requires that LUFAConfig.h is in incl
 SET(CMAKE_C_FLAGS -std=c99) #Lufa requires c99
 SET(LUFA_INCLUDE_DIRECTORIES ${LUFA_LOCATION})
 GET_FILENAME_COMPONENT(LUFA_LOCATION ${LUFA_LOCATION} ABSOLUTE) # Change relative path to absolute
-set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections,--relax -mmcu=${MCU_MODEL}")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections,--relax,-u,vfprintf -mmcu=${MCU_MODEL}")
