@@ -22,6 +22,7 @@ ADD_LIBRARY(Platform STATIC
     display_sharp.hh display_sharp.cpp
     altimeter_mpl3115a2.hh altimeter_mpl3115a2.cpp
     altimeter_ms5805_02ba01.hh altimeter_ms5805_02ba01.cpp
+    gps_sim33ela.hh gps_sim33ela.cpp
     ${LUFA_USB_C}
     ${LUFA_USB_C_CORE}
     ${LUFA_USB_C_PLATFORM}

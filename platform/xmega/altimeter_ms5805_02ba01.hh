@@ -29,7 +29,7 @@ class AltimeterMS5805_02BA01
     } RawValue;
 
     void SetOversampleRatio(const OversampleRatio ratio);
-
+    void GetStr(char *str);
  private:
     uint8_t ReadCoefficient(const uint8_t coefnum, uint16_t *coef);
     uint8_t ReadMeasurement(const RawValue d, const OversampleRatio ratio, uint32_t *value);
