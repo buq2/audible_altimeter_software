@@ -6,13 +6,13 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include "lufa_config/Descriptors.h"
 #include "config.hh"
-#include "display_buffer.hh"
+#include "axlib/displays/display_buffer.hh"
 #include "sensors.hh"
 #include "ui/ui_main.hh"
-#include "display_sharp.hh"
-#include "altimeter_mpl3115a2.hh"
-#include "altimeter_ms5805_02ba01.hh"
-#include "gps_sim33ela.hh"
+#include "axlib/displays/display_sharp.hh"
+#include "axlib/sensors/altimeter_mpl3115a2.hh"
+#include "axlib/sensors/altimeter_ms5805_02ba01.hh"
+#include "axlib/sensors/gps_sim33ela.hh"
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }

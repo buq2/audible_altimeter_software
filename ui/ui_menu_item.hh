@@ -15,7 +15,7 @@ class UiMenuItem
     UiMenuItem();
     UiMenuItem(UiMenu *parent);
 
-    virtual void Render(DisplayBuffer *buffer);
+    virtual void Render(axlib::DisplayBuffer *buffer);
     virtual void KeyPress(const KeyCode key, const bool down);
 
     virtual const char *GetLabel();

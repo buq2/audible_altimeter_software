@@ -12,8 +12,11 @@ SET(LUFA_LOCATION "lufa_library/")
 SET(MCU_MODEL atxmega128a4u)
 SET(MCU_ARCH XMEGA) # Used to include and compile correct lufa files
 SET(MCU_FREQ 48000000)
+INCLUDE_DIRECTORIES("/usr/avr/include")
+STRING(TOLOWER ${MCU_MODEL} MCU_MODEL_LOWER)
+ADD_DEFINITIONS(-D__AVR_ATxmega128A4U__) #Helps to include correct files, defined by avr-gcc
 
-ADD_DEFINITIONS("-mmcu=${MCU_MODEL}")
+ADD_DEFINITIONS("-mmcu=${MCU_MODEL_LOWER}")
 
 # Following are from LUFA/Common/Architectures.h
 IF (MCU_ARCH MATCHES AVR8)

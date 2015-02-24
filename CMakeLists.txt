@@ -18,7 +18,8 @@ INCLUDE_DIRECTORIES(
 ADD_LIBRARY(Common STATIC
     common.hh common.cpp
     )
-    
+
+INCLUDE_DIRECTORIES(platform/xmega/xmega-libraries)
 ADD_SUBDIRECTORY(ui)
 ADD_SUBDIRECTORY(platform)
 
@@ -26,8 +27,8 @@ ADD_EXECUTABLE(audible
     common.hh
     config.cpp config.hh
     sensors.cpp sensors.hh
-    display_buffer.cpp display_buffer.hh
-    fonts/fontlibrary.h fonts/fontlibrary.c
+    #display_buffer.cpp display_buffer.hh
+    #fonts/fontlibrary.h fonts/fontlibrary.c
     )
     
 TARGET_LINK_LIBRARIES(audible

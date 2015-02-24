@@ -1,5 +1,5 @@
 #include "ui_altimeter.hh"
-#include "fonts/fontlibrary.h"
+#include "axlib/displays/fonts/fontlibrary.h"
 #include <string.h>
 #include <stdio.h>
 #include "common.hh"
@@ -12,6 +12,8 @@ int16_t UiAltimeter::MIN_UI_ALTITUDE_RATE = -9999;
 
 int16_t UiAltimeter::MAX_UI_TEMPERATURE = 999;
 int16_t UiAltimeter::MIN_UI_TEMPERATURE = -999;
+
+using namespace axlib;
 
 UiAltimeter::UiAltimeter(Sensors *sensors)
     :

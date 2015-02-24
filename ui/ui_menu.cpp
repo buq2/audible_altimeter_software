@@ -1,6 +1,8 @@
 #include "ui_menu.hh"
 #include "common.hh"
 
+using namespace axlib;
+
 const uint8_t menu_font_scale_x = 1;
 const uint8_t menu_font_scale_y = 1;
 

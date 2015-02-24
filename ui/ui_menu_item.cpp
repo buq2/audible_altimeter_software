@@ -15,7 +15,7 @@ UiMenuItem::UiMenuItem(UiMenu *parent)
     parent_->AddItem(this);
 }
 
-void UiMenuItem::Render(DisplayBuffer */*buffer*/)
+void UiMenuItem::Render(axlib::DisplayBuffer */*buffer*/)
 {
 }
 

@@ -8,6 +8,8 @@
 #include <string.h>
 #include "common.hh"
 
+using namespace axlib;
+
 static const uint8_t font_scale_x = 1;
 static const uint8_t font_scale_y = 1;
 

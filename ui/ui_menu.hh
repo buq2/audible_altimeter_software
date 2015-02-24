@@ -3,7 +3,7 @@
 
 #include "ui_base.hh"
 #include "ui_menu_item.hh"
-#include "fonts/fontlibrary.h"
+#include "axlib/displays/fonts/fontlibrary.h"
 
 class UiMenu
         :
@@ -13,7 +13,7 @@ class UiMenu
     UiMenu();
     UiMenu(UiMenu *parent);
 
-    virtual void Render(DisplayBuffer *buffer);
+    virtual void Render(axlib::DisplayBuffer *buffer);
     virtual void KeyPress(const UiBase::KeyCode key, const bool down);
 
     uint8_t GetNumberOfItems();
@@ -26,7 +26,7 @@ class UiMenu
     void Previous();
     void Activate();
  private:
-    uint8_t GetNumberOfMenuRows(const DisplayBuffer &buffer);
+    uint8_t GetNumberOfMenuRows(const axlib::DisplayBuffer &buffer);
     uint8_t GetMenuRowHeight();
  private:
     UiMenuItem *active_item_;

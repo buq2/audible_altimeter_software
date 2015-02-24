@@ -1,7 +1,7 @@
 #ifndef UI_BASE_HH
 #define UI_BASE_HH
 
-#include "display_buffer.hh"
+#include "axlib/displays/display_buffer.hh"
 
 class UiBase
 {
@@ -17,7 +17,7 @@ class UiBase
         KEY_MIDDLE
     } KeyCode;
 
-    virtual void Render(DisplayBuffer *buffer) = 0;
+    virtual void Render(axlib::DisplayBuffer *buffer) = 0;
     virtual void KeyPress(const KeyCode key, const bool down) = 0;
     virtual void Tick100ms();
 }; //class Ui

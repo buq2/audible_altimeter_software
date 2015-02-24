@@ -3,6 +3,7 @@
 
 #include "ui_base.hh"
 #include "sensors.hh"
+#include "axlib/displays/display_buffer.hh"
 
 class UiAltimeter
         :
@@ -10,7 +11,7 @@ class UiAltimeter
 {
  public:
     UiAltimeter(Sensors *sensors);
-    void Render(DisplayBuffer *buffer);
+    void Render(axlib::DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
 
@@ -27,13 +28,13 @@ class UiAltimeter
     static int16_t MAX_UI_TEMPERATURE;
     static int16_t MIN_UI_TEMPERATURE;
  private:
-    void RenderComplex(DisplayBuffer *buffer);
-    void RenderSimpleFreeFall(DisplayBuffer *buffer);
+    void RenderComplex(axlib::DisplayBuffer *buffer);
+    void RenderSimpleFreeFall(axlib::DisplayBuffer *buffer);
 
-    void RenderAltitude(DisplayBuffer *buffer, uint8_t *row);
-    void RenderAltitudeLong(DisplayBuffer *buffer, uint8_t *row);
-    void RenderAltitudeChangeLong(DisplayBuffer *buffer, uint8_t *row);
-    void RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitude(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitudeLong(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitudeChangeLong(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderTemperatureLong(axlib::DisplayBuffer *buffer, uint8_t *row);
  private:
     Sensors *sensors_;
     AltimeterUiMode mode_;

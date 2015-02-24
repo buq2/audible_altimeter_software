@@ -2,7 +2,7 @@
 #define CONFIG_HH
 
 #include <stdint.h>
-#include "fonts/fontlibrary.h"
+#include "axlib/displays/fonts/fontlibrary.h"
 
 struct Config
 {
