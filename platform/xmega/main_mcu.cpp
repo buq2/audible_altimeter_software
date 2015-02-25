@@ -84,15 +84,20 @@ int main()
     GlobalInterruptEnable();
 
     Config config;
-    const uint8_t width = 96;
-    const uint8_t height = 96;
+    const uint8_t width = 128;
+    const uint8_t height = 128;
     DisplayBuffer buffer(width,height);
-    DisplaySharp display(width,height);
+    DisplaySharp display(width,height,
+                         PORT_C,  //spi
+                         PORT_A, 0b00001000, //cs
+                         PORT_NOT_USED, 0, //excomin
+                         PORT_A, 0b00000100 //display on
+                         );
+    display.SetDisplayOn(true);
     Sensors sensors;
-    AltimeterMPl3114A2 alt1;
-    AltimeterMS5805_02BA01 alt2;
-    GpsSim33Ela gps;
-    gps.Setup();
+    AltimeterMPl3114A2 alt1(PORT_C);
+    AltimeterMS5805_02BA01 alt2(PORT_C);
+
     UiMain ui(&config, &sensors);
 
     display.Setup();
@@ -103,54 +108,18 @@ int main()
     STOP_IF_ERROR(alt1.Setup());
     STOP_IF_ERROR(alt2.Setup());
 
-
-    bool sensors_zeroed = false;
     while (1) {
-        //alt1.RequestDataUpdate();
+        alt1.RequestDataUpdate();
+        _delay_ms(100);
         display.ToggleExtcomin();
+        float altitude_m = 0;
+        if (0 == alt1.GetAltitudeMeters(&altitude_m)) {
+            sensors.SetAltitudeMeters(altitude_m);
+        }
         ui.Tick100ms();
-        //ui.Render(&buffer);
-        //display.SetContent(buffer);
-
-        {
-            // Sensor updates
-            float altitude_meters;
-            //uint8_t err = alt1.GetAltitudeMeters(&altitude_meters);
-            //if (!err) {
-                //sensors.SetAltitudeMeters(altitude_meters);
-            //}
-
-            char str[100];
-            //err = alt2.GetTemperatureCelcius(&altitude_meters);
-            //if (!err) {
-            //    sprintf(str,"%f\n\r",altitude_meters);
-            //} else {
-            //    sprintf(str,"%d\n\r",err);
-            //}
-            //alt2.GetStr(str);
-            //CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-        }
-
-        if (!sensors_zeroed) {
-            // We should first use all other gizmos before
-            // zeroing the sensors first time
-            //sensors_zeroed = true;
-            //alt1.ZeroAltitudeLoop();
-        }
-
-        char *strr;
-        gps.ReceiveData(&strr);
-        //CDC_Device_SendString(&VirtualSerial_CDC_Interface, "GPS: ");
-        CDC_Device_SendString(&VirtualSerial_CDC_Interface, strr);
-        //CDC_Device_SendString(&VirtualSerial_CDC_Interface, "\n\r");
-        int16_t cmd = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
-        if (cmd >= 0) {
-            //CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Sending GPS command\n\r");
-            gps.SendCommand();
-        }
-
-
-        //CDC_Device_SendString(&VirtualSerial_CDC_Interface, alt1.GetAltitudeMetersString());
+        ui.Render(&buffer);
+        display.SetContent(buffer);
+        CDC_Device_SendString(&VirtualSerial_CDC_Interface, alt1.GetAltitudeMetersString());
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();
     }
