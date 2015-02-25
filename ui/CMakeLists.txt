@@ -19,3 +19,4 @@ ADD_LIBRARY(Ui STATIC
     ui_config_item_int.cpp ui_config_item_int.hh
     ui_config_item_bool.cpp ui_config_item_bool.hh
     )
+

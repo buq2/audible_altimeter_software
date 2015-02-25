@@ -15,24 +15,20 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_BINARY_DIR}
     )
 
-ADD_LIBRARY(Common STATIC
-    common.hh common.cpp
-    )
-
 INCLUDE_DIRECTORIES(platform/xmega/xmega-libraries)
 ADD_SUBDIRECTORY(ui)
 ADD_SUBDIRECTORY(platform)
+IF (NOT USE_MCU)
+    # Qt code requires some of the axlib stuff (core, displays)
+    ADD_SUBDIRECTORY(platform/xmega/xmega-libraries)
+ENDIF()
 
 ADD_EXECUTABLE(audible
-    common.hh
     config.cpp config.hh
     sensors.cpp sensors.hh
-    #display_buffer.cpp display_buffer.hh
-    #fonts/fontlibrary.h fonts/fontlibrary.c
     )
     
 TARGET_LINK_LIBRARIES(audible
     Platform
     Ui
-    Common
     )

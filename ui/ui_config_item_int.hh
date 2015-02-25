@@ -6,7 +6,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include "common.hh"
+#include "axlib/core/core.hh"
 
 using namespace axlib;
 

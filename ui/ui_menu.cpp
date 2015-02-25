@@ -1,5 +1,5 @@
 #include "ui_menu.hh"
-#include "common.hh"
+#include "axlib/core/core.hh"
 
 using namespace axlib;
 

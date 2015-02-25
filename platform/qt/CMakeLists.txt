@@ -12,12 +12,6 @@ QT5_WRAP_UI(GUI_UI_MOC
     mainwindow.ui
     )
 
-# Need to steal display related stuff from axlib
-ADD_LIBRARY(AxlibLite STATIC
-    ../xmega/xmega-libraries/axlib/displays/display_buffer.cpp
-    ../xmega/xmega-libraries/axlib/displays/fonts/fontlibrary.c
-    )
-
 ADD_LIBRARY(Platform STATIC
     main_qt.cpp
     mainwindow.cpp mainwindow.hh
@@ -27,5 +21,6 @@ ADD_LIBRARY(Platform STATIC
 
 TARGET_LINK_LIBRARIES(Platform
     ${Qt5Widgets_LIBRARIES}
-    AxlibLite
+    axCore
+    axDisplays
     )

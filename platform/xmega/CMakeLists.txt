@@ -19,14 +19,20 @@ FILE(GLOB LUFA_PERIPHERAL
     ${LUFA_LOCATION}/LUFA/Drivers/Peripheral/${MCU_ARCH}/
     ${LUFA_LOCATION}/LUFA/Drivers/Peripheral/${MCU_ARCH}/*.c)
 
-ADD_LIBRARY(Platform STATIC
-    main_mcu.cpp
+ADD_LIBRARY(lufa STATIC
     ${LUFA_USB_C}
     ${LUFA_USB_C_CORE}
     ${LUFA_USB_C_PLATFORM}
     ${LUFA_PERIPHERAL}
     )
 
+ADD_LIBRARY(Platform STATIC
+    main_mcu.cpp
+    )
+
 TARGET_LINK_LIBRARIES(Platform
     LufaConfig
+    axSensors
+    axDisplays
+    lufa
     )

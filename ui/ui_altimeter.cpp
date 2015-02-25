@@ -2,7 +2,7 @@
 #include "axlib/displays/fonts/fontlibrary.h"
 #include <string.h>
 #include <stdio.h>
-#include "common.hh"
+#include "axlib/core/core.hh"
 
 int16_t UiAltimeter::MAX_UI_ALTITUDE = 32767;
 int16_t UiAltimeter::MIN_UI_ALTITUDE = -9999;
