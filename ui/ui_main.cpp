@@ -1,9 +1,9 @@
 #include "ui_main.hh"
 
-UiMain::UiMain(Config *config, Sensors *sensors)
+UiMain::UiMain(Config *config, Sensors *sensors, MainMenu::ConfigApplyFunction fun)
     :
       altimeter_(sensors),
-      menu_(config),
+      menu_(config, fun),
       ui_selection_(UI_SELECTION_ALTIMETER)
 {
 
@@ -47,4 +47,9 @@ void UiMain::Tick100ms()
 {
     altimeter_.Tick100ms();
     menu_.Tick100ms();
+}
+
+UiAltimeter *UiMain::GetAltimeterUi()
+{
+    return &altimeter_;
 }

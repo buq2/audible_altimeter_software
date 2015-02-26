@@ -7,13 +7,24 @@
 #include <QTimer>
 #include <QPixmap>
 
+// Ugly, but works for the testing purposes
+MainWindow *mainwin;
+void UpdateConfig(Config *conf)
+{
+    mainwin->display_buffer_.SetRotation(conf->display_orientation);
+    mainwin->ui_main_.GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     qt_ui(new Ui::MainWindow),
     view_(new QGraphicsView(this)),
-    ui_main_(&config_, &sensors_),
+    ui_main_(&config_, &sensors_, UpdateConfig),
     display_buffer_(128,128)
 {
+    // Ugly, but works similar to MCU code
+    mainwin = this;
+
     qt_ui->setupUi(this);
     qt_ui->centralWidget->setLayout(new QHBoxLayout);
     qt_ui->centralWidget->layout()->addWidget(view_);

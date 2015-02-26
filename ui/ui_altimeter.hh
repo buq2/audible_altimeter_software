@@ -17,9 +17,12 @@ class UiAltimeter
 
     typedef enum AltimeterUiMode_t
     {
-        ALTIMETER_UI_MODE_FREE_FALL,
-        ALTIMETER_UI_MODE_COMPLEX
+        ALTIMETER_UI_MODE_FREE_FALL = 0,
+        ALTIMETER_UI_MODE_COMPLEX = 1,
+        ALTIMETER_UI_MODE_NUM_ENUMS = 2
     } AltimeterUiMode;
+
+    void SetUiMode(const AltimeterUiMode mode);
 
     static int16_t MAX_UI_ALTITUDE;
     static int16_t MIN_UI_ALTITUDE;

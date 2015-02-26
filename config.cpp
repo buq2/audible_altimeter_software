@@ -2,6 +2,52 @@
 #include "axlib/core/core.hh"
 
 template<>
+const char *ToString(const UiAltimeter::AltimeterUiMode en)
+{
+    switch(en) {
+    default:
+    case UiAltimeter::ALTIMETER_UI_MODE_COMPLEX:
+    {
+        static const char str[] = "Complex";
+        return str;
+    }
+    case UiAltimeter::ALTIMETER_UI_MODE_FREE_FALL:
+    {
+        static const char str[] = "FreeF";
+        return str;
+    }
+    }
+}
+
+template<>
+const char *ToString(const axlib::DisplayBuffer::Rotation rot)
+{
+    switch(rot) {
+    default:
+    case axlib::DisplayBuffer::ROTATION_NONE:
+    {
+        static const char str[] = "None";
+        return str;
+    }
+    case axlib::DisplayBuffer::ROTATION_90:
+    {
+        static const char str[] = "90";
+        return str;
+    }
+    case axlib::DisplayBuffer::ROTATION_180:
+    {
+        static const char str[] = "180";
+        return str;
+    }
+    case axlib::DisplayBuffer::ROTATION_270:
+    {
+        static const char str[] = "270";
+        return str;
+    }
+    }
+}
+
+template<>
 const char *ToString(const Config::AltitudeDisplayUnitMode en)
 {
     switch(en) {
@@ -60,24 +106,6 @@ const char *ToString(const Config::TemperatureMode en)
     default:
     {
         static const char str[] = "F";
-        return str;
-    }
-    }
-}
-
-template<>
-const char *ToString(const Config::DisplayOrientation en)
-{
-    switch(en) {
-    case Config::DisplayOrientationNormal:
-    {
-        static const char str[] = "Normal";
-        return str;
-    }
-    case Config::DisplayOrientation180Rotated:
-    default:
-    {
-        static const char str[] = "Rotated";
         return str;
     }
     }
@@ -143,9 +171,10 @@ T NextEnum(const T en)\
 ENUM_MACRO(Config::AltitudeDisplayUnitMode, Config::AltitudeUnitModeNumberOfEnums);
 ENUM_MACRO(Config::SpeedDisplayUnitMode, Config::SpeedUnitModeNumberOfEnums);
 ENUM_MACRO(Config::TemperatureMode, Config::TemperatureModeNumberOfEnums);
-ENUM_MACRO(Config::DisplayOrientation, Config::DisplayOrientationNumberOfEnums);
+ENUM_MACRO(axlib::DisplayBuffer::Rotation, axlib::DisplayBuffer::ROTATION_NUM_ENUMS);
 ENUM_MACRO(Config::FontSize, Config::FontSizeNumberOfEnums);
 ENUM_MACRO(Config::AltitudeAlarm::AlarmAmplitude, Config::AltitudeAlarm::AlarmAmplitudeNumberOfEnums);
+ENUM_MACRO(UiAltimeter::AltimeterUiMode, UiAltimeter::ALTIMETER_UI_MODE_NUM_ENUMS);
 
 fontStyle_t *Config::GetIntChangeFont() const
 {

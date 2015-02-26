@@ -11,11 +11,11 @@ class UiMain
         public UiBase
 {
  public:
-    UiMain(Config *config, Sensors *sensors);
+    UiMain(Config *config, Sensors *sensors, MainMenu::ConfigApplyFunction fun = NULL);
     void Render(DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
-
+    UiAltimeter *GetAltimeterUi();
     typedef enum UiSelection_t
     {
         UI_SELECTION_ALTIMETER,

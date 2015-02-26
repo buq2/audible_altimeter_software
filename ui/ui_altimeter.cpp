@@ -47,6 +47,11 @@ void UiAltimeter::Tick100ms()
 
 }
 
+void UiAltimeter::SetUiMode(const UiAltimeter::AltimeterUiMode mode)
+{
+    mode_ = mode;
+}
+
 void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
 {
     uint8_t y = 0;

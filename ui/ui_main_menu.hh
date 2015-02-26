@@ -14,9 +14,12 @@ class MainMenu
         public UiMenu
 {
  public:
-    MainMenu(Config *config);
+    typedef void(*ConfigApplyFunction)(Config*);
+    MainMenu(Config *config, ConfigApplyFunction fun = NULL);
     virtual Config *GetConfig();
     bool IsAtMainMenu() const;
+    void SetConfigApplyFunction(ConfigApplyFunction);
+    virtual void KeyPress(const UiBase::KeyCode key, const bool down);
  private:
     Config *config_;
     UiDisplayMenu display_;
@@ -25,6 +28,7 @@ class MainMenu
     UiDzMenu dz_;
     UiLogAdminMenu log_admin_;
     UiTimeDateMenu time_date_;
+    ConfigApplyFunction config_apply_fun_;
 }; //class MainMenu
 
 #endif //ifndef UI_MAIN_MENU_HH

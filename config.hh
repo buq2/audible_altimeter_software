@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include "axlib/displays/fonts/fontlibrary.h"
+#include "axlib/displays/display_buffer.hh"
+#include "ui/ui_altimeter.hh"
 
 struct Config
 {
@@ -30,13 +32,6 @@ struct Config
         TemperatureModeFahrenheit = 1,
         TemperatureModeNumberOfEnums = 2
     } TemperatureMode;
-
-    typedef enum
-    {
-        DisplayOrientationNormal = 0,
-        DisplayOrientation180Rotated = 1,
-        DisplayOrientationNumberOfEnums = 2
-    } DisplayOrientation;
 
     typedef enum
     {
@@ -137,8 +132,9 @@ struct Config
           altitude_unit_mode(AltitudeUnitModeMeters),
           speed_unit_mode(SpeedUnitModeMetersPerSecond),
           temperature_mode(TemperatureModeCelcius),
-          display_orientation(DisplayOrientationNormal),
-          menu_font_size(FontSizeMedium)
+          display_orientation(axlib::DisplayBuffer::ROTATION_NONE),
+          menu_font_size(FontSizeMedium),
+          default_altimeter_ui_mode_(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX)
     {
     }
 
@@ -147,10 +143,11 @@ struct Config
     AltitudeDisplayUnitMode altitude_unit_mode;
     SpeedDisplayUnitMode speed_unit_mode;
     TemperatureMode temperature_mode;
-    DisplayOrientation display_orientation;
+    axlib::DisplayBuffer::Rotation display_orientation;
     AltitudeAlarm alarms_freefall[3];
     AltitudeAlarm alarms_canopy[3];
     FontSize menu_font_size;
+    UiAltimeter::AltimeterUiMode default_altimeter_ui_mode_;
 }; //struct Config
 
 template<typename T>
@@ -170,7 +167,7 @@ template<>
 const char *ToString(const Config::TemperatureMode en);
 
 template<>
-const char *ToString(const Config::DisplayOrientation en);
+const char *ToString(const axlib::DisplayBuffer::Rotation rot);
 
 template<>
 const char *ToString(const Config::AltitudeAlarm en);
@@ -180,6 +177,9 @@ const char *ToString(const Config::FontSize en);
 
 template<>
 const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en);
+
+template<>
+const char *ToString(const UiAltimeter::AltimeterUiMode en);
 
 template<typename T>
 T NextEnum(const T en)
@@ -197,12 +197,15 @@ template<>
 Config::TemperatureMode NextEnum(const Config::TemperatureMode en);
 
 template<>
-Config::DisplayOrientation NextEnum(const Config::DisplayOrientation en);
+axlib::DisplayBuffer::Rotation NextEnum(const axlib::DisplayBuffer::Rotation en);
 
 template<>
 Config::AltitudeAlarm NextEnum(const Config::AltitudeAlarm en);
 
 template<>
 Config::FontSize NextEnum(const Config::FontSize en);
+
+template<>
+UiAltimeter::AltimeterUiMode NextEnum(const UiAltimeter::AltimeterUiMode en);
 
 #endif //ifndef CONFIG_HH

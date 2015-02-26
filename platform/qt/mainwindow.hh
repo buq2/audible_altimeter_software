@@ -33,6 +33,7 @@ private:
     DisplayBuffer display_buffer_;
     Sensors sensors_;
     Config config_;
+    friend void UpdateConfig(Config *conf);
 };
 
 #endif // MAINWINDOW_HH
