@@ -27,6 +27,7 @@ ADD_LIBRARY(lufa STATIC
     )
 
 ADD_LIBRARY(Platform STATIC
+    buttons.hh buttons.cpp
     main_mcu.cpp
     )
 

@@ -9,6 +9,7 @@
 #include "axlib/displays/display_buffer.hh"
 #include "sensors.hh"
 #include "ui/ui_main.hh"
+#include "buttons.hh"
 #include "axlib/displays/display_sharp.hh"
 #include "axlib/sensors/altimeter_mpl3115a2.hh"
 #include "axlib/sensors/altimeter_ms5805_02ba01.hh"
@@ -97,6 +98,10 @@ int main()
     Sensors sensors;
     AltimeterMPl3114A2 alt1(PORT_C);
     AltimeterMS5805_02BA01 alt2(PORT_C);
+
+    Buttons buttons(PORT_C,PIN_4,
+                    PORT_C,PIN_3,
+                    PORT_C,PIN_2);
 
     UiMain ui(&config, &sensors);
 
