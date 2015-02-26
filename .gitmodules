@@ -1,3 +1,6 @@
 [submodule "platform/xmega/xmega-libraries"]
 	path = platform/xmega/xmega-libraries
-	url = git@bitbucket-buq2:buq2/xmega-libraries.git
+	url = git@bitbucket.org:buq2/xmega-libraries.git
+[submodule "platform/xmega/lufa_library"]
+	path = platform/xmega/lufa_library
+	url = https://github.com/abcminiuser/lufa.git

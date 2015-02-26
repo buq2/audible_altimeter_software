@@ -1,5 +1,5 @@
 #include "mainwindow.hh"
-#include "ui_mainwindow.h"
+#include "platform/qt/ui_mainwindow.h"
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QGraphicsPixmapItem>
