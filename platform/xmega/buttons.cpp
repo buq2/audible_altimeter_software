@@ -24,3 +24,30 @@ Buttons::Buttons(const Port port_up, const Pin pin_up,
     *(GetPortPinControlRegister(port_center,pin_center)) |= PORT_OPC_WIREDANDPULL_gc;
     *(GetPortPinControlRegister(port_down,pin_down)) |= PORT_OPC_WIREDANDPULL_gc;
 }
+
+void Buttons::Tick()
+{
+    UpdateButtonState(port_up_, pin_up_, &state_up_, &up_press_counter_);
+    UpdateButtonState(port_center_, pin_center_, &state_center_, &center_press_counter_);
+    UpdateButtonState(port_down_, pin_down_, &state_down_, &down_press_counter_);
+}
+
+void Buttons::UpdateButtonState(PORT_t *port, uint8_t pin,
+                                Buttons::ButtonState *state, uint8_t *counter)
+{
+    const uint8_t pressed_limit = 1;
+    const uint8_t long_limit = 5;
+    if ((port->IN & pin) == 0) {
+        ++(*counter);
+        *state = BUTTON_OFF;
+    } else {
+        if (*counter > long_limit) {
+            *state = BUTTON_LONG;
+        } else if (*counter > pressed_limit) {
+            *state = BUTTON_SHORT;
+        } else {
+            *state = BUTTON_OFF;
+        }
+        *counter = 0;
+    }
+}

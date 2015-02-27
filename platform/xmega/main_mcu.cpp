@@ -76,6 +76,14 @@ void SetupHardware(void)
     USB_Init();
 }
 
+UiMain *global_ui_main;
+DisplayBuffer *global_display_buffer;
+void UpdateConfig(Config *conf)
+{
+    global_display_buffer->SetRotation(conf->display_orientation);
+    global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+}
+
 int main()
 {
     SetupHardware();
@@ -88,6 +96,7 @@ int main()
     const uint8_t width = 128;
     const uint8_t height = 128;
     DisplayBuffer buffer(width,height);
+    global_display_buffer = &buffer;
     DisplaySharp display(width,height,
                          PORT_C,  //spi
                          PORT_A, 0b00001000, //cs
@@ -103,7 +112,8 @@ int main()
                     PORT_C,PIN_3,
                     PORT_C,PIN_2);
 
-    UiMain ui(&config, &sensors);
+    UiMain ui(&config, &sensors,UpdateConfig);
+    global_ui_main = &ui;
 
     display.Setup();
     display.Clear();
@@ -114,6 +124,20 @@ int main()
     STOP_IF_ERROR(alt2.Setup());
 
     while (1) {
+        buttons.Tick();
+
+        if (buttons.GetDown() != Buttons::BUTTON_OFF) {
+            ui.KeyPress(UiBase::KEY_DOWN, true);
+        }
+        if (buttons.GetUp() != Buttons::BUTTON_OFF) {
+            ui.KeyPress(UiBase::KEY_UP, true);
+        }
+        if (buttons.GetCenter() == Buttons::BUTTON_SHORT) {
+            ui.KeyPress(UiBase::KEY_RIGHT, true);
+        } else if (buttons.GetCenter() == Buttons::BUTTON_LONG) {
+            ui.KeyPress(UiBase::KEY_LEFT, true);
+        }
+
         alt1.RequestDataUpdate();
         _delay_ms(100);
         display.ToggleExtcomin();
