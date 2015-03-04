@@ -76,12 +76,12 @@ void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
 
 void UiAltimeter::RenderAltitude(DisplayBuffer *buffer, uint8_t *row)
 {
-    char str[6]; //"-9999" + null
-    int16_t alt = sensors_->GetAltitudeMeters();
+    char str[8]; //"-9999.0" + null
+    float alt = sensors_->GetAltitudeMeters();
     // Clamp altitude to range that fits to the altitude string
 
     alt = MAX(MIN_UI_ALTITUDE,MIN(MAX_UI_ALTITUDE, alt));
-    sprintf(str,"%d",alt);
+    sprintf(str,"%.1f",alt);
 
     const uint8_t xpos = buffer->GetWidth()/2;
     const uint8_t scale_x = 1;

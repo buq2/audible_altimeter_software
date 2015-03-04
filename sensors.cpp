@@ -9,12 +9,12 @@ Sensors::Sensors()
 
 }
 
-int16_t Sensors::GetAltitudeMeters()
+float Sensors::GetAltitudeMeters()
 {
     return altitude_m_;
 }
 
-int16_t Sensors::GetAltitudeChangeRateDecimetresPerS()
+float Sensors::GetAltitudeChangeRateDecimetresPerS()
 {
     return altitude_change_dm_per_s_;
 }
@@ -24,7 +24,7 @@ int16_t Sensors::GetTemperatureC()
     return temperature_c_;
 }
 
-void Sensors::SetAltitudeMeters(int16_t altitude_meters)
+void Sensors::SetAltitudeMeters(float altitude_meters)
 {
     altitude_m_ = altitude_meters;
 }

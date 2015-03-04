@@ -17,6 +17,7 @@ class Buttons
         BUTTON_OFF,
         BUTTON_SHORT,
         BUTTON_LONG,
+        BUTTON_EXTRA_LONG
     } ButtonState;
 
     ButtonState GetUp()

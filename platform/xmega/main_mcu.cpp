@@ -126,10 +126,10 @@ int main()
     while (1) {
         buttons.Tick();
 
-        if (buttons.GetDown() != Buttons::BUTTON_OFF) {
+        if (buttons.GetDown() == Buttons::BUTTON_LONG || buttons.GetDown() == Buttons::BUTTON_SHORT) {
             ui.KeyPress(UiBase::KEY_DOWN, true);
         }
-        if (buttons.GetUp() != Buttons::BUTTON_OFF) {
+        if (buttons.GetUp() == Buttons::BUTTON_LONG || buttons.GetUp() == Buttons::BUTTON_SHORT) {
             ui.KeyPress(UiBase::KEY_UP, true);
         }
         if (buttons.GetCenter() == Buttons::BUTTON_SHORT) {
@@ -137,9 +137,17 @@ int main()
         } else if (buttons.GetCenter() == Buttons::BUTTON_LONG) {
             ui.KeyPress(UiBase::KEY_LEFT, true);
         }
+        if (buttons.GetCenter() == Buttons::BUTTON_OFF &&
+            buttons.GetUp() == Buttons::BUTTON_EXTRA_LONG &&
+            buttons.GetDown() == Buttons::BUTTON_EXTRA_LONG)
+        {
+            // Zero altitude
+            alt1.ZeroAltitude();
+        }
+
 
         alt1.RequestDataUpdate();
-        _delay_ms(100);
+        _delay_ms(5);
         display.ToggleExtcomin();
         float altitude_m = 0;
         if (0 == alt1.GetAltitudeMeters(&altitude_m)) {

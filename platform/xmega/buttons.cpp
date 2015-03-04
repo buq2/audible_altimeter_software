@@ -36,14 +36,17 @@ void Buttons::UpdateButtonState(PORT_t *port, uint8_t pin,
                                 Buttons::ButtonState *state, uint8_t *counter)
 {
     const uint8_t pressed_limit = 1;
-    const uint8_t long_limit = 5;
+    const uint8_t long_limit = 10;
     if ((port->IN & pin) == 0) {
         ++(*counter);
-        *state = BUTTON_OFF;
-    } else {
-        if (*counter > long_limit) {
+        if (*state == BUTTON_LONG) {
+            *state = BUTTON_EXTRA_LONG;
+        } else if (*state != BUTTON_EXTRA_LONG && *counter > long_limit) {
             *state = BUTTON_LONG;
-        } else if (*counter > pressed_limit) {
+        }
+    } else {
+        // Button not pressed
+        if (*counter > pressed_limit && *counter < long_limit) {
             *state = BUTTON_SHORT;
         } else {
             *state = BUTTON_OFF;

@@ -7,14 +7,14 @@ class Sensors
 {
  public:
     Sensors();
-    int16_t GetAltitudeMeters();
-    int16_t GetAltitudeChangeRateDecimetresPerS();
+    float GetAltitudeMeters();
+    float GetAltitudeChangeRateDecimetresPerS();
     int16_t GetTemperatureC();
-    void SetAltitudeMeters(int16_t altitude_meters);
+    void SetAltitudeMeters(float altitude_meters);
  private:
  private:
-    int16_t altitude_m_;
-    int16_t altitude_change_dm_per_s_;
+    float altitude_m_;
+    float altitude_change_dm_per_s_;
     int16_t temperature_c_;
 }; //class Sensors
 
