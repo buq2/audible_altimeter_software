@@ -113,18 +113,18 @@ void UiAltimeter::RenderAltitudeChangeLong(DisplayBuffer *buffer, uint8_t *row)
 {
     char str[11]; //"999.9 ft/s" + null
 
-    int16_t change = sensors_->GetAltitudeChangeRateDecimetresPerS();
+    float change = sensors_->GetAltitudeChangeRateMetresPerS();
     change = MAX(MIN_UI_ALTITUDE_RATE,MIN(MAX_UI_ALTITUDE_RATE, change));
 
     const char *str_desc = "Descent:";
     const char *str_climb = "Climb:";
     const char *str_front = str_desc;
+
+    sprintf(str, "%0.1f m/s", change);
     if (change < 0) {
         str_front = str_desc;
-        sprintf(str, "%d.%d m/s", change/10, ABS(change%10));
     } else {
         str_front = str_climb;
-        sprintf(str, "%d.%d m/s", change/10, change%10);
     }
 
     uint8_t xpos = 3;

@@ -28,6 +28,7 @@ ADD_LIBRARY(lufa STATIC
 
 ADD_LIBRARY(Platform STATIC
     buttons.hh buttons.cpp
+    timer.hh timer.cpp
     main_mcu.cpp
     )
 

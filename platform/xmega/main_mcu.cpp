@@ -14,6 +14,8 @@
 #include "axlib/sensors/altimeter_mpl3115a2.hh"
 #include "axlib/sensors/altimeter_ms5805_02ba01.hh"
 #include "axlib/sensors/gps_sim33ela.hh"
+#include "axlib/sensors/clock_mcp7940m.hh"
+#include "timer.hh"
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -84,6 +86,8 @@ void UpdateConfig(Config *conf)
     global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
 }
 
+
+
 int main()
 {
     SetupHardware();
@@ -108,6 +112,11 @@ int main()
     AltimeterMPl3114A2 alt1(PORT_C);
     AltimeterMS5805_02BA01 alt2(PORT_C);
 
+    ClockMcp7940M clock(PORT_C);
+    clock.Setup();
+
+    Timer timer;
+
     Buttons buttons(PORT_C,PIN_4,
                     PORT_C,PIN_3,
                     PORT_C,PIN_2);
@@ -123,41 +132,77 @@ int main()
     STOP_IF_ERROR(alt1.Setup());
     STOP_IF_ERROR(alt2.Setup());
 
+    uint8_t previous_seconds = 0;
     while (1) {
-        buttons.Tick();
-
-        if (buttons.GetDown() == Buttons::BUTTON_LONG || buttons.GetDown() == Buttons::BUTTON_SHORT) {
-            ui.KeyPress(UiBase::KEY_DOWN, true);
-        }
-        if (buttons.GetUp() == Buttons::BUTTON_LONG || buttons.GetUp() == Buttons::BUTTON_SHORT) {
-            ui.KeyPress(UiBase::KEY_UP, true);
-        }
-        if (buttons.GetCenter() == Buttons::BUTTON_SHORT) {
-            ui.KeyPress(UiBase::KEY_RIGHT, true);
-        } else if (buttons.GetCenter() == Buttons::BUTTON_LONG) {
-            ui.KeyPress(UiBase::KEY_LEFT, true);
-        }
-        if (buttons.GetCenter() == Buttons::BUTTON_OFF &&
-            buttons.GetUp() == Buttons::BUTTON_EXTRA_LONG &&
-            buttons.GetDown() == Buttons::BUTTON_EXTRA_LONG)
         {
-            // Zero altitude
-            alt1.ZeroAltitude();
+            // Update altimeters
+            alt1.RequestDataUpdate();
         }
 
+        {
+            // Update clock
+            uint8_t current_seconds = 0;
+            clock.ReadSeconds(&current_seconds);
+            if (previous_seconds != current_seconds) {
+                timer.TickApproxOneSecond();
+                previous_seconds = current_seconds;
+            }
+        }
 
-        alt1.RequestDataUpdate();
+        {
+            // Update buttons
+            buttons.Tick();
+            if (buttons.GetDown() == Buttons::BUTTON_LONG || buttons.GetDown() == Buttons::BUTTON_SHORT) {
+                ui.KeyPress(UiBase::KEY_DOWN, true);
+            }
+            if (buttons.GetUp() == Buttons::BUTTON_LONG || buttons.GetUp() == Buttons::BUTTON_SHORT) {
+                ui.KeyPress(UiBase::KEY_UP, true);
+            }
+            if (buttons.GetCenter() == Buttons::BUTTON_SHORT) {
+                ui.KeyPress(UiBase::KEY_RIGHT, true);
+            } else if (buttons.GetCenter() == Buttons::BUTTON_LONG) {
+                ui.KeyPress(UiBase::KEY_LEFT, true);
+            }
+            if (buttons.GetCenter() == Buttons::BUTTON_OFF &&
+                buttons.GetUp() == Buttons::BUTTON_EXTRA_LONG &&
+                buttons.GetDown() == Buttons::BUTTON_EXTRA_LONG)
+            {
+                // Zero altitude
+                alt1.ZeroAltitude();
+            }
+        }
+
+        // Small delay
         _delay_ms(5);
-        display.ToggleExtcomin();
-        float altitude_m = 0;
-        if (0 == alt1.GetAltitudeMeters(&altitude_m)) {
-            sensors.SetAltitudeMeters(altitude_m);
+
+        {
+            // Update altitude
+            float altitude_m = 0;
+            if (0 == alt1.GetAltitudeMeters(&altitude_m)) {
+                const float time_since_update = timer.Toc();
+                sensors.SetAltitudeMeters(altitude_m, time_since_update);
+                timer.Tic();
+            }
+            float temperature_c = 0;
+            if (0 == alt1.GetTemperature(&temperature_c)) {
+                sensors.SetTemperatureC(temperature_c);
+            }
         }
-        ui.Tick100ms();
-        ui.Render(&buffer);
-        display.SetContent(buffer);
-        CDC_Device_SendString(&VirtualSerial_CDC_Interface, alt1.GetAltitudeMetersString());
-        CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
-        USB_USBTask();
+
+        {
+            // Display related
+            display.ToggleExtcomin();
+            ui.Tick100ms();
+            ui.Render(&buffer);
+            display.SetContent(buffer);
+        }
+
+        {
+            // Usb related
+            CDC_Device_SendString(&VirtualSerial_CDC_Interface, sensors.GetAltitudeMetersString());
+            CDC_Device_SendString(&VirtualSerial_CDC_Interface, clock.GetTimeString());
+            CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+            USB_USBTask();
+        }
     }
 }
