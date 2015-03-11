@@ -16,6 +16,8 @@
 #include "axlib/sensors/gps_sim33ela.hh"
 #include "axlib/sensors/clock_mcp7940m.hh"
 #include "timer.hh"
+#include "axlib/memory/flash_s25fl216k.hh"
+#include "memory.hh"
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -114,6 +116,9 @@ int main()
 
     ClockMcp7940M clock(PORT_C);
     clock.Setup();
+
+    FlashS25Fl216K flash(PORT_C, PORT_A, PIN_4);
+    MemoryController mem_control(&flash);
 
     Timer timer;
 

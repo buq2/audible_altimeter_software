@@ -26,6 +26,7 @@ ENDIF()
 ADD_EXECUTABLE(audible
     config.cpp config.hh
     sensors.cpp sensors.hh
+    jump_data.hh
     )
     
 TARGET_LINK_LIBRARIES(audible

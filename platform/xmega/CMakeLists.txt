@@ -29,6 +29,7 @@ ADD_LIBRARY(lufa STATIC
 ADD_LIBRARY(Platform STATIC
     buttons.hh buttons.cpp
     timer.hh timer.cpp
+    memory.hh memory.cpp
     main_mcu.cpp
     )
 
@@ -36,5 +37,6 @@ TARGET_LINK_LIBRARIES(Platform
     LufaConfig
     axSensors
     axDisplays
+    axMemory
     lufa
     )

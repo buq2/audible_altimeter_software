@@ -180,3 +180,8 @@ fontStyle_t *Config::GetIntChangeFont() const
 {
     return &FontStyle_impact_huge;
 }
+
+uint32_t Config::GetValidMagic()
+{
+    return 0xbadface0;
+}

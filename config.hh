@@ -129,6 +129,7 @@ struct Config
 
     Config()
         :
+          magic_number(GetValidMagic()),
           altitude_unit_mode(AltitudeUnitModeMeters),
           speed_unit_mode(SpeedUnitModeMetersPerSecond),
           temperature_mode(TemperatureModeCelcius),
@@ -138,6 +139,15 @@ struct Config
     {
     }
 
+    static bool IsValidConfig(const Config &conf)
+    {
+        return conf.magic_number == GetValidMagic();
+    }
+
+    static uint32_t GetValidMagic();
+
+    // Magic number is different for each version of config
+    uint32_t magic_number;
     Time time;
     Date date;
     AltitudeDisplayUnitMode altitude_unit_mode;
