@@ -13,6 +13,8 @@ class Sensors
     void SetAltitudeMeters(float altitude_meters, float time_since_update_seconds);
     char *GetAltitudeMetersString();
     void SetTemperatureC(int16_t temp);
+    float GetUpdateRate();
+    void SetUpdateRate(float fps);
  private:
  private:
 #define SENSORS_NUMBER_OF_ALTITUDES_TO_REMEMBER 6
@@ -22,6 +24,7 @@ class Sensors
     uint8_t next_altitude_change_idx_;
     int16_t temperature_c_;
     char altitude_string_[20];
+    float update_rate_;
 }; //class Sensors
 
 #endif //ifndef SENSORS_HH

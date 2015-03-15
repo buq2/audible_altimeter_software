@@ -10,7 +10,7 @@ class Buttons
             const axlib::Port port_center, const axlib::Pin pin_center,
             const axlib::Port port_down, const axlib::Pin pin_down);
 
-    void Tick();
+    void CheckState();
 
     typedef enum
     {
@@ -47,11 +47,21 @@ class Buttons
     {
         return down_press_counter_;
     }
+
+    bool AnyButtonPressed();
+    uint16_t GetCounter();
+    void UpdateButtonCounters();
+
+    typedef void(*button_state_change_fun)(void);
+    void SetButtonStateChangedFunction(button_state_change_fun fun);
  private:
-    void UpdateButtonState(PORT_t *port, uint8_t pin,
+    bool UpdateButtonState(PORT_t *port, uint8_t pin,
                            ButtonState *state,
                            uint8_t *counter);
+    void StopCounter();
+    void StartCounter();
  private:
+    button_state_change_fun state_changed_fun_;
     PORT_t *port_up_;
     PORT_t *port_center_;
     PORT_t *port_down_;

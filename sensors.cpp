@@ -4,7 +4,8 @@
 Sensors::Sensors()
     :
       altitude_m_(9999),
-      temperature_c_(21)
+      temperature_c_(21),
+      update_rate_(0)
 {
     for (uint8_t i = 0; i < next_altitude_change_idx_; ++i) {
         altitudes_m_[i] = 0;
@@ -67,4 +68,14 @@ char *Sensors::GetAltitudeMetersString()
 void Sensors::SetTemperatureC(int16_t temp)
 {
     temperature_c_ = temp;
+}
+
+float Sensors::GetUpdateRate()
+{
+    return update_rate_;
+}
+
+void Sensors::SetUpdateRate(float fps)
+{
+    update_rate_ = fps;
 }

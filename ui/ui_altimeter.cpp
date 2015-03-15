@@ -59,6 +59,7 @@ void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
     RenderAltitudeLong(buffer, &y);
     RenderAltitudeChangeLong(buffer, &y);
     RenderTemperatureLong(buffer, &y);
+    RenderUpdateRate(buffer, &y);
 }
 
 void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
@@ -155,4 +156,21 @@ void UiAltimeter::RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row)
     buffer->RenderText_AlignRight(FontStyle_impact, xpos,
                        *row, scale_x, scale_y, str);
     *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact, scale_y, str);
+}
+
+void UiAltimeter::RenderUpdateRate(DisplayBuffer *buffer, uint8_t *row)
+{
+    char str[9]; //"10.2 fps"
+
+    float fps = sensors_->GetUpdateRate();
+    fps = MAX(0,MIN(99, fps));
+    sprintf(str,"%0.1f fps",fps);
+
+    float xpos = buffer->GetWidth()-3;
+    const uint8_t scale_x = 1;
+    const uint8_t scale_y = 1;
+    buffer->RenderText_AlignRight(FontStyle_vcr_tiny, xpos,
+                       *row, scale_x, scale_y, str);
+
+    *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_vcr_tiny, scale_y, str);
 }
