@@ -5,10 +5,11 @@
 
 int16_t timer_counter_ = 0;
 
-ISR(TCE0_OVF_vect)
-{
-   ++timer_counter_;
-}
+//ISR(TCE0_OVF_vect)
+//ISR(RTC_COMP_vect)
+
+
+
 
 Timer::Timer()
     :
@@ -16,10 +17,12 @@ Timer::Timer()
       counter_start_value_(0),
       first_call_(true)
 {
-    TCE0.CTRLA = TC_CLKSEL_DIV64_gc;
-    TCE0.PER = 1000;
-    TCE0.INTCTRLA |= TC_OVFINTLVL_LO_gc;
-    TCE0.CNT = 0;
+//    TCE0.CTRLA = TC_CLKSEL_DIV64_gc;
+//    TCE0.PER = 1000;
+//    TCE0.INTCTRLA |= TC_OVFINTLVL_LO_gc;
+//    TCE0.CNT = 0;
+
+
 
     for (uint8_t i = 0; i < 16; ++i) {
         second_lenghts_[i] = 0;
@@ -60,4 +63,9 @@ uint16_t Timer::GetCountsInSecond()
     }
 
     return mmin;
+}
+
+uint16_t Timer::GetInternalCounter()
+{
+    return timer_counter_;
 }

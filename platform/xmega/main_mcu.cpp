@@ -12,7 +12,6 @@
 #include "buttons.hh"
 #include "axlib/displays/display_sharp.hh"
 #include "axlib/sensors/clock_mcp7940m.hh"
-#include "timer.hh"
 #include "axlib/memory/flash_s25fl216k.hh"
 #include "memory.hh"
 #include "sensor_controller.hh"
@@ -22,19 +21,17 @@ extern "C" void __cxa_pure_virtual() { while (1); }
 
 #define STOP_IF_ERROR(x) {if(x){while(1){}}}
 
-/** Standard file stream for the CDC interface when set up, so that the virtual CDC COM port can be
- *  used like any regular character stream in the C APIs.
- */
-static FILE USBSerialStream;
-
 bool global_usb_connected = false;
 UiMain *global_ui_main;
 DisplayBuffer *global_display_buffer;
-Timer global_timer;
 Buttons global_buttons(PORT_C,PIN_4,
                 PORT_C,PIN_3,
                 PORT_C,PIN_2);
+DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
+bool global_setup_ready = false;
+Sensors *global_sensors;
+ClockMcp7940M *global_clock;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -61,10 +58,9 @@ void EVENT_USB_Device_ControlRequest(void)
     CDC_Device_ProcessControlRequest(&VirtualSerial_CDC_Interface);
 }
 
+// 1HZ interrupt from the clock
 ISR(PORTB_INT0_vect)
 {
-    // 1HZ interrupt from the clock
-    global_timer.TickApproxOneSecond();
 }
 
 void SetupClockInterrupts()
@@ -74,10 +70,9 @@ void SetupClockInterrupts()
     PORTB.INTCTRL |= PORT_INT0LVL_LO_gc;
 }
 
-uint8_t button_counter = 0;
+// Button press interrupt
 ISR(PORTC_INT0_vect)
 {
-    // Button press interrupt
     global_buttons.CheckState();
 }
 
@@ -120,7 +115,68 @@ void SetupButtonInterrupts()
     global_buttons.SetButtonStateChangedFunction(ButtonStateChangedCallback);
 }
 
-/** Configures the board hardware and chip peripherals for the demo's functionality. */
+void UpdateDisplayAndUi()
+{
+    // Display related
+    global_display->ToggleExtcomin();
+    global_ui_main->Tick100ms();
+    global_ui_main->Render(global_display_buffer);
+    global_display->SetContent(*global_display_buffer);
+}
+
+void UpdateSensors(float update_seconds)
+{
+    global_sensor_ctrl->DataUpdate(update_seconds);
+
+    // Update altimeters
+    global_sensor_ctrl->RequestDataUpdate();
+}
+
+void UpdateUsb()
+{
+    if (global_usb_connected) {
+        // Usb related
+        CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
+        CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_clock->GetTimeString());
+        CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+
+//        {
+//            char str[6];
+//            sprintf(str,"%d\n\r",rtc_counter);
+//            CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
+//        }
+    }
+    USB_USBTask();
+}
+
+// 100ms interrupt
+ISR(RTC_OVF_vect)
+{
+    static uint8_t update_200ms = 1;
+    update_200ms = !update_200ms;
+    if (update_200ms) {
+        // Update sensors once 200ms
+        UpdateSensors(0.2);
+    }
+    UpdateDisplayAndUi();
+    UpdateUsb();
+}
+
+void SetupRtc()
+{
+    // Setup RTC
+    PR.PRGEN &= ~PR_RTC_bm; //?
+    CLK.RTCCTRL = CLK_RTCSRC_ULP_gc | CLK_RTCEN_bm; //use internal 32khz ulp clock and enable it
+    RTC.CTRL = 0;  // shut down rtc (needed as rtc has different clock domain)
+    while (RTC.STATUS & RTC_SYNCBUSY_bm) {
+        // essential to wait for this condition or the RTC doesn't work
+    }
+    RTC.INTCTRL |= RTC_OVFINTLVL_LO_gc;
+    RTC.PER = 102; // ~100ms = 10fps (1.024khz/1)/10fps
+    RTC.CNT = 0;
+    RTC.CTRL = RTC_PRESCALER_DIV1_gc; //divide by
+}
+
 void SetupHardware(void)
 {
     /* Start the PLL to multiply the 2MHz RC oscillator to 32MHz and switch the CPU core to run from it */
@@ -138,6 +194,7 @@ void SetupHardware(void)
 
     SetupClockInterrupts();
     SetupButtonInterrupts();
+    SetupRtc();
 }
 
 void UpdateConfig(Config *conf)
@@ -149,11 +206,6 @@ void UpdateConfig(Config *conf)
 int main()
 {
 
-    SetupHardware();
-
-    /* Create a regular character stream for the interface so that it can be used with the stdio.h functions */
-    CDC_Device_CreateStream(&VirtualSerial_CDC_Interface, &USBSerialStream);
-    GlobalInterruptEnable();
 
     Config config;
     const uint8_t width = 128;
@@ -167,9 +219,15 @@ int main()
                          PORT_A, 0b00000100 //display on
                          );
     display.SetDisplayOn(true);
+    global_display = &display;
     Sensors sensors;
+    global_sensors = &sensors;
+
+    UiMain ui(&config, &sensors,UpdateConfig);
+    global_ui_main = &ui;
 
     ClockMcp7940M clock(PORT_C);
+    global_clock = &clock;
     clock.Setup();
     clock.Setup1HzSquareWave();
 
@@ -180,57 +238,13 @@ int main()
     sensor_ctrl.Setup();
     global_sensor_ctrl = &sensor_ctrl;
 
-    UiMain ui(&config, &sensors,UpdateConfig);
-    global_ui_main = &ui;
-
     display.Setup();
     display.Clear();
 
+    SetupHardware();
+    GlobalInterruptEnable();
+
     while (1) {
-        // Update altimeters
-        sensor_ctrl.RequestDataUpdate();
 
-        {
-            // Display related
-            display.ToggleExtcomin();
-            ui.Tick100ms();
-            ui.Render(&buffer);
-            display.SetContent(buffer);
-        }
-
-        if (global_usb_connected) {
-            // Usb related
-            CDC_Device_SendString(&VirtualSerial_CDC_Interface, sensors.GetAltitudeMetersString());
-            CDC_Device_SendString(&VirtualSerial_CDC_Interface, clock.GetTimeString());
-            CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
-
-            {
-                char str[6];
-
-                sprintf(str,"%d\n\r",global_buttons.GetCounterUp());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-                sprintf(str,"%d\n\r",global_buttons.GetCounterCenter());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-                sprintf(str,"%d\n\r",global_buttons.GetCounterDown());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-
-                sprintf(str,"%d\n\r",global_buttons.GetUp());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-                sprintf(str,"%d\n\r",global_buttons.GetCenter());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-                sprintf(str,"%d\n\r",global_buttons.GetDown());
-                CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-            }
-
-            USB_USBTask();
-        } else {
-            USB_USBTask();
-        }
-
-        {
-            const float time_since_update = global_timer.Toc();
-            sensor_ctrl.DataUpdate(time_since_update);
-            global_timer.Tic();
-        }
     }
 }

@@ -11,6 +11,7 @@ class Timer
     void Tic();
     float Toc();
     uint16_t GetCountsInSecond();
+    uint16_t GetInternalCounter();
  private:
 
  private:
