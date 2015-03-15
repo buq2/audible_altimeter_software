@@ -41,7 +41,10 @@ class UiConfigItemInt
 
     const char *GetLabelValue()
     {
-        sprintf(label_value_, "%d", *ptr_);
+        if (NULL == ptr_) {
+            strcpy(label_value_, "NULL");
+        }
+        sprintf(label_value_, "%ld", (int32_t)*ptr_);
         return label_value_;
     }
 

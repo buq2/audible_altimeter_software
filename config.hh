@@ -41,6 +41,13 @@ struct Config
         FontSizeNumberOfEnums = 3
     } FontSize;
 
+    typedef enum
+    {
+        DataSaveOff = 0,
+        DataSaveAll = 1,
+        DataSaveNumberOfEnums = 2
+    } DataSaveMode;
+
     struct AltitudeAlarm
     {
         typedef enum
@@ -135,7 +142,8 @@ struct Config
           temperature_mode(TemperatureModeCelcius),
           display_orientation(axlib::DisplayBuffer::ROTATION_NONE),
           menu_font_size(FontSizeMedium),
-          default_altimeter_ui_mode_(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX)
+          default_altimeter_ui_mode_(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
+          log_save_mode(DataSaveOff)
     {
     }
 
@@ -158,6 +166,7 @@ struct Config
     AltitudeAlarm alarms_canopy[3];
     FontSize menu_font_size;
     UiAltimeter::AltimeterUiMode default_altimeter_ui_mode_;
+    DataSaveMode log_save_mode;
 }; //struct Config
 
 template<typename T>
@@ -191,6 +200,9 @@ const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en);
 template<>
 const char *ToString(const UiAltimeter::AltimeterUiMode en);
 
+template<>
+const char *ToString(const Config::DataSaveMode en);
+
 template<typename T>
 T NextEnum(const T en)
 {
@@ -217,5 +229,8 @@ Config::FontSize NextEnum(const Config::FontSize en);
 
 template<>
 UiAltimeter::AltimeterUiMode NextEnum(const UiAltimeter::AltimeterUiMode en);
+
+template<>
+Config::DataSaveMode NextEnum(const Config::DataSaveMode en);
 
 #endif //ifndef CONFIG_HH

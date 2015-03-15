@@ -59,7 +59,7 @@ void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
     RenderAltitudeLong(buffer, &y);
     RenderAltitudeChangeLong(buffer, &y);
     RenderTemperatureLong(buffer, &y);
-    RenderUpdateRate(buffer, &y);
+    RenderUpdateRateAndMemoryUsage(buffer, &y);
 }
 
 void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
@@ -158,6 +158,15 @@ void UiAltimeter::RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row)
     *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact, scale_y, str);
 }
 
+void UiAltimeter::RenderUpdateRateAndMemoryUsage(DisplayBuffer *buffer, uint8_t *row)
+{
+    // Render at the same row
+    uint8_t row_cur = *row;
+    RenderUpdateRate(buffer,row);
+    *row = row_cur;
+    RenderMemoryUsage(buffer, row);
+}
+
 void UiAltimeter::RenderUpdateRate(DisplayBuffer *buffer, uint8_t *row)
 {
     char str[9]; //"10.2 fps"
@@ -170,6 +179,25 @@ void UiAltimeter::RenderUpdateRate(DisplayBuffer *buffer, uint8_t *row)
     const uint8_t scale_x = 1;
     const uint8_t scale_y = 1;
     buffer->RenderText_AlignRight(FontStyle_vcr_tiny, xpos,
+                       *row, scale_x, scale_y, str);
+
+    *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_vcr_tiny, scale_y, str);
+}
+
+void UiAltimeter::RenderMemoryUsage(DisplayBuffer *buffer, uint8_t *row)
+{
+    MiscInformation *misc = sensors_->GetMiscInformation();
+    if (NULL == misc) {
+        return;
+    }
+
+    char str[10]; //"4294967296"
+    sprintf(str,"%ld", misc->current_memory_usage);
+
+    float xpos = 3;
+    const uint8_t scale_x = 1;
+    const uint8_t scale_y = 1;
+    buffer->RenderText(FontStyle_vcr_tiny, xpos,
                        *row, scale_x, scale_y, str);
 
     *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_vcr_tiny, scale_y, str);

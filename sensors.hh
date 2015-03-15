@@ -3,6 +3,15 @@
 
 #include <stdint.h>
 
+class MiscInformation
+{
+ public:
+    MiscInformation();
+
+    uint32_t current_memory_usage;
+};
+
+
 class Sensors
 {
  public:
@@ -15,6 +24,8 @@ class Sensors
     void SetTemperatureC(int16_t temp);
     float GetUpdateRate();
     void SetUpdateRate(float fps);
+    MiscInformation *GetMiscInformation();
+    void SetMiscInformation(MiscInformation *misc);
  private:
  private:
 #define SENSORS_NUMBER_OF_ALTITUDES_TO_REMEMBER 6
@@ -25,6 +36,7 @@ class Sensors
     int16_t temperature_c_;
     char altitude_string_[20];
     float update_rate_;
+    MiscInformation *misc_;
 }; //class Sensors
 
 #endif //ifndef SENSORS_HH

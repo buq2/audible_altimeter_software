@@ -30,9 +30,11 @@ Buttons global_buttons(PORT_C,PIN_4,
                 PORT_C,PIN_2);
 DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
-MemoryController *global_mem_control_;
+MemoryController *global_mem_control;
 Sensors *global_sensors;
 ClockMcp7940M *global_clock;
+MiscInformation global_misc_info;
+Config *global_config;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -142,7 +144,9 @@ void PrintSerialHelp()
                           "num_jumps<CR>\n\r"
                           "date<CR>\n\r"
                           "altitude<CR>\n\r"
-                          "get_jump<CR>#\n\r"
+                          "get_jump<CR>#<CR>\n\r"
+                          "erase<CR>\n\r"
+                          "full_erase<CR>\n\r"
                           );
 }
 
@@ -152,7 +156,7 @@ void SerialSendJumpIndex(const uint32_t jump_idx, char temp_buffer[64])
     uint32_t bytes_send = 0;
     while(true) {
         uint32_t bytes = 64;
-        global_mem_control_->GetJumpData(jump_idx,(uint8_t*)temp_buffer,&bytes,&offset);
+        global_mem_control->GetJumpData(jump_idx,(uint8_t*)temp_buffer,&bytes,&offset);
 
         if (bytes == 0) {
             // No more data to send
@@ -188,7 +192,7 @@ void HandleSerialInput()
     if (c == '\r') {
         if (command == COMMAND_NONE) {
             if (0 == strcmp(input_buffer, "num_jumps")) {
-                const uint32_t num_jumps = global_mem_control_->GetNumberOfJumps();
+                const uint32_t num_jumps = global_mem_control->GetNumberOfJumps();
                 sprintf(temp_buffer, "%ld\n\r", num_jumps);
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, temp_buffer);
             } else if (0 == strcmp(input_buffer, "date")) {
@@ -197,6 +201,15 @@ void HandleSerialInput()
                 command = COMMAND_GET_JUMP;
             } else if (0 == strcmp(input_buffer, "altitude")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
+            } else if (0 == strcmp(input_buffer, "erase")) {
+                global_sensor_ctrl->QuickErase();
+                global_config->log_save_mode = Config::DataSaveOff;
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Quick erase run.\n\rSaving disabled\n\r");
+            } else if (0 == strcmp(input_buffer, "full_erase")) {
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Please wait. This can take about one minute\n\r");
+                global_sensor_ctrl->FullErase();
+                global_config->log_save_mode = Config::DataSaveOff;
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Full erase run.\n\rSaving disabled\n\r");
             } else if (0 == strcmp(input_buffer, "help")) {
                 PrintSerialHelp();
             } else {
@@ -285,20 +298,28 @@ void UpdateFromConfig(Config *conf)
     global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
 }
 
+void UpdateFromConfigAfterSave(Config *conf)
+{
+    if (conf->log_save_mode == Config::DataSaveAll) {
+        global_sensor_ctrl->StartSavingData();
+    } else if (conf->log_save_mode == Config::DataSaveOff) {
+        global_sensor_ctrl->StopSavingData();
+    }
+}
+
 void SaveConfig(Config *conf)
 {
-    global_mem_control_->WriteConfig(conf);
+    UpdateFromConfigAfterSave(conf);
+    global_mem_control->WriteConfig(conf);
 }
 
 uint8_t LoadConfig(Config *conf)
 {
-    return global_mem_control_->LoadConfig(conf);
+    return global_mem_control->LoadConfig(conf);
 }
 
 int main()
 {
-
-
     Config config;
     const uint8_t width = 128;
     const uint8_t height = 128;
@@ -315,7 +336,7 @@ int main()
     Sensors sensors;
     global_sensors = &sensors;
 
-    UiMain ui(&config, &sensors);
+    UiMain ui(&config, &sensors, &global_misc_info);
     ui.SetConfigChangedFunction(UpdateFromConfig);
     ui.SetConfigSaveFunction(SaveConfig);
     global_ui_main = &ui;
@@ -327,20 +348,25 @@ int main()
 
     FlashS25Fl216K flash(PORT_C, PORT_A, PIN_4);
     MemoryController mem_control(&flash);
-    global_mem_control_ = &mem_control;
+    global_mem_control = &mem_control;
 
     SensorController sensor_ctrl(&sensors, &mem_control, &clock);
     sensor_ctrl.Setup();
     global_sensor_ctrl = &sensor_ctrl;
+    global_sensor_ctrl->SetMiscInformation(&global_misc_info);
 
     display.Setup();
     display.Clear();
+
+    global_config = &config;
+    sensors.SetMiscInformation(&global_misc_info);
 
     SetupHardware();
     GlobalInterruptEnable();
 
     LoadConfig(&config);
     UpdateFromConfig(&config);
+    UpdateFromConfigAfterSave(&config);
 
     while (1) {
 

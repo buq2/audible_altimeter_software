@@ -32,7 +32,13 @@ typedef enum JumpData_StructEnum_t
     JUMPDATA_STRUCT_ENUM_ALTITUDE = 3, // JumpData_Altitude
     JUMPDATA_STRUCT_ENUM_ALTITUDE_RATE = 4, // JumpData_AltitudeRate
     JUMPDATA_STRUCT_ENUM_SECONDS_TIC = 5, // JumpData_SecondsTic
+    JUMPDATA_STRUCT_ENUM_DATA_PADDING = 6 // JumpData_Padding
 } JumpData_StructEnum;
+
+typedef struct JumpData_Padding_t
+{
+    uint32_t padding_bytes; // how many bytes should be skipped AFTER this struct
+} JumpData_Padding;
 
 typedef struct JumpData_Info_t
 {

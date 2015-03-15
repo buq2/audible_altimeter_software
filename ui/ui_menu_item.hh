@@ -23,6 +23,7 @@ class UiMenuItem
 
     UiMenuItem *GetParent();
     virtual Config *GetConfig();
+    virtual MiscInformation *GetMiscInformation();
     virtual void Activated();
  protected:
  private:

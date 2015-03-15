@@ -1,10 +1,11 @@
 #include "ui_main.hh"
 
-UiMain::UiMain(Config *config, Sensors *sensors)
+UiMain::UiMain(Config *config, Sensors *sensors, MiscInformation *misc)
     :
       altimeter_(sensors),
-      menu_(config),
-      ui_selection_(UI_SELECTION_ALTIMETER)
+      menu_(config, misc),
+      ui_selection_(UI_SELECTION_ALTIMETER),
+      config_save_(0)
 {
 
 }
@@ -31,7 +32,7 @@ void UiMain::KeyPress(const UiBase::KeyCode key, const bool down)
 
             // Back at altimeter
             // Save configs
-            if (config_save_) {
+            if (config_save_ != 0) {
                 config_save_(menu_.GetConfig());
             }
 
@@ -70,3 +71,5 @@ void UiMain::SetConfigSaveFunction(UiMain::ConfigSaveFunction fun)
 {
     config_save_ = fun;
 }
+
+

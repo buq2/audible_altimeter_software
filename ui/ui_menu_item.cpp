@@ -54,6 +54,11 @@ Config *UiMenuItem::GetConfig()
     return parent_->GetConfig();
 }
 
+MiscInformation *UiMenuItem::GetMiscInformation()
+{
+    return parent_->GetMiscInformation();
+}
+
 void UiMenuItem::Activated()
 {
 

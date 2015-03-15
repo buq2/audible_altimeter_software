@@ -32,6 +32,7 @@ private:
     UiMain ui_main_;
     DisplayBuffer display_buffer_;
     Sensors sensors_;
+    MiscInformation misc_;
     Config config_;
     friend void UpdateConfig(Config *conf);
 };

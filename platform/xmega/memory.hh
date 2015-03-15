@@ -26,6 +26,9 @@ class MemoryController
     /// Get last jump number
     uint32_t GetLastJumpNumber();
 
+    void QuickErase();
+    void FullErase();
+
     /// Get number of jumps
     uint32_t GetNumberOfJumps();
 
@@ -39,6 +42,10 @@ class MemoryController
     void GetJumpData(const uint32_t jump_idx, uint8_t *data, uint32_t *bytes, uint32_t *offset);
 
     uint32_t GetJumpNumberOnSector(uint32_t address);
+
+    /// Write jump data and increment address
+    /// Handles sector boundaries properly
+    void WriteJumpData(const uint8_t *data, const uint8_t bytes, uint32_t *address);
 
     static uint32_t GetFirstPossibleJumpSector();
     static uint32_t GetSectorLength();

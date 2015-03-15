@@ -18,12 +18,25 @@ class SensorController
     void RequestDataUpdate();
     void DataUpdate(const float time_since_update);
     void ZeroAltitude();
+    void StartSavingData();
+    void StopSavingData();
+    void SaveDataIfEnabled(const float time_since_update);
+    void StartNewJump();
+    void SetMiscInformation(MiscInformation *misc);
+    void FillJumpDataBuffer(const float time_since_update, uint8_t **buffer, uint8_t *num_bytes);
+    void QuickErase();
+    void FullErase();
  private:
+    bool save_data_;
     Sensors *sensors_;
     MemoryController *mem_control_;
     axlib::ClockMcp7940M *clock_;
     axlib::AltimeterMPl3114A2 alt1_;
     axlib::AltimeterMS5805_02BA01 alt2_;
+    MiscInformation *misc_;
+
+    uint32_t flash_current_memory_address_;
+    uint8_t jump_data_buffer_[64];
 }; //class SensorController
 
 #endif //ifndef AUDIBLEA_SENSOR_CONTOLLER_HH

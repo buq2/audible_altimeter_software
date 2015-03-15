@@ -5,7 +5,8 @@ Sensors::Sensors()
     :
       altitude_m_(9999),
       temperature_c_(21),
-      update_rate_(0)
+      update_rate_(0),
+      misc_(0)
 {
     for (uint8_t i = 0; i < next_altitude_change_idx_; ++i) {
         altitudes_m_[i] = 0;
@@ -78,4 +79,20 @@ float Sensors::GetUpdateRate()
 void Sensors::SetUpdateRate(float fps)
 {
     update_rate_ = fps;
+}
+
+MiscInformation *Sensors::GetMiscInformation()
+{
+    return misc_;
+}
+
+void Sensors::SetMiscInformation(MiscInformation *misc)
+{
+    misc_ = misc;
+}
+
+MiscInformation::MiscInformation()
+    :
+      current_memory_usage(0)
+{
 }

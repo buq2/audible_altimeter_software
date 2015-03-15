@@ -1,4 +1,5 @@
 #include "sensor_controller.hh"
+#include <string.h>
 
 using namespace axlib;
 
@@ -10,7 +11,9 @@ SensorController::SensorController(Sensors *sensors, MemoryController *mem_contr
       mem_control_(mem_control),
       clock_(clock),
       alt1_(PORT_C),
-      alt2_(PORT_C)
+      alt2_(PORT_C),
+      misc_(0),
+      flash_current_memory_address_(0)
 {
 
 }
@@ -42,9 +45,114 @@ void SensorController::DataUpdate(const float time_since_update)
     }
 
     sensors_->SetUpdateRate(1.0f/time_since_update);
+
+    SaveDataIfEnabled(time_since_update);
 }
 
 void SensorController::ZeroAltitude()
 {
     alt1_.ZeroAltitude();
+}
+
+void SensorController::StartSavingData()
+{
+    if (save_data_) {
+        // Already saving
+        return;
+    }
+
+    StartNewJump();
+
+    save_data_ = true;
+}
+
+void SensorController::StopSavingData()
+{
+    save_data_ = false;
+}
+
+void SensorController::SaveDataIfEnabled(const float time_since_update)
+{
+    if (!save_data_) {
+        return;
+    }
+
+    uint8_t *ptr;
+    uint8_t num_bytes;
+    FillJumpDataBuffer(time_since_update, &ptr, &num_bytes);
+    mem_control_->WriteJumpData(ptr, num_bytes, &flash_current_memory_address_);
+
+    // Update memory usage
+    if (0 != misc_) {
+        misc_->current_memory_usage = flash_current_memory_address_;
+    }
+}
+
+void SensorController::StartNewJump()
+{
+    flash_current_memory_address_ = mem_control_->InitJumpSector();
+}
+
+void SensorController::SetMiscInformation(MiscInformation *misc)
+{
+    misc_ = misc;
+}
+
+void SensorController::FillJumpDataBuffer(const float time_since_update,
+                                          uint8_t **buffer, uint8_t *num_bytes)
+{
+    *buffer = jump_data_buffer_;
+    *num_bytes = 0;
+    uint8_t *ptr = *buffer;
+
+
+#define AUDIBLEA_COPY_DATA_MACRO(x) \
+    uint8_t b = sizeof(x);\
+    memcpy(ptr, &x, b);\
+    ptr += b; \
+    *num_bytes += b;
+
+#define AUDIBLEA_ADD_STRUCT_TYPE(x) \
+    uint8_t data = x;\
+    memcpy(ptr, &data, 1);\
+    ptr += 1; \
+    *num_bytes += 1;
+
+    {
+        JumpData_BeginSensorData begin;
+        begin.time_since_last_sensor_data_seconds = time_since_update;
+
+        AUDIBLEA_ADD_STRUCT_TYPE(JUMPDATA_STRUCT_ENUM_BEGIN_SENSOR_DATA);
+        AUDIBLEA_COPY_DATA_MACRO(begin);
+    }
+
+    {
+        JumpData_Altitude alt1;
+        alt1.altitude_sensor_id = 1;
+        alt1_.GetAltitudeMeters(&(alt1.altitude_meters));
+
+        AUDIBLEA_ADD_STRUCT_TYPE(JUMPDATA_STRUCT_ENUM_ALTITUDE);
+        AUDIBLEA_COPY_DATA_MACRO(alt1);
+    }
+
+    {
+        JumpData_AltitudeRate rate;
+        rate.altitude_rate_m_per_s = sensors_->GetAltitudeChangeRateMetresPerS();
+
+        AUDIBLEA_ADD_STRUCT_TYPE(JUMPDATA_STRUCT_ENUM_ALTITUDE_RATE);
+        AUDIBLEA_COPY_DATA_MACRO(rate);
+    }
+#undef AUDIBLEA_COPY_DATA_MACRO
+}
+
+void SensorController::QuickErase()
+{
+    StopSavingData();
+    mem_control_->QuickErase();
+}
+
+void SensorController::FullErase()
+{
+    StopSavingData();
+    mem_control_->FullErase();
 }

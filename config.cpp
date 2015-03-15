@@ -157,6 +157,24 @@ const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en)
     }
 }
 
+template<>
+const char *ToString(const Config::DataSaveMode en)
+{
+    switch(en) {
+    case Config::DataSaveOff:
+    {
+        static const char str[] = "Off";
+        return str;
+    }
+    default:
+    case Config::DataSaveAll:
+    {
+        static const char str[] = "All";
+        return str;
+    }
+    }
+}
+
 #define ENUM_MACRO(T,MAXNUM) \
 template<> \
 T NextEnum(const T en)\
@@ -175,6 +193,7 @@ ENUM_MACRO(axlib::DisplayBuffer::Rotation, axlib::DisplayBuffer::ROTATION_NUM_EN
 ENUM_MACRO(Config::FontSize, Config::FontSizeNumberOfEnums);
 ENUM_MACRO(Config::AltitudeAlarm::AlarmAmplitude, Config::AltitudeAlarm::AlarmAmplitudeNumberOfEnums);
 ENUM_MACRO(UiAltimeter::AltimeterUiMode, UiAltimeter::ALTIMETER_UI_MODE_NUM_ENUMS);
+ENUM_MACRO(Config::DataSaveMode, Config::DataSaveNumberOfEnums);
 
 fontStyle_t *Config::GetIntChangeFont() const
 {
@@ -183,5 +202,8 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface0;
+    return 0xbadface1;
 }
+
+
+

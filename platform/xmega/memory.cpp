@@ -85,6 +85,21 @@ uint32_t MemoryController::GetLastJumpNumber()
     return GetJumpNumberOnSector(sector);
 }
 
+void MemoryController::QuickErase()
+{
+    // By erasing first two sectors we overwrite configuration data and
+    // First sector of first jump log. Other jumps will not be found
+    flash_->Erase4k(0);
+    flash_->Erase4k(GetSectorLength());
+    flash_->WaitUntilReady();
+}
+
+void MemoryController::FullErase()
+{
+    flash_->FullErase();
+    flash_->WaitUntilReady();
+}
+
 uint32_t MemoryController::GetNumberOfJumps()
 {
     uint32_t num_jumps = 0;
@@ -172,6 +187,34 @@ uint32_t MemoryController::GetJumpNumberOnSector(uint32_t address)
 
     // Failure
     return 0;
+}
+
+void MemoryController::WriteJumpData(const uint8_t *data, const uint8_t bytes, uint32_t *address)
+{
+    const uint32_t padding_size = 1 + sizeof(JumpData_Padding);
+    const uint32_t next_sector = FlashS25Fl216K::GetNext4kSector(*address);
+    const uint32_t sector_left = next_sector-*address;
+
+    if (sector_left < bytes + padding_size) {
+        // Need to skip to next sector
+        // Add only padding
+        const uint32_t bytes_padding = sector_left-padding_size;
+
+        // First struct type
+        uint8_t struct_type = JUMPDATA_STRUCT_ENUM_DATA_PADDING;
+        flash_->WriteData(*address,&struct_type,1);
+        *address += 1;
+
+        // Then the struct
+        JumpData_Padding padding_struct;
+        padding_struct.padding_bytes = bytes_padding;
+        flash_->WriteData(*address,(uint8_t*)&padding_struct,sizeof(padding_struct));
+        *address = next_sector;
+        flash_->Erase4k(*address);
+    }
+
+    flash_->WriteData(*address, data, bytes);
+    *address += bytes;
 }
 
 uint32_t MemoryController::GetFirstPossibleJumpSector()

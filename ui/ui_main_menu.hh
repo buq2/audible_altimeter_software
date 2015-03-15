@@ -15,13 +15,16 @@ class MainMenu
 {
  public:
     typedef void(*ConfigChangedFunction)(Config*);
-    MainMenu(Config *config, ConfigChangedFunction fun = NULL);
+    MainMenu(Config *config, MiscInformation *misc);
     virtual Config *GetConfig();
+    virtual MiscInformation *GetMiscInformation();
+    virtual void SetMiscInformation(MiscInformation *misc);
     bool IsAtMainMenu() const;
     void SetConfigChangedFunction(ConfigChangedFunction fun);
     virtual void KeyPress(const UiBase::KeyCode key, const bool down);
  private:
     Config *config_;
+    MiscInformation *misc_;
     UiDisplayMenu display_;
     UiLogMenu log_;
     UiAlarmsMenu alarms_;

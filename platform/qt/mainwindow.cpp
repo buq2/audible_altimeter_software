@@ -19,9 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     qt_ui(new Ui::MainWindow),
     view_(new QGraphicsView(this)),
-    ui_main_(&config_, &sensors_, UpdateConfig),
+    ui_main_(&config_, &sensors_, &misc_),
     display_buffer_(128,128)
 {
+    sensors_.SetMiscInformation(&misc_);
+    ui_main_.SetConfigChangedFunction(UpdateConfig);
     // Ugly, but works similar to MCU code
     mainwin = this;
 
