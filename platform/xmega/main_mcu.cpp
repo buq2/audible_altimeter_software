@@ -15,6 +15,7 @@
 #include "axlib/memory/flash_s25fl216k.hh"
 #include "memory.hh"
 #include "sensor_controller.hh"
+#include <stdlib.h>
 
 // If we ever run pure virtual funciton, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -29,7 +30,7 @@ Buttons global_buttons(PORT_C,PIN_4,
                 PORT_C,PIN_2);
 DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
-bool global_setup_ready = false;
+MemoryController *global_mem_control_;
 Sensors *global_sensors;
 ClockMcp7940M *global_clock;
 
@@ -132,15 +133,96 @@ void UpdateSensors(float update_seconds)
     global_sensor_ctrl->RequestDataUpdate();
 }
 
+void PrintSerialHelp()
+{
+    CDC_Device_SendString(&VirtualSerial_CDC_Interface,
+                          "Command list:\n\r"
+                          "\n\r"
+                          "help<CR>\n\r"
+                          "num_jumps<CR>\n\r"
+                          "date<CR>\n\r"
+                          "altitude<CR>\n\r"
+                          "get_jump<CR>#\n\r"
+                          );
+}
+
+void SerialSendJumpIndex(const uint32_t jump_idx, char temp_buffer[64])
+{
+    uint32_t offset = 0;
+    uint32_t bytes_send = 0;
+    while(true) {
+        uint32_t bytes = 64;
+        global_mem_control_->GetJumpData(jump_idx,(uint8_t*)temp_buffer,&bytes,&offset);
+
+        if (bytes == 0) {
+            // No more data to send
+            return;
+        }
+        bytes_send += bytes;
+        CDC_Device_SendData(&VirtualSerial_CDC_Interface, temp_buffer, 64);
+        CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+        USB_USBTask();
+    }
+}
+
+typedef enum Command_t
+{
+    COMMAND_NONE = 0,
+    COMMAND_GET_JUMP = 1
+} Command;
+
+void HandleSerialInput()
+{
+    static char input_buffer[17];
+    static uint8_t buffer_idx = 0;
+    static Command command = COMMAND_NONE;
+    input_buffer[buffer_idx] = 0;
+
+    int16_t c = CDC_Device_ReceiveByte(&VirtualSerial_CDC_Interface);
+    if (c < 0) {
+        // No data
+        return;
+    }
+
+    char temp_buffer[64];
+    if (c == '\r') {
+        if (command == COMMAND_NONE) {
+            if (0 == strcmp(input_buffer, "num_jumps")) {
+                const uint32_t num_jumps = global_mem_control_->GetNumberOfJumps();
+                sprintf(temp_buffer, "%ld\n\r", num_jumps);
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, temp_buffer);
+            } else if (0 == strcmp(input_buffer, "date")) {
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_clock->GetTimeString());
+            } else if (0 == strcmp(input_buffer, "get_jump")) {
+                command = COMMAND_GET_JUMP;
+            } else if (0 == strcmp(input_buffer, "altitude")) {
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
+            } else if (0 == strcmp(input_buffer, "help")) {
+                PrintSerialHelp();
+            } else {
+                PrintSerialHelp();
+            }
+        } else if (command == COMMAND_GET_JUMP) {
+            const int jump_idx = atoi(input_buffer);
+            SerialSendJumpIndex(jump_idx, temp_buffer);
+            command = COMMAND_NONE; //Back to normal mode
+        }
+        buffer_idx = 0;
+    } else {
+        input_buffer[buffer_idx] = c;
+        ++buffer_idx;
+        buffer_idx %= 16;
+    }
+}
+
 void UpdateUsb()
 {
     if (global_usb_connected) {
         // Usb related
-        CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
-        CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_clock->GetTimeString());
+        HandleSerialInput();
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
 
-//        {
+        //        {
 //            char str[6];
 //            sprintf(str,"%d\n\r",rtc_counter);
 //            CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
@@ -233,6 +315,7 @@ int main()
 
     FlashS25Fl216K flash(PORT_C, PORT_A, PIN_4);
     MemoryController mem_control(&flash);
+    global_mem_control_ = &mem_control;
 
     SensorController sensor_ctrl(&sensors, &mem_control, &clock);
     sensor_ctrl.Setup();

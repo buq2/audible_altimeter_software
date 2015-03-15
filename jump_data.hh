@@ -13,6 +13,11 @@
 // Stored at the beginning of each 4kb sector
 typedef struct JumpData_Header_t
 {
+    JumpData_Header_t()
+        :
+          magic_number(0xBEEFCA5E)
+    {
+    }
     uint32_t magic_number; // Magic number = 0xBEEFCA5E. If sector does not begin with this number -> invalid sector
     uint32_t jump_number; // Starts from 1.
 } JumpData_Header;
