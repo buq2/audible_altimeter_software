@@ -1,6 +1,6 @@
 #include "ui_main_menu.hh"
 
-MainMenu::MainMenu(Config *config, MainMenu::ConfigApplyFunction fun)
+MainMenu::MainMenu(Config *config, MainMenu::ConfigChangedFunction fun)
     :
       config_(config),
       display_(this),
@@ -21,6 +21,11 @@ Config *MainMenu::GetConfig()
 bool MainMenu::IsAtMainMenu() const
 {
     return GetActiveItem() == this;
+}
+
+void MainMenu::SetConfigChangedFunction(MainMenu::ConfigChangedFunction fun)
+{
+    config_apply_fun_ = fun;
 }
 
 void MainMenu::KeyPress(const UiBase::KeyCode key, const bool down)

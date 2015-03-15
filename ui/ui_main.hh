@@ -11,11 +11,15 @@ class UiMain
         public UiBase
 {
  public:
-    UiMain(Config *config, Sensors *sensors, MainMenu::ConfigApplyFunction fun = NULL);
+    UiMain(Config *config, Sensors *sensors);
     void Render(DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
     UiAltimeter *GetAltimeterUi();
+    void SetConfigChangedFunction(MainMenu::ConfigChangedFunction fun);
+
+    typedef void(*ConfigSaveFunction)(Config*);
+    void SetConfigSaveFunction(ConfigSaveFunction fun);
     typedef enum UiSelection_t
     {
         UI_SELECTION_ALTIMETER,
@@ -25,6 +29,7 @@ class UiMain
     UiAltimeter altimeter_;
     MainMenu menu_;
     UiSelection ui_selection_;
+    ConfigSaveFunction config_save_;
 }; //class UiMain
 
 #endif //ifndef UI_MAIN_HH

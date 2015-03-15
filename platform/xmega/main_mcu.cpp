@@ -17,7 +17,7 @@
 #include "sensor_controller.hh"
 #include <stdlib.h>
 
-// If we ever run pure virtual funciton, stop
+// If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
 
 #define STOP_IF_ERROR(x) {if(x){while(1){}}}
@@ -279,10 +279,20 @@ void SetupHardware(void)
     SetupRtc();
 }
 
-void UpdateConfig(Config *conf)
+void UpdateFromConfig(Config *conf)
 {
     global_display_buffer->SetRotation(conf->display_orientation);
     global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+}
+
+void SaveConfig(Config *conf)
+{
+    global_mem_control_->WriteConfig(conf);
+}
+
+uint8_t LoadConfig(Config *conf)
+{
+    return global_mem_control_->LoadConfig(conf);
 }
 
 int main()
@@ -305,7 +315,9 @@ int main()
     Sensors sensors;
     global_sensors = &sensors;
 
-    UiMain ui(&config, &sensors,UpdateConfig);
+    UiMain ui(&config, &sensors);
+    ui.SetConfigChangedFunction(UpdateFromConfig);
+    ui.SetConfigSaveFunction(SaveConfig);
     global_ui_main = &ui;
 
     ClockMcp7940M clock(PORT_C);
@@ -326,6 +338,9 @@ int main()
 
     SetupHardware();
     GlobalInterruptEnable();
+
+    LoadConfig(&config);
+    UpdateFromConfig(&config);
 
     while (1) {
 

@@ -9,11 +9,12 @@ MemoryController::MemoryController(FlashS25Fl216K *flash)
 {
 }
 
-void MemoryController::WriteConfig(Config *config)
+uint8_t MemoryController::WriteConfig(Config *config)
 {
     // Config is stored in the first sector
     flash_->Erase4k(0);
     flash_->WriteData(0,(uint8_t*)config,sizeof(Config));
+    return 0;
 }
 
 bool MemoryController::IsConfigValid()
@@ -21,6 +22,15 @@ bool MemoryController::IsConfigValid()
     uint32_t magic;
     flash_->ReadData((uint8_t*)&magic,0,sizeof(magic));
     return magic == Config::GetValidMagic();
+}
+
+uint8_t MemoryController::LoadConfig(Config *config)
+{
+    if (!IsConfigValid()) {
+        return 1;
+    }
+    flash_->ReadData((uint8_t*)config, 0, sizeof(Config));
+    return 0;
 }
 
 uint32_t MemoryController::FindLastJumpSector()

@@ -8,8 +8,13 @@ class MemoryController
 {
  public:
     MemoryController(axlib::FlashS25Fl216K *flash);
-    void WriteConfig(Config *config);
+
+    /// \return 0 on success
+    uint8_t WriteConfig(Config *config);
     bool IsConfigValid();
+
+    /// \return 0 on success
+    uint8_t LoadConfig(Config *config);
     uint32_t FindLastJumpSector();
     uint32_t FindNextFreeSector();
     bool IsJumpSector(uint32_t sector);
