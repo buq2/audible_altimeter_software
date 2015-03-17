@@ -21,6 +21,7 @@ ADD_SUBDIRECTORY(platform)
 IF (NOT USE_MCU)
     # Qt code requires some of the axlib stuff (core, displays)
     ADD_SUBDIRECTORY(platform/xmega/xmega-libraries)
+    ADD_SUBDIRECTORY(log_viewer)
 ENDIF()
 
 ADD_EXECUTABLE(audible

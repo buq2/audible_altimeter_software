@@ -10,8 +10,10 @@
 
 #define JUMPDATA_HEADER_MAGIC 0xBEEFCA5E
 
+#define PACK __attribute__ ((__packed__))
+
 // Stored at the beginning of each 4kb sector
-typedef struct JumpData_Header_t
+typedef struct PACK JumpData_Header_t
 {
     JumpData_Header_t()
         :
@@ -35,35 +37,35 @@ typedef enum JumpData_StructEnum_t
     JUMPDATA_STRUCT_ENUM_DATA_PADDING = 6 // JumpData_Padding
 } JumpData_StructEnum;
 
-typedef struct JumpData_Padding_t
+typedef struct PACK JumpData_Padding_t
 {
     uint32_t padding_bytes; // how many bytes should be skipped AFTER this struct
 } JumpData_Padding;
 
-typedef struct JumpData_Info_t
+typedef struct PACK JumpData_Info_t
 {
     char jump_date_time[20]; //format "2015-03-11 20:23:10\0"
     char dropzone[32]; //freeformat
 } JumpData_Date_Info;
 
-typedef struct JumpData_BeginSensorData_t
+typedef struct PACK JumpData_BeginSensorData_t
 {
     // Time in seconds since last sensor data update
     float time_since_last_sensor_data_seconds; 
 } JumpData_BeginSensorData;
 
-typedef struct JumpData_Altitude_t
+typedef struct PACK JumpData_Altitude_t
 {
     uint8_t altitude_sensor_id;
     float altitude_meters;
 } JumpData_Altitude;
 
-typedef struct JumpData_AltitudeRate_t
+typedef struct PACK JumpData_AltitudeRate_t
 {
     float altitude_rate_m_per_s;
 } JumpData_AltitudeRate;
 
-typedef struct JumpData_SecondsTic_t
+typedef struct PACK JumpData_SecondsTic_t
 {
     // Seconds since beginning
     uint32_t second;

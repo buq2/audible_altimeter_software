@@ -132,11 +132,12 @@ uint32_t MemoryController::GetJumpIndexSector(const uint32_t jump_idx)
 
         if (jump_number != current_jump_number) {
             current_jump_number = jump_number;
-            ++current_jump_idx;
 
             if (current_jump_idx == jump_idx) {
                 return sector;
             }
+
+            ++current_jump_idx;
         }
 
         sector += GetSectorLength();
@@ -225,4 +226,9 @@ uint32_t MemoryController::GetFirstPossibleJumpSector()
 uint32_t MemoryController::GetSectorLength()
 {
     return 4096;
+}
+
+FlashS25Fl216K *MemoryController::GetFlash()
+{
+    return flash_;
 }

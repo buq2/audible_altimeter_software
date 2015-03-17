@@ -163,7 +163,7 @@ void SerialSendJumpIndex(const uint32_t jump_idx, char temp_buffer[64])
             return;
         }
         bytes_send += bytes;
-        CDC_Device_SendData(&VirtualSerial_CDC_Interface, temp_buffer, 64);
+        CDC_Device_SendData(&VirtualSerial_CDC_Interface, temp_buffer, bytes);
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
         USB_USBTask();
     }

@@ -49,6 +49,8 @@ class MemoryController
 
     static uint32_t GetFirstPossibleJumpSector();
     static uint32_t GetSectorLength();
+
+    axlib::FlashS25Fl216K *GetFlash();
  private:
     axlib::FlashS25Fl216K *flash_;
 }; // class MemoryController
