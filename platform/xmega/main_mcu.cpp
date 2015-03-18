@@ -35,6 +35,7 @@ Sensors *global_sensors;
 ClockMcp7940M *global_clock;
 MiscInformation global_misc_info;
 Config *global_config;
+FlashS25Fl216K *global_flash;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -142,11 +143,13 @@ void PrintSerialHelp()
                           "\n\r"
                           "help<CR>\n\r"
                           "num_jumps<CR>\n\r"
+                          "jump_sectors<CR>\n\r"
                           "date<CR>\n\r"
                           "altitude<CR>\n\r"
                           "get_jump<CR>#<CR>\n\r"
                           "erase<CR>\n\r"
                           "full_erase<CR>\n\r"
+                          "print_data<CR>#<CR>\n\r"
                           );
 }
 
@@ -160,7 +163,7 @@ void SerialSendJumpIndex(const uint32_t jump_idx, char temp_buffer[64])
 
         if (bytes == 0) {
             // No more data to send
-            return;
+            break;;
         }
         bytes_send += bytes;
         CDC_Device_SendData(&VirtualSerial_CDC_Interface, temp_buffer, bytes);
@@ -169,10 +172,23 @@ void SerialSendJumpIndex(const uint32_t jump_idx, char temp_buffer[64])
     }
 }
 
+void PrintJumpSectors(char temp_buffer[64])
+{
+    const uint32_t num_jumps = global_mem_control->GetNumberOfJumps();
+    for (uint32_t i = 0; i < num_jumps; ++i) {
+        const uint32_t sector = global_mem_control->GetJumpIndexSector(i);
+        sprintf(temp_buffer,"%ld\n\r", sector);
+        CDC_Device_SendString(&VirtualSerial_CDC_Interface, temp_buffer);
+        CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+        USB_USBTask();
+    }
+}
+
 typedef enum Command_t
 {
     COMMAND_NONE = 0,
-    COMMAND_GET_JUMP = 1
+    COMMAND_GET_JUMP = 1,
+    COMMAND_PRINT_DATA = 2,
 } Command;
 
 void HandleSerialInput()
@@ -188,7 +204,8 @@ void HandleSerialInput()
         return;
     }
 
-    char temp_buffer[64];
+    const size_t size_temp_buffer = 64;
+    char temp_buffer[size_temp_buffer];
     if (c == '\r') {
         if (command == COMMAND_NONE) {
             if (0 == strcmp(input_buffer, "num_jumps")) {
@@ -197,8 +214,12 @@ void HandleSerialInput()
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, temp_buffer);
             } else if (0 == strcmp(input_buffer, "date")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_clock->GetTimeString());
+            } else if (0 == strcmp(input_buffer, "jump_sectors")) {
+                PrintJumpSectors(temp_buffer);
             } else if (0 == strcmp(input_buffer, "get_jump")) {
                 command = COMMAND_GET_JUMP;
+            } else if (0 == strcmp(input_buffer, "print_data")) {
+                command = COMMAND_PRINT_DATA;
             } else if (0 == strcmp(input_buffer, "altitude")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
             } else if (0 == strcmp(input_buffer, "erase")) {
@@ -215,10 +236,22 @@ void HandleSerialInput()
             } else {
                 PrintSerialHelp();
             }
-        } else if (command == COMMAND_GET_JUMP) {
-            const int jump_idx = atoi(input_buffer);
-            SerialSendJumpIndex(jump_idx, temp_buffer);
-            command = COMMAND_NONE; //Back to normal mode
+        } else {
+            const uint32_t param1 = atoi(input_buffer);
+            if (command == COMMAND_GET_JUMP) {
+                SerialSendJumpIndex(param1, temp_buffer);
+                command = COMMAND_NONE; //Back to normal mode
+            } else if (command == COMMAND_PRINT_DATA) {
+                global_flash->ReadData((uint8_t*)temp_buffer, param1, size_temp_buffer);
+                for (uint32_t i = 0; i < 16; ++i) {
+                    char str[10];
+                    sprintf(str,"%d\n\r",temp_buffer[i]);
+                    CDC_Device_SendString(&VirtualSerial_CDC_Interface,str);
+                    CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
+                    USB_USBTask();
+                }
+                command = COMMAND_NONE; //Back to normal mode
+            }
         }
         buffer_idx = 0;
     } else {
@@ -234,12 +267,6 @@ void UpdateUsb()
         // Usb related
         HandleSerialInput();
         CDC_Device_USBTask(&VirtualSerial_CDC_Interface);
-
-        //        {
-//            char str[6];
-//            sprintf(str,"%d\n\r",rtc_counter);
-//            CDC_Device_SendString(&VirtualSerial_CDC_Interface, str);
-//        }
     }
     USB_USBTask();
 }
@@ -347,6 +374,7 @@ int main()
     clock.Setup1HzSquareWave();
 
     FlashS25Fl216K flash(PORT_C, PORT_A, PIN_4);
+    global_flash = &flash;
     MemoryController mem_control(&flash);
     global_mem_control = &mem_control;
 

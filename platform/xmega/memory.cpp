@@ -5,7 +5,8 @@ using namespace axlib;
 
 MemoryController::MemoryController(FlashS25Fl216K *flash)
     :
-      flash_(flash)
+      flash_(flash),
+      current_jump_number_(0)
 {
 }
 
@@ -55,23 +56,33 @@ bool MemoryController::IsJumpSector(uint32_t sector)
     return magic == JUMPDATA_HEADER_MAGIC;
 }
 
-uint32_t MemoryController::InitJumpSector()
+uint32_t MemoryController::InitJumpSector(const uint32_t sector_in, const uint32_t jump_number)
 {
-    uint32_t sector = FindNextFreeSector();
-    uint32_t prev_sector = sector-GetSectorLength();
+    const uint32_t sector = FlashS25Fl216K::GetSector4kBegin(sector_in);
     JumpData_Header header;
-    if (IsJumpSector(prev_sector)) {
-        JumpData_Header prev_header;
-        flash_->ReadData((uint8_t*)&prev_header, prev_sector, sizeof(JumpData_Header));
-        header.jump_number = prev_header.jump_number + 1;
-    } else {
-        header.jump_number = 1;
-    }
+    header.jump_number = jump_number;
 
     flash_->Erase4k(sector);
     flash_->WriteData(sector,(uint8_t*)&header,sizeof(header));
 
     return sector + sizeof(header);
+}
+
+uint32_t MemoryController::InitJumpSector_ForNewJump()
+{
+    uint32_t sector = FindNextFreeSector();
+    uint32_t prev_sector = sector-GetSectorLength();
+    uint32_t jump_number = 0;
+    if (IsJumpSector(prev_sector)) {
+        JumpData_Header prev_header;
+        flash_->ReadData((uint8_t*)&prev_header, prev_sector, sizeof(JumpData_Header));
+        jump_number = prev_header.jump_number + 1;
+    } else {
+        jump_number = 1;
+    }
+
+    current_jump_number_ = jump_number;
+    return InitJumpSector(sector, jump_number);
 }
 
 uint32_t MemoryController::GetLastJumpNumber()
@@ -211,7 +222,9 @@ void MemoryController::WriteJumpData(const uint8_t *data, const uint8_t bytes, u
         padding_struct.padding_bytes = bytes_padding;
         flash_->WriteData(*address,(uint8_t*)&padding_struct,sizeof(padding_struct));
         *address = next_sector;
-        flash_->Erase4k(*address);
+
+        // Start new jump sector
+        *address = InitJumpSector(*address,current_jump_number_);
     }
 
     flash_->WriteData(*address, data, bytes);

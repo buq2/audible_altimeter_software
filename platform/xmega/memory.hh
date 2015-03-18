@@ -21,7 +21,9 @@ class MemoryController
 
     /// Returns pointer to memory address to which jump data can be written
     /// Beginning of the sector is initialized with JumpData_Header
-    uint32_t InitJumpSector();
+    uint32_t InitJumpSector_ForNewJump();
+
+    uint32_t InitJumpSector(const uint32_t sector, const uint32_t jump_number);
 
     /// Get last jump number
     uint32_t GetLastJumpNumber();
@@ -53,6 +55,7 @@ class MemoryController
     axlib::FlashS25Fl216K *GetFlash();
  private:
     axlib::FlashS25Fl216K *flash_;
+    uint32_t current_jump_number_;
 }; // class MemoryController
 
 #endif //ifndef AUDIBLEA_MEMORY_HH

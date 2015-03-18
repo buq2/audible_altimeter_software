@@ -90,7 +90,7 @@ void SensorController::SaveDataIfEnabled(const float time_since_update)
 
 void SensorController::StartNewJump()
 {
-    flash_current_memory_address_ = mem_control_->InitJumpSector();
+    flash_current_memory_address_ = mem_control_->InitJumpSector_ForNewJump();
 }
 
 void SensorController::SetMiscInformation(MiscInformation *misc)
