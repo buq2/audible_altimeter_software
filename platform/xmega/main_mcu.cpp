@@ -16,6 +16,7 @@
 #include "memory.hh"
 #include "sensor_controller.hh"
 #include <stdlib.h>
+#include "buzzer.hh"
 
 // If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -36,6 +37,7 @@ ClockMcp7940M *global_clock;
 MiscInformation global_misc_info;
 Config *global_config;
 FlashS25Fl216K *global_flash;
+Buzzer *global_buzzer;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -388,6 +390,9 @@ int main()
 
     global_config = &config;
     sensors.SetMiscInformation(&global_misc_info);
+
+    Buzzer buzzer(PORT_D, PIN_4);
+    global_buzzer = &buzzer;
 
     SetupHardware();
     GlobalInterruptEnable();

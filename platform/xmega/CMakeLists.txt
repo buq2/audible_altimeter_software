@@ -31,6 +31,7 @@ ADD_LIBRARY(Platform STATIC
     timer.hh timer.cpp
     memory.hh memory.cpp
     sensor_controller.hh sensor_controller.cpp
+    buzzer.hh buzzer.cpp
     main_mcu.cpp
     )
 
