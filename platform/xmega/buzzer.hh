@@ -11,6 +11,7 @@ class Buzzer
     void SetFrequency(const uint32_t hz);
     void StepSweep();
  private:
+ private:
     axlib::Port buzzer_port_;
     axlib::Pin buzzer_pin_;
 

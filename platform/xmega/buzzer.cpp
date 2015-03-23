@@ -16,20 +16,36 @@ Buzzer::Buzzer(const axlib::Port buzzer_port, const axlib::Pin buzzer_pin)
     SetFrequency(600);
 }
 
-void Buzzer::SetFrequency(const uint32_t hz)
+template<class T>
+void SetFrequency_int(T *tc, const uint16_t per, const TC_CLKSEL_t clocksel)
 {
-    TC1_t *tc = GetTimerCounter1(buzzer_port_);
-
-    const uint32_t prescale = 4;
-    const uint32_t per = ((F_CPU)/(prescale*hz)+1);
-
     tc->PER = per;
     tc->CTRLB |= 0x03; //Single slope mode
     tc->CTRLB |= 0b10000; //channel selection CCAEN
-    tc->CTRLA |= TC_CLKSEL_DIV4_gc; //clock selection
+    tc->CTRLA |= clocksel; //clock selection
     tc->CCABUF = per/2; //set the duty cycle as 50%
     while((tc->INTFLAGS & 0x01) == 0);
     tc->INTFLAGS = 0x00; //clear the interrupt flag
+}
+
+uint16_t GetPeriod(const uint32_t hz)
+{
+    const uint32_t prescale = 4;
+    return F_CPU/(prescale*hz)+1;
+}
+
+TC_CLKSEL_t GetClockSelection()
+{
+    return TC_CLKSEL_DIV4_gc;
+}
+
+void Buzzer::SetFrequency(const uint32_t hz)
+{
+    if ((int)buzzer_pin_ < (int)axlib::PIN_4) {
+        SetFrequency_int(GetTimerCounter0(buzzer_port_), GetPeriod(hz), GetClockSelection());
+    } else {
+        SetFrequency_int(GetTimerCounter1(buzzer_port_), GetPeriod(hz), GetClockSelection());
+    }
 }
 
 void Buzzer::StepSweep()
@@ -40,3 +56,4 @@ void Buzzer::StepSweep()
     }
     SetFrequency(sweep_current_freqz_);
 }
+
