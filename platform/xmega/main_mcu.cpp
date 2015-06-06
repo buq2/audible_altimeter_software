@@ -26,9 +26,9 @@ extern "C" void __cxa_pure_virtual() { while (1); }
 bool global_usb_connected = false;
 UiMain *global_ui_main;
 DisplayBuffer *global_display_buffer;
-Buttons global_buttons(PORT_C,PIN_4,
-                PORT_C,PIN_3,
-                PORT_C,PIN_2);
+Buttons global_buttons(PORT_D,PIN_2,
+                PORT_D,PIN_1,
+                PORT_D,PIN_0);
 DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
 MemoryController *global_mem_control;
@@ -77,7 +77,7 @@ void SetupClockInterrupts()
 }
 
 // Button press interrupt
-ISR(PORTC_INT0_vect)
+ISR(PORTD_INT0_vect)
 {
     global_buttons.CheckState();
 }
@@ -108,15 +108,15 @@ void ButtonStateChangedCallback()
 void SetupButtonInterrupts()
 {
     // Interrupts on both edges
-    PORTC.PIN2CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
-    PORTC.PIN3CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
-    PORTC.PIN4CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
+    PORTD.PIN0CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
+    PORTD.PIN1CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
+    PORTD.PIN2CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
 
-    PORTC.INT0MASK |= (uint8_t)PIN_2;
-    PORTC.INT0MASK |= (uint8_t)PIN_3;
-    PORTC.INT0MASK |= (uint8_t)PIN_4;
+    PORTD.INT0MASK |= (uint8_t)PIN_0;
+    PORTD.INT0MASK |= (uint8_t)PIN_1;
+    PORTD.INT0MASK |= (uint8_t)PIN_2;
 
-    PORTC.INTCTRL |= PORT_INT0LVL_LO_gc;
+    PORTD.INTCTRL |= PORT_INT0LVL_LO_gc;
 
     global_buttons.SetButtonStateChangedFunction(ButtonStateChangedCallback);
 }
@@ -356,9 +356,9 @@ int main()
     global_display_buffer = &buffer;
     DisplaySharp display(width,height,
                          PORT_C,  //spi
-                         PORT_A, 0b00001000, //cs
+                         PORT_A, PIN_3, //cs
                          PORT_NOT_USED, 0, //excomin
-                         PORT_A, 0b00000100 //display on
+                         PORT_A, PIN_2 //display on
                          );
     display.SetDisplayOn(true);
     global_display = &display;
