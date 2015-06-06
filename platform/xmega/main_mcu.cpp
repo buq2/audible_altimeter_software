@@ -17,6 +17,7 @@
 #include "sensor_controller.hh"
 #include <stdlib.h>
 #include "buzzer.hh"
+#include "axlib/sensors/digipot_mcp4017t.hh"
 
 // If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -29,6 +30,7 @@ DisplayBuffer *global_display_buffer;
 Buttons global_buttons(PORT_D,PIN_2,
                 PORT_D,PIN_1,
                 PORT_D,PIN_0);
+DigipotMcp4017T global_digipot(PORT_C);
 DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
 MemoryController *global_mem_control;
@@ -87,14 +89,18 @@ void ButtonStateChangedCallback()
     // Update buttons
     if (global_buttons.GetDown() == Buttons::BUTTON_LONG || global_buttons.GetDown() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_DOWN, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetUp() == Buttons::BUTTON_LONG || global_buttons.GetUp() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_UP, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetCenter() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_RIGHT, true);
+        global_buzzer->Beep();
     } else if (global_buttons.GetCenter() == Buttons::BUTTON_LONG) {
         global_ui_main->KeyPress(UiBase::KEY_LEFT, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetCenter() == Buttons::BUTTON_OFF &&
         global_buttons.GetUp() == Buttons::BUTTON_EXTRA_LONG &&
@@ -102,6 +108,7 @@ void ButtonStateChangedCallback()
     {
         // Zero altitude
         global_sensor_ctrl->ZeroAltitude();
+        global_buzzer->Beep(3);
     }
 }
 
@@ -273,6 +280,11 @@ void UpdateUsb()
     USB_USBTask();
 }
 
+void UpdateBuzzer()
+{
+    global_buzzer->Tick100ms();
+}
+
 // 100ms interrupt
 ISR(RTC_OVF_vect)
 {
@@ -284,6 +296,7 @@ ISR(RTC_OVF_vect)
     }
     UpdateDisplayAndUi();
     UpdateUsb();
+    UpdateBuzzer();
 }
 
 void SetupRtc()
@@ -380,6 +393,9 @@ int main()
     MemoryController mem_control(&flash);
     global_mem_control = &mem_control;
 
+    global_digipot.Setup();
+    global_digipot.SetValue(255);
+
     SensorController sensor_ctrl(&sensors, &mem_control, &clock);
     sensor_ctrl.Setup();
     global_sensor_ctrl = &sensor_ctrl;
@@ -391,7 +407,7 @@ int main()
     global_config = &config;
     sensors.SetMiscInformation(&global_misc_info);
 
-    Buzzer buzzer(PORT_D, PIN_4);
+    Buzzer buzzer(PORT_D, PIN_4, &global_digipot);
     global_buzzer = &buzzer;
 
     SetupHardware();
