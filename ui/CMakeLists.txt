@@ -18,5 +18,7 @@ ADD_LIBRARY(Ui STATIC
     ui_config_item_altitude_alarm.cpp ui_config_item_altitude_alarm.hh
     ui_config_item_int.cpp ui_config_item_int.hh
     ui_config_item_bool.cpp ui_config_item_bool.hh
+
+    ui_config_item_beep_option.hh ui_config_item_beep_option.cpp
     )
 

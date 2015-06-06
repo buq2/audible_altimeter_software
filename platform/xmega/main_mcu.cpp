@@ -159,6 +159,14 @@ void PrintSerialHelp()
                           "erase<CR>\n\r"
                           "full_erase<CR>\n\r"
                           "print_data<CR>#<CR>\n\r"
+                          "use_fake_data<CR>#<CR> (bool)\n\r"
+                          "set_altitude<CR>#<CR> (fake altitude in [m]\n\r"
+                          "set_rate<CR>#<CR> (fake altitude change rate in [m/s])\n\r"
+                          "demo_off\n\r"
+                          "demo_climb\n\r"
+                          "demo_freefall\n\r"
+                          "demo_canopy\n\r"
+                          "demo_ground\n\r"
                           );
 }
 
@@ -198,6 +206,9 @@ typedef enum Command_t
     COMMAND_NONE = 0,
     COMMAND_GET_JUMP = 1,
     COMMAND_PRINT_DATA = 2,
+    COMMAND_SET_USE_FAKE = 3,
+    COMMAND_SET_ALTITUDE = 4,
+    COMMAND_SET_RATE = 5
 } Command;
 
 void HandleSerialInput()
@@ -229,6 +240,22 @@ void HandleSerialInput()
                 command = COMMAND_GET_JUMP;
             } else if (0 == strcmp(input_buffer, "print_data")) {
                 command = COMMAND_PRINT_DATA;
+            } else if (0 == strcmp(input_buffer, "use_fake_data")) {
+                command = COMMAND_SET_USE_FAKE;
+            } else if (0 == strcmp(input_buffer, "set_altitude")) {
+                command = COMMAND_SET_ALTITUDE;
+            } else if (0 == strcmp(input_buffer, "set_rate")) {
+                command = COMMAND_SET_RATE;
+            } else if (0 == strcmp(input_buffer, "demo_off")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_OFF);
+            } else if (0 == strcmp(input_buffer, "demo_climb")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_CLIMB);
+            } else if (0 == strcmp(input_buffer, "demo_freefall")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_FREEFALL);
+            } else if (0 == strcmp(input_buffer, "demo_canopy")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_CANOPY);
+            } else if (0 == strcmp(input_buffer, "demo_ground")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_GROUND);
             } else if (0 == strcmp(input_buffer, "altitude")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
             } else if (0 == strcmp(input_buffer, "erase")) {
@@ -260,6 +287,17 @@ void HandleSerialInput()
                     USB_USBTask();
                 }
                 command = COMMAND_NONE; //Back to normal mode
+            } else if (command == COMMAND_SET_USE_FAKE) {
+                global_sensor_ctrl->SetUseFakeData(param1>0);
+                command = COMMAND_NONE;
+            } else if (command == COMMAND_SET_ALTITUDE) {
+                const float p = atof(input_buffer);
+                global_sensor_ctrl->SetFakeAltitude(p);
+                command = COMMAND_NONE;
+            } else if (command == COMMAND_SET_RATE) {
+                const float p = atof(input_buffer);
+                global_sensor_ctrl->SetFakeAltitudeChange(p);
+                command = COMMAND_NONE;
             }
         }
         buffer_idx = 0;

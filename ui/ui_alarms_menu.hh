@@ -3,6 +3,7 @@
 
 #include "ui_menu.hh"
 #include "ui_config_item_altitude_alarm.hh"
+#include "ui_config_item_beep_option.hh"
 
 class UiAlarmsMenu
         :
@@ -14,6 +15,7 @@ class UiAlarmsMenu
  private:
     UiConfigItemAltitudeAlarm free_fly_[3];
     UiConfigItemAltitudeAlarm canopy_[3];
+    UiConfigItemBeepOption options_[3];
 }; //class UiAlarmsMenu
 
 #endif //ifndef UI_ALARMS_MENU

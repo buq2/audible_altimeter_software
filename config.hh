@@ -58,17 +58,50 @@ struct Config
             AlarmAmplitudeNumberOfEnums = 3
         } AlarmAmplitude;
 
+        typedef enum
+        {
+            AlarmTypeFreefallBeeps = 0,
+            AlarmTypeUntilOpen = 1,
+            AlarmTypeLastChange = 2,
+            AlarmTypeCanopyAltitude = 3,
+            AlarmTypeNumberOfEnums = 4,
+        } AlarmType;
+
         AltitudeAlarm()
             :
-              altitude(4000),
+              altitude(2000),
               amplitude(AlarmAmplitudeMedium),
-              enabled(false)
+              enabled(false),
+              type(AlarmTypeFreefallBeeps)
         {
         }
 
         int16_t altitude;
         AlarmAmplitude amplitude;
         bool enabled;
+        AlarmType type;
+    };
+
+    struct Beeper
+    {
+        struct BeepOption
+        {
+            BeepOption()
+                :
+                  amplitude(AltitudeAlarm::AlarmAmplitudeMedium),
+                  enabled(true)
+            {
+            }
+
+            AltitudeAlarm::AlarmAmplitude amplitude;
+            bool enabled;
+        };
+
+        AltitudeAlarm alarms_freefall[3];
+        AltitudeAlarm alarms_canopy[3];
+        BeepOption at_freefall;
+        BeepOption climb_altitude;
+        BeepOption at_ground;
     };
 
     struct Time
@@ -162,8 +195,7 @@ struct Config
     SpeedDisplayUnitMode speed_unit_mode;
     TemperatureMode temperature_mode;
     axlib::DisplayBuffer::Rotation display_orientation;
-    AltitudeAlarm alarms_freefall[3];
-    AltitudeAlarm alarms_canopy[3];
+    Beeper beeper;
     FontSize menu_font_size;
     UiAltimeter::AltimeterUiMode default_altimeter_ui_mode_;
     DataSaveMode log_save_mode;
@@ -198,6 +230,9 @@ template<>
 const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en);
 
 template<>
+const char *ToString(const Config::AltitudeAlarm::AlarmType en);
+
+template<>
 const char *ToString(const UiAltimeter::AltimeterUiMode en);
 
 template<>
@@ -222,7 +257,10 @@ template<>
 axlib::DisplayBuffer::Rotation NextEnum(const axlib::DisplayBuffer::Rotation en);
 
 template<>
-Config::AltitudeAlarm NextEnum(const Config::AltitudeAlarm en);
+Config::AltitudeAlarm::AlarmAmplitude NextEnum(const Config::AltitudeAlarm::AlarmAmplitude en);
+
+template<>
+Config::AltitudeAlarm::AlarmType NextEnum(const Config::AltitudeAlarm::AlarmType en);
 
 template<>
 Config::FontSize NextEnum(const Config::FontSize en);
