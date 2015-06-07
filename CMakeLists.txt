@@ -27,6 +27,7 @@ ENDIF()
 ADD_EXECUTABLE(audible
     config.cpp config.hh
     sensors.cpp sensors.hh
+    altitude_manager.cpp altitude_manager.hh
     jump_data.hh
     )
     

@@ -175,7 +175,10 @@ struct Config
           temperature_mode(TemperatureModeCelcius),
           display_orientation(axlib::DisplayBuffer::ROTATION_NONE),
           menu_font_size(FontSizeMedium),
-          default_altimeter_ui_mode_(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
+          default_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
+          freefall_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_FREE_FALL),
+          canopy_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
+          climb_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
           log_save_mode(DataSaveOff)
     {
     }
@@ -197,7 +200,10 @@ struct Config
     axlib::DisplayBuffer::Rotation display_orientation;
     Beeper beeper;
     FontSize menu_font_size;
-    UiAltimeter::AltimeterUiMode default_altimeter_ui_mode_;
+    UiAltimeter::AltimeterUiMode default_altimeter_ui_mode;
+    UiAltimeter::AltimeterUiMode freefall_altimeter_ui_mode;
+    UiAltimeter::AltimeterUiMode canopy_altimeter_ui_mode;
+    UiAltimeter::AltimeterUiMode climb_altimeter_ui_mode;
     DataSaveMode log_save_mode;
 }; //struct Config
 

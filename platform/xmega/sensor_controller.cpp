@@ -236,6 +236,8 @@ void SensorController::RunDemo(const SensorController::DemoType demo)
         SetFakeAltitude(0);
         SetUseFakeData(true);
         break;
+    case DEMO_OFF:
+        SetUseFakeData(false);
     default:
         break;
     }

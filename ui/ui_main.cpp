@@ -1,8 +1,8 @@
 #include "ui_main.hh"
 
-UiMain::UiMain(Config *config, Sensors *sensors, MiscInformation *misc)
+UiMain::UiMain(Config *config, Sensors *sensors, MiscInformation *misc, AltitudeManager *alt_manager)
     :
-      altimeter_(sensors),
+      altimeter_(sensors,alt_manager),
       menu_(config, misc),
       ui_selection_(UI_SELECTION_ALTIMETER),
       config_save_(0)

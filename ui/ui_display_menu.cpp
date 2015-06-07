@@ -8,7 +8,10 @@ UiDisplayMenu::UiDisplayMenu(UiMenu *parent)
       temperature_(this, "Temp unit"),
       orientation_(this, "Disp orient"),
       font_size_(this, "Font size"),
-      altimeter_default_mode_(this, "Alt mode")
+      altimeter_default_mode_(this, "Def mode"),
+      altimeter_freefall_mode_(this, "Freef mode"),
+      altimeter_canopy_mode_(this,"Canopy mode"),
+      altimeter_climb_mode_(this,"Plane mode")
 {
     Config *conf = GetConfig();
     altitude_.SetEnumPointer(&conf->altitude_unit_mode);
@@ -16,7 +19,10 @@ UiDisplayMenu::UiDisplayMenu(UiMenu *parent)
     temperature_.SetEnumPointer(&conf->temperature_mode);
     orientation_.SetEnumPointer(&conf->display_orientation);
     font_size_.SetEnumPointer(&conf->menu_font_size);
-    altimeter_default_mode_.SetEnumPointer(&conf->default_altimeter_ui_mode_);
+    altimeter_default_mode_.SetEnumPointer(&conf->default_altimeter_ui_mode);
+    altimeter_freefall_mode_.SetEnumPointer(&conf->freefall_altimeter_ui_mode);
+    altimeter_canopy_mode_.SetEnumPointer(&conf->canopy_altimeter_ui_mode);
+    altimeter_climb_mode_.SetEnumPointer(&conf->climb_altimeter_ui_mode);
 }
 
 const char *UiDisplayMenu::GetLabel()

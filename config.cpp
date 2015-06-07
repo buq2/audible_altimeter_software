@@ -231,7 +231,7 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface2;
+    return 0xbadface3;
 }
 
 

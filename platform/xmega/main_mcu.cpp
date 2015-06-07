@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "buzzer.hh"
 #include "axlib/sensors/digipot_mcp4017t.hh"
+#include "altitude_manager.hh"
 
 // If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -40,6 +41,7 @@ MiscInformation global_misc_info;
 Config *global_config;
 FlashS25Fl216K *global_flash;
 Buzzer *global_buzzer;
+AltitudeManager *global_alt_manager;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -331,6 +333,7 @@ ISR(RTC_OVF_vect)
     if (update_200ms) {
         // Update sensors once 200ms
         UpdateSensors(0.2);
+        global_alt_manager->Tick200ms();
     }
     UpdateDisplayAndUi();
     UpdateUsb();
@@ -375,7 +378,7 @@ void SetupHardware(void)
 void UpdateFromConfig(Config *conf)
 {
     global_display_buffer->SetRotation(conf->display_orientation);
-    global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+    global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode);
 }
 
 void UpdateFromConfigAfterSave(Config *conf)
@@ -416,7 +419,10 @@ int main()
     Sensors sensors;
     global_sensors = &sensors;
 
-    UiMain ui(&config, &sensors, &global_misc_info);
+    AltitudeManager alt_manager(&sensors,&config);
+    global_alt_manager = &alt_manager;
+
+    UiMain ui(&config, &sensors, &global_misc_info, &alt_manager);
     ui.SetConfigChangedFunction(UpdateFromConfig);
     ui.SetConfigSaveFunction(SaveConfig);
     global_ui_main = &ui;
