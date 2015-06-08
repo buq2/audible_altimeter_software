@@ -158,6 +158,34 @@ const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en)
 }
 
 template<>
+const char *ToString(const Config::AltitudeAlarm::AlarmType en)
+{
+    switch(en) {
+    case Config::AltitudeAlarm::AlarmTypeCanopyAltitude:
+    {
+        static const char str[] = "Canopy";
+        return str;
+    }
+    case Config::AltitudeAlarm::AlarmTypeFreefallBeeps:
+    {
+        static const char str[] = "Beeps";
+        return str;
+    }
+    case Config::AltitudeAlarm::AlarmTypeUntilOpen:
+    {
+        static const char str[] = "Open";
+        return str;
+    }
+    default:
+    case Config::AltitudeAlarm::AlarmTypeLastChange:
+    {
+        static const char str[] = "LastChng";
+        return str;
+    }
+    }
+}
+
+template<>
 const char *ToString(const Config::DataSaveMode en)
 {
     switch(en) {
@@ -192,6 +220,7 @@ ENUM_MACRO(Config::TemperatureMode, Config::TemperatureModeNumberOfEnums);
 ENUM_MACRO(axlib::DisplayBuffer::Rotation, axlib::DisplayBuffer::ROTATION_NUM_ENUMS);
 ENUM_MACRO(Config::FontSize, Config::FontSizeNumberOfEnums);
 ENUM_MACRO(Config::AltitudeAlarm::AlarmAmplitude, Config::AltitudeAlarm::AlarmAmplitudeNumberOfEnums);
+ENUM_MACRO(Config::AltitudeAlarm::AlarmType, Config::AltitudeAlarm::AlarmTypeNumberOfEnums);
 ENUM_MACRO(UiAltimeter::AltimeterUiMode, UiAltimeter::ALTIMETER_UI_MODE_NUM_ENUMS);
 ENUM_MACRO(Config::DataSaveMode, Config::DataSaveNumberOfEnums);
 
@@ -202,7 +231,7 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface1;
+    return 0xbadface3;
 }
 
 

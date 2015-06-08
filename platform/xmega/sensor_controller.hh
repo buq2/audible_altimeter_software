@@ -26,6 +26,21 @@ class SensorController
     void FillJumpDataBuffer(const float time_since_update, uint8_t **buffer, uint8_t *num_bytes);
     void QuickErase();
     void FullErase();
+
+    void SetUseFakeData(const bool use_fake);
+    void SetFakeAltitude(const float altitude_m);
+    void SetFakeAltitudeChange(const float altitude_change_m_per_s);
+
+    typedef enum DemoType_t {
+        DEMO_CLIMB,
+        DEMO_FREEFALL,
+        DEMO_CANOPY,
+        DEMO_GROUND,
+        DEMO_OFF
+    } DemoType;
+    void RunDemo(const DemoType demo);
+ private:
+    void UpdateDemo();
  private:
     bool save_data_;
     Sensors *sensors_;
@@ -37,6 +52,18 @@ class SensorController
 
     uint32_t flash_current_memory_address_;
     uint8_t jump_data_buffer_[64];
+
+    // If true, data is not read from the sensors, but from external
+    // input (serial console?)
+    bool use_fake_data_;
+
+    // Fake altitude which is modified by altitude change speed
+    float fake_altitude_;
+
+    // Fake altitude change
+    float fake_altitude_change_;
+
+    DemoType demo_;
 }; //class SensorController
 
 #endif //ifndef AUDIBLEA_SENSOR_CONTOLLER_HH

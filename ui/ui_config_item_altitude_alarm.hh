@@ -19,6 +19,7 @@ class UiConfigItemAltitudeAlarm
  private:
     UiConfigItemInt<int16_t> altitude_;
     UiConfigItemEnum<Config::AltitudeAlarm::AlarmAmplitude> alarm_amplitude_;
+    UiConfigItemEnum<Config::AltitudeAlarm::AlarmType> alarm_type_;
     UiConfigItemBool enabled_;
     const char *label_;
     Config::AltitudeAlarm *alarm_;

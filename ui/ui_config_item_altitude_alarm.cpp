@@ -3,8 +3,9 @@
 UiConfigItemAltitudeAlarm::UiConfigItemAltitudeAlarm(UiMenu *parent, const char *label)
     :
       UiMenu(parent),
-      altitude_(this, "Alarm altitude",300, 7000),
-      alarm_amplitude_(this, "Alarm volume"),
+      altitude_(this, "Altitude",300, 7000),
+      alarm_amplitude_(this, "Volume"),
+      alarm_type_(this, "Type"),
       enabled_(this, "Enabled"),
       label_(label)
 {

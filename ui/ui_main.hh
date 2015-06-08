@@ -5,13 +5,15 @@
 #include "ui_altimeter.hh"
 #include "ui_main_menu.hh"
 #include "sensors.hh"
+#include "altitude_manager.hh"
 
 class UiMain
         :
         public UiBase
 {
  public:
-    UiMain(Config *config, Sensors *sensors, MiscInformation *misc);
+    UiMain(Config *config, Sensors *sensors, MiscInformation *misc,
+           AltitudeManager *alt_manager);
     void Render(DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();

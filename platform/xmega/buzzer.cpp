@@ -1,19 +1,21 @@
 #include "buzzer.hh"
 
-Buzzer::Buzzer(const axlib::Port buzzer_port, const axlib::Pin buzzer_pin)
+Buzzer::Buzzer(const axlib::Port buzzer_port, const axlib::Pin buzzer_pin, axlib::DigipotMcp4017T *digipot)
     :
       buzzer_port_(buzzer_port),
       buzzer_pin_(buzzer_pin),
       sweep_freqz_min_(300),
       sweep_freqz_max_(3200),
       sweep_freqz_step_(200),
-      sweep_current_freqz_(0)
+      current_freqz_(0),
+      volume_control_(digipot),
+      beep_on_(false),
+      sweep_on_(false),
+      num_beeps_(0)
 {
     // Set pin as output
     PORT_t *port = GetPort(buzzer_port);
     port->DIRSET = (int)buzzer_pin;
-
-    SetFrequency(600);
 }
 
 template<class T>
@@ -41,19 +43,46 @@ TC_CLKSEL_t GetClockSelection()
 
 void Buzzer::SetFrequency(const uint32_t hz)
 {
+    if (current_freqz_ == hz) {
+        return;
+    }
     if ((int)buzzer_pin_ < (int)axlib::PIN_4) {
         SetFrequency_int(GetTimerCounter0(buzzer_port_), GetPeriod(hz), GetClockSelection());
     } else {
         SetFrequency_int(GetTimerCounter1(buzzer_port_), GetPeriod(hz), GetClockSelection());
     }
+    current_freqz_ = hz;
 }
 
 void Buzzer::StepSweep()
 {
-    sweep_current_freqz_ = sweep_current_freqz_ - sweep_freqz_step_;
-    if (sweep_current_freqz_ <= sweep_freqz_min_) {
-        sweep_current_freqz_ = sweep_freqz_max_;
+    current_freqz_ = current_freqz_ - sweep_freqz_step_;
+    if (current_freqz_ <= sweep_freqz_min_) {
+        current_freqz_ = sweep_freqz_max_;
     }
-    SetFrequency(sweep_current_freqz_);
+    SetFrequency(current_freqz_);
+}
+
+void Buzzer::Tick100ms()
+{
+    if (num_beeps_ == 0 && !sweep_on_) {
+        SetFrequency(0);
+    } else if (num_beeps_ > 0) {
+        --num_beeps_;
+        if (beep_on_) {
+            SetFrequency(600);
+        } else {
+            SetFrequency(0);
+        }
+        beep_on_ = !beep_on_;
+    } else if (sweep_on_) {
+        StepSweep();
+    }
+}
+
+void Buzzer::Beep(const uint8_t num_beeps)
+{
+    beep_on_ = true;
+    num_beeps_ += num_beeps;
 }
 

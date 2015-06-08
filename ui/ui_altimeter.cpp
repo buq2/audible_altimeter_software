@@ -15,10 +15,11 @@ int16_t UiAltimeter::MIN_UI_TEMPERATURE = -999;
 
 using namespace axlib;
 
-UiAltimeter::UiAltimeter(Sensors *sensors)
+UiAltimeter::UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager)
     :
       sensors_(sensors),
-      mode_(ALTIMETER_UI_MODE_COMPLEX)
+      mode_(ALTIMETER_UI_MODE_COMPLEX),
+      alt_manager_(alt_manager)
 {
 
 }
@@ -56,10 +57,10 @@ void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
 {
     uint8_t y = 0;
     RenderAltitude(buffer, &y);
-    RenderAltitudeLong(buffer, &y);
+    //RenderAltitudeLong(buffer, &y);
     RenderAltitudeChangeLong(buffer, &y);
     RenderTemperatureLong(buffer, &y);
-    RenderUpdateRateAndMemoryUsage(buffer, &y);
+    RenderMisc(buffer, &y);
 }
 
 void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
@@ -158,11 +159,12 @@ void UiAltimeter::RenderTemperatureLong(DisplayBuffer *buffer, uint8_t *row)
     *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact, scale_y, str);
 }
 
-void UiAltimeter::RenderUpdateRateAndMemoryUsage(DisplayBuffer *buffer, uint8_t *row)
+void UiAltimeter::RenderMisc(DisplayBuffer *buffer, uint8_t *row)
 {
     // Render at the same row
     uint8_t row_cur = *row;
-    RenderUpdateRate(buffer,row);
+    //RenderUpdateRate(buffer,row);
+    RenderAltitudeMode(buffer,row);
     *row = row_cur;
     RenderMemoryUsage(buffer, row);
 }
@@ -174,6 +176,38 @@ void UiAltimeter::RenderUpdateRate(DisplayBuffer *buffer, uint8_t *row)
     float fps = sensors_->GetUpdateRate();
     fps = MAX(0,MIN(99, fps));
     sprintf(str,"%0.1f fps",fps);
+
+    float xpos = buffer->GetWidth()-3;
+    const uint8_t scale_x = 1;
+    const uint8_t scale_y = 1;
+    buffer->RenderText_AlignRight(FontStyle_vcr_tiny, xpos,
+                       *row, scale_x, scale_y, str);
+
+    *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_vcr_tiny, scale_y, str);
+}
+
+void UiAltimeter::RenderAltitudeMode(DisplayBuffer *buffer, uint8_t *row)
+{
+    static const char canopy[] = "Canopy";
+    static const char free[] = "Freefall";
+    static const char plane[] = "Plane";
+    static const char ground[] = "Ground";
+    const char *str;
+    switch(alt_manager_->GetCurrentModeSimple()) {
+    case AltitudeManager::AltitudeModeSimpleCanopy:
+        str = canopy;
+        break;
+    case AltitudeManager::AltitudeModeSimpleFreefall:
+        str = free;
+        break;
+    case AltitudeManager::AltitudeModeSimplePlane:
+        str = plane;
+        break;
+    case AltitudeManager::AltitudeModeSimpleGround:
+    default:
+        str = ground;
+        break;
+    }
 
     float xpos = buffer->GetWidth()-3;
     const uint8_t scale_x = 1;

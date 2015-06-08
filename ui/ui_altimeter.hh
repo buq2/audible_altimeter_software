@@ -4,13 +4,14 @@
 #include "ui_base.hh"
 #include "sensors.hh"
 #include "axlib/displays/display_buffer.hh"
+#include "altitude_manager.hh"
 
 class UiAltimeter
         :
         public UiBase
 {
  public:
-    UiAltimeter(Sensors *sensors);
+    UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager);
     void Render(axlib::DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
@@ -39,12 +40,14 @@ class UiAltimeter
     void RenderAltitudeChangeLong(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderTemperatureLong(axlib::DisplayBuffer *buffer, uint8_t *row);
 
-    void RenderUpdateRateAndMemoryUsage(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderMisc(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderUpdateRate(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderAltitudeMode(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderMemoryUsage(axlib::DisplayBuffer *buffer, uint8_t *row);
  private:
     Sensors *sensors_;
     AltimeterUiMode mode_;
+    AltitudeManager *alt_manager_;
 };
 
 #endif //ifndef UI_ALTIMETER_HH

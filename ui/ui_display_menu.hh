@@ -18,6 +18,9 @@ class UiDisplayMenu
     UiConfigItemEnum<axlib::DisplayBuffer::Rotation> orientation_;
     UiConfigItemEnum<Config::FontSize> font_size_;
     UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_default_mode_;
+    UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_freefall_mode_;
+    UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_canopy_mode_;
+    UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_climb_mode_;
 }; //class UiDisplayMenu
 
 #endif //ifndef UI_DISPLAY_MENU

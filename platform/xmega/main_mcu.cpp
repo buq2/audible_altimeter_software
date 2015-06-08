@@ -17,6 +17,8 @@
 #include "sensor_controller.hh"
 #include <stdlib.h>
 #include "buzzer.hh"
+#include "axlib/sensors/digipot_mcp4017t.hh"
+#include "altitude_manager.hh"
 
 // If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
@@ -29,6 +31,7 @@ DisplayBuffer *global_display_buffer;
 Buttons global_buttons(PORT_D,PIN_2,
                 PORT_D,PIN_1,
                 PORT_D,PIN_0);
+DigipotMcp4017T global_digipot(PORT_C);
 DisplaySharp *global_display;
 SensorController *global_sensor_ctrl;
 MemoryController *global_mem_control;
@@ -38,6 +41,7 @@ MiscInformation global_misc_info;
 Config *global_config;
 FlashS25Fl216K *global_flash;
 Buzzer *global_buzzer;
+AltitudeManager *global_alt_manager;
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -77,7 +81,7 @@ void SetupClockInterrupts()
 }
 
 // Button press interrupt
-ISR(PORTC_INT0_vect)
+ISR(PORTD_INT0_vect)
 {
     global_buttons.CheckState();
 }
@@ -87,14 +91,18 @@ void ButtonStateChangedCallback()
     // Update buttons
     if (global_buttons.GetDown() == Buttons::BUTTON_LONG || global_buttons.GetDown() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_DOWN, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetUp() == Buttons::BUTTON_LONG || global_buttons.GetUp() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_UP, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetCenter() == Buttons::BUTTON_SHORT) {
         global_ui_main->KeyPress(UiBase::KEY_RIGHT, true);
+        global_buzzer->Beep();
     } else if (global_buttons.GetCenter() == Buttons::BUTTON_LONG) {
         global_ui_main->KeyPress(UiBase::KEY_LEFT, true);
+        global_buzzer->Beep();
     }
     if (global_buttons.GetCenter() == Buttons::BUTTON_OFF &&
         global_buttons.GetUp() == Buttons::BUTTON_EXTRA_LONG &&
@@ -102,15 +110,16 @@ void ButtonStateChangedCallback()
     {
         // Zero altitude
         global_sensor_ctrl->ZeroAltitude();
+        global_buzzer->Beep(3);
     }
 }
 
 void SetupButtonInterrupts()
 {
     // Interrupts on both edges
+    PORTD.PIN0CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
+    PORTD.PIN1CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
     PORTD.PIN2CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
-    PORTD.PIN3CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
-    PORTD.PIN4CTRL |= PORT_OPC_PULLUP_gc | PORT_ISC_BOTHEDGES_gc;
 
     PORTD.INT0MASK |= (uint8_t)PIN_0;
     PORTD.INT0MASK |= (uint8_t)PIN_1;
@@ -152,6 +161,14 @@ void PrintSerialHelp()
                           "erase<CR>\n\r"
                           "full_erase<CR>\n\r"
                           "print_data<CR>#<CR>\n\r"
+                          "use_fake_data<CR>#<CR> (bool)\n\r"
+                          "set_altitude<CR>#<CR> (fake altitude in [m]\n\r"
+                          "set_rate<CR>#<CR> (fake altitude change rate in [m/s])\n\r"
+                          "demo_off\n\r"
+                          "demo_climb\n\r"
+                          "demo_freefall\n\r"
+                          "demo_canopy\n\r"
+                          "demo_ground\n\r"
                           );
 }
 
@@ -191,6 +208,9 @@ typedef enum Command_t
     COMMAND_NONE = 0,
     COMMAND_GET_JUMP = 1,
     COMMAND_PRINT_DATA = 2,
+    COMMAND_SET_USE_FAKE = 3,
+    COMMAND_SET_ALTITUDE = 4,
+    COMMAND_SET_RATE = 5
 } Command;
 
 void HandleSerialInput()
@@ -222,6 +242,22 @@ void HandleSerialInput()
                 command = COMMAND_GET_JUMP;
             } else if (0 == strcmp(input_buffer, "print_data")) {
                 command = COMMAND_PRINT_DATA;
+            } else if (0 == strcmp(input_buffer, "use_fake_data")) {
+                command = COMMAND_SET_USE_FAKE;
+            } else if (0 == strcmp(input_buffer, "set_altitude")) {
+                command = COMMAND_SET_ALTITUDE;
+            } else if (0 == strcmp(input_buffer, "set_rate")) {
+                command = COMMAND_SET_RATE;
+            } else if (0 == strcmp(input_buffer, "demo_off")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_OFF);
+            } else if (0 == strcmp(input_buffer, "demo_climb")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_CLIMB);
+            } else if (0 == strcmp(input_buffer, "demo_freefall")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_FREEFALL);
+            } else if (0 == strcmp(input_buffer, "demo_canopy")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_CANOPY);
+            } else if (0 == strcmp(input_buffer, "demo_ground")) {
+                global_sensor_ctrl->RunDemo(SensorController::DEMO_GROUND);
             } else if (0 == strcmp(input_buffer, "altitude")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, global_sensors->GetAltitudeMetersString());
             } else if (0 == strcmp(input_buffer, "erase")) {
@@ -253,6 +289,17 @@ void HandleSerialInput()
                     USB_USBTask();
                 }
                 command = COMMAND_NONE; //Back to normal mode
+            } else if (command == COMMAND_SET_USE_FAKE) {
+                global_sensor_ctrl->SetUseFakeData(param1>0);
+                command = COMMAND_NONE;
+            } else if (command == COMMAND_SET_ALTITUDE) {
+                const float p = atof(input_buffer);
+                global_sensor_ctrl->SetFakeAltitude(p);
+                command = COMMAND_NONE;
+            } else if (command == COMMAND_SET_RATE) {
+                const float p = atof(input_buffer);
+                global_sensor_ctrl->SetFakeAltitudeChange(p);
+                command = COMMAND_NONE;
             }
         }
         buffer_idx = 0;
@@ -273,6 +320,11 @@ void UpdateUsb()
     USB_USBTask();
 }
 
+void UpdateBuzzer()
+{
+    global_buzzer->Tick100ms();
+}
+
 // 100ms interrupt
 ISR(RTC_OVF_vect)
 {
@@ -281,9 +333,11 @@ ISR(RTC_OVF_vect)
     if (update_200ms) {
         // Update sensors once 200ms
         UpdateSensors(0.2);
+        global_alt_manager->Tick200ms();
     }
     UpdateDisplayAndUi();
     UpdateUsb();
+    UpdateBuzzer();
 }
 
 void SetupRtc()
@@ -324,7 +378,7 @@ void SetupHardware(void)
 void UpdateFromConfig(Config *conf)
 {
     global_display_buffer->SetRotation(conf->display_orientation);
-    global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+    global_ui_main->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode);
 }
 
 void UpdateFromConfigAfterSave(Config *conf)
@@ -356,16 +410,19 @@ int main()
     global_display_buffer = &buffer;
     DisplaySharp display(width,height,
                          PORT_C,  //spi
-                         PORT_A, (int)PIN_3, //cs
+                         PORT_A, PIN_3, //cs
                          PORT_NOT_USED, 0, //excomin
-                         PORT_A, (int)PIN_2 //display on
+                         PORT_A, PIN_2 //display on
                          );
     display.SetDisplayOn(true);
     global_display = &display;
     Sensors sensors;
     global_sensors = &sensors;
 
-    UiMain ui(&config, &sensors, &global_misc_info);
+    AltitudeManager alt_manager(&sensors,&config);
+    global_alt_manager = &alt_manager;
+
+    UiMain ui(&config, &sensors, &global_misc_info, &alt_manager);
     ui.SetConfigChangedFunction(UpdateFromConfig);
     ui.SetConfigSaveFunction(SaveConfig);
     global_ui_main = &ui;
@@ -380,6 +437,9 @@ int main()
     MemoryController mem_control(&flash);
     global_mem_control = &mem_control;
 
+    global_digipot.Setup();
+    global_digipot.SetValue(255);
+
     SensorController sensor_ctrl(&sensors, &mem_control, &clock);
     sensor_ctrl.Setup();
     global_sensor_ctrl = &sensor_ctrl;
@@ -391,7 +451,7 @@ int main()
     global_config = &config;
     sensors.SetMiscInformation(&global_misc_info);
 
-    Buzzer buzzer(PORT_D, PIN_4);
+    Buzzer buzzer(PORT_D, PIN_4, &global_digipot);
     global_buzzer = &buzzer;
 
     SetupHardware();
