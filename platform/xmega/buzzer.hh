@@ -11,7 +11,7 @@ class Buzzer
            const axlib::Pin buzzer_pin,
            axlib::DigipotMcp4017T *digipot);
     void SetFrequency(const uint32_t hz);
-    void Tick100ms();
+    void Tick10ms();
     void Beep(const uint8_t num_beeps = 1);
  private:
     void StepSweep();

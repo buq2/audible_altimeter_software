@@ -42,6 +42,19 @@ Config *global_config;
 FlashS25Fl216K *global_flash;
 Buzzer *global_buzzer;
 AltitudeManager *global_alt_manager;
+bool global_init_function_run_after_reset = false;
+
+void InitFunctionAfterReset()
+{
+    static uint8_t times_run = 0;
+    ++times_run;
+    if (times_run == 3) {
+        // Altitude sensors are not valid right after reset.
+        // Zero the altitude few times before satisfied...
+        global_init_function_run_after_reset = true;
+    }
+    global_sensor_ctrl->ZeroAltitude();
+}
 
 void EVENT_USB_Device_Connect(void)
 {
@@ -71,6 +84,11 @@ void EVENT_USB_Device_ControlRequest(void)
 // 1HZ interrupt from the clock
 ISR(PORTB_INT0_vect)
 {
+    if (!global_init_function_run_after_reset) {
+        // Init function is run ~1s after reset
+        // Before this the altitude module does not have valid altitude
+        InitFunctionAfterReset();
+    }
 }
 
 void SetupClockInterrupts()
@@ -320,11 +338,6 @@ void UpdateUsb()
     USB_USBTask();
 }
 
-void UpdateBuzzer()
-{
-    global_buzzer->Tick100ms();
-}
-
 // 100ms interrupt
 ISR(RTC_OVF_vect)
 {
@@ -337,7 +350,6 @@ ISR(RTC_OVF_vect)
     }
     UpdateDisplayAndUi();
     UpdateUsb();
-    UpdateBuzzer();
 }
 
 void SetupRtc()
