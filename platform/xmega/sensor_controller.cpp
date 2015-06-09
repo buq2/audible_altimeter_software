@@ -68,18 +68,18 @@ void SensorController::UpdateDemo()
     }
 }
 
-void SensorController::DataUpdate(const float time_since_update)
+void SensorController::DataUpdate(const float time_since_update_s)
 {
     if (!use_fake_data_) {
         // Update altitude
         float altitude_m = 0;
         if (0 == alt1_.GetAltitudeMeters(&altitude_m)) {
-            sensors_->SetAltitudeMeters(altitude_m, time_since_update);
+            sensors_->SetAltitudeMeters(altitude_m, time_since_update_s);
         }
     } else {
         // Use only fake data
-        fake_altitude_ = fake_altitude_ + time_since_update*fake_altitude_change_;
-        sensors_->SetAltitudeMeters(fake_altitude_, time_since_update);
+        fake_altitude_ = fake_altitude_ + time_since_update_s*fake_altitude_change_;
+        sensors_->SetAltitudeMeters(fake_altitude_, time_since_update_s);
         if (demo_ != DEMO_OFF) {
             UpdateDemo();
         }
@@ -89,9 +89,9 @@ void SensorController::DataUpdate(const float time_since_update)
         sensors_->SetTemperatureC(temperature_c);
     }
 
-    sensors_->SetUpdateRate(1.0f/time_since_update);
+    sensors_->SetUpdateRate(1.0f/time_since_update_s);
 
-    SaveDataIfEnabled(time_since_update);
+    SaveDataIfEnabled(time_since_update_s);
 }
 
 void SensorController::ZeroAltitude()
@@ -225,7 +225,7 @@ void SensorController::RunDemo(const SensorController::DemoType demo)
         SetUseFakeData(true);
         break;
     case DEMO_FREEFALL:
-        SetFakeAltitude(4000);
+        SetFakeAltitude(1600);
         SetUseFakeData(true);
         break;
     case DEMO_CANOPY:

@@ -22,6 +22,10 @@
 
 // If we ever run pure virtual function, stop
 extern "C" void __cxa_pure_virtual() { while (1); }
+__extension__ typedef int __guard __attribute__((mode (__DI__)));
+extern "C" int __cxa_guard_acquire(__guard *g) {return !*(char *)(g);}
+extern "C" void __cxa_guard_release (__guard *g) {*(char *)g = 1;}
+extern "C" void __cxa_guard_abort (__guard *) {}
 
 #define STOP_IF_ERROR(x) {if(x){while(1){}}}
 
@@ -43,6 +47,11 @@ FlashS25Fl216K *global_flash;
 Buzzer *global_buzzer;
 AltitudeManager *global_alt_manager;
 bool global_init_function_run_after_reset = false;
+
+void PlaySound(BuzzerSound sound)
+{
+    global_buzzer->SetSound(sound);
+}
 
 void InitFunctionAfterReset()
 {
@@ -465,6 +474,7 @@ int main()
 
     Buzzer buzzer(PORT_D, PIN_4, &global_digipot);
     global_buzzer = &buzzer;
+    alt_manager.SetPlaySoundFunction(PlaySound);
 
     SetupHardware();
     GlobalInterruptEnable();

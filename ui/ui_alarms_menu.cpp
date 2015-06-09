@@ -4,10 +4,10 @@
 UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
     :
       UiMenu(parent),
-      free_fly_({
-               UiConfigItemAltitudeAlarm(this, "Free fall 1"),
-               UiConfigItemAltitudeAlarm(this, "Free fall 2"),
-               UiConfigItemAltitudeAlarm(this, "Free fall 3")
+      freefall_({
+               UiConfigItemAltitudeAlarm(this, "Freefall 1"),
+               UiConfigItemAltitudeAlarm(this, "Freefall 2"),
+               UiConfigItemAltitudeAlarm(this, "Freefall 3")
                }),
       canopy_({
                UiConfigItemAltitudeAlarm(this, "Canopy 1"),
@@ -21,9 +21,9 @@ UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
                })
 {
     Config *conf = GetConfig();
-    free_fly_[0].SetAlarmPointer(&(conf->beeper.alarms_freefall[0]));
-    free_fly_[1].SetAlarmPointer(&(conf->beeper.alarms_freefall[1]));
-    free_fly_[2].SetAlarmPointer(&(conf->beeper.alarms_freefall[2]));
+    freefall_[0].SetAlarmPointer(&(conf->beeper.alarms_freefall[0]));
+    freefall_[1].SetAlarmPointer(&(conf->beeper.alarms_freefall[1]));
+    freefall_[2].SetAlarmPointer(&(conf->beeper.alarms_freefall[2]));
     canopy_[0].SetAlarmPointer(&(conf->beeper.alarms_canopy[0]));
     canopy_[1].SetAlarmPointer(&(conf->beeper.alarms_canopy[1]));
     canopy_[2].SetAlarmPointer(&(conf->beeper.alarms_canopy[2]));

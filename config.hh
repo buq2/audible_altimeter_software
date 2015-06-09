@@ -247,7 +247,7 @@ const char *ToString(const Config::DataSaveMode en);
 template<typename T>
 T NextEnum(const T en)
 {
-    return en;
+    return (T)0;
 }
 
 template<>
@@ -276,5 +276,7 @@ UiAltimeter::AltimeterUiMode NextEnum(const UiAltimeter::AltimeterUiMode en);
 
 template<>
 Config::DataSaveMode NextEnum(const Config::DataSaveMode en);
+
+uint8_t GetVolume(const Config::AltitudeAlarm::AlarmAmplitude amp);
 
 #endif //ifndef CONFIG_HH

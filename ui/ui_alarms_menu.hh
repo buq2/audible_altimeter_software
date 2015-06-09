@@ -13,7 +13,7 @@ class UiAlarmsMenu
     UiAlarmsMenu(UiMenu *parent);
     const char *GetLabel();
  private:
-    UiConfigItemAltitudeAlarm free_fly_[3];
+    UiConfigItemAltitudeAlarm freefall_[3];
     UiConfigItemAltitudeAlarm canopy_[3];
     UiConfigItemBeepOption options_[3];
 }; //class UiAlarmsMenu

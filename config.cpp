@@ -208,7 +208,7 @@ template<> \
 T NextEnum(const T en)\
 {\
     const T next = (T)(en+1);\
-    if (next == MAXNUM) {\
+    if (next >= MAXNUM) {\
         return (T)0;\
     }\
     return next;\
@@ -236,3 +236,17 @@ uint32_t Config::GetValidMagic()
 
 
 
+
+
+uint8_t GetVolume(const Config::AltitudeAlarm::AlarmAmplitude amp)
+{
+    switch(amp) {
+    case Config::AltitudeAlarm::AlarmAmplitudeWeak:
+        return 20;
+    case Config::AltitudeAlarm::AlarmAmplitudeMedium:
+        return 20;
+    case Config::AltitudeAlarm::AlarmAmplitudeStrong:
+    default:
+        return 20;
+    }
+}

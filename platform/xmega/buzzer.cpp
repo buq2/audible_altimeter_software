@@ -70,20 +70,14 @@ Buzzer::Buzzer(const axlib::Port buzzer_port, const axlib::Pin buzzer_pin, axlib
     :
       buzzer_port_(buzzer_port),
       buzzer_pin_(buzzer_pin),
-      sweep_freqz_min_(300),
-      sweep_freqz_max_(6200),
-      sweep_freqz_step_(150),
-      current_freqz_(0),
       volume_control_(digipot),
-      beep_on_(false),
-      sweep_on_(false),
-      num_beeps_(0)
+      current_freqz_(0)
 {
     // Set pin as output
     PORT_t *port = GetPort(buzzer_port);
     port->DIRSET = (int)buzzer_pin;
     SetBuzzerModulationTC(this);
-    volume_control_->SetValue(0);
+    SetVolume(255);
 }
 
 void Buzzer::SetFrequency(const uint32_t hz)
@@ -99,35 +93,175 @@ void Buzzer::SetFrequency(const uint32_t hz)
     current_freqz_ = hz;
 }
 
-void Buzzer::StepSweep()
-{
-    uint16_t new_freq = current_freqz_ - sweep_freqz_step_;
-    if (new_freq <= sweep_freqz_min_ || new_freq > sweep_freqz_max_) {
-        new_freq = sweep_freqz_max_;
-    }
-    SetFrequency(new_freq);
-}
-
 void Buzzer::Tick10ms()
 {
-    if (num_beeps_ == 0 && !sweep_on_) {
-        SetFrequency(0);
-    } else if (sweep_on_) {
-        StepSweep();
-    } else if (num_beeps_ > 0) {
-        --num_beeps_;
-        if (beep_on_) {
-            SetFrequency(3200);
-        } else {
-            SetFrequency(0);
-        }
-        beep_on_ = !beep_on_;
-    }
+    SetFrequency(current_sound_.StepAndGetFrequency());
 }
 
 void Buzzer::Beep(const uint8_t num_beeps)
 {
-    beep_on_ = true;
-    num_beeps_ += num_beeps;
+    current_sound_ = BuzzerSound::Beep(num_beeps);
 }
 
+void Buzzer::SetSound(const BuzzerSound sound)
+{
+    current_sound_.ReplaceIfHigherPriorityOrActive(sound);
+    SetVolume(current_sound_.GetVolume());
+}
+
+void Buzzer::SetVolume(const uint8_t volume)
+{
+    if (current_volume_ == volume) {
+        return;
+    }
+    volume_control_->SetValue(255-volume); //Controls resistance, not volume
+    current_volume_ = volume;
+}
+
+BuzzerSound::BuzzerSound()
+    :
+      active_(false),
+      priority_(SoundPriorityLow),
+      type_(SoundTypeOff),
+      frequency_(0),
+      sweep_freqz_min_(300),
+      sweep_freqz_max_(6200),
+      sweep_freqz_step_(-150),
+      num_beeps_left_(0),
+      beep_half_period_length_(10),
+      beep_period_position_(0),
+      beep_frequency_(3200)
+{
+}
+
+void BuzzerSound::ReplaceIfHigherPriorityOrActive(const BuzzerSound replacement)
+{
+//    *this = replacement;
+    if (!active_) {
+        *this = replacement;
+    } else if (priority_ <= replacement.priority_) {
+        *this = replacement;
+    }
+}
+
+uint16_t BuzzerSound::StepAndGetFrequency()
+{
+    if (!active_) {
+        return 0;
+    }
+
+    switch(type_) {
+    case SoundTypeBeep:
+        return StepBeep();
+    case SoundTypeSweep:
+        return StepSweep();
+    case SoundTypeOff:
+    default:
+        return 0;
+    }
+}
+
+void BuzzerSound::SetVolume(uint8_t volume)
+{
+    volume_ = volume;
+}
+
+uint8_t BuzzerSound::GetVolume()
+{
+    return volume_;
+}
+
+void BuzzerSound::SetPriority(const BuzzerSound::SoundPriority priority)
+{
+    priority_ = priority;
+}
+
+void BuzzerSound::SetType(const BuzzerSound::SoundType type)
+{
+    type_ = type;
+}
+
+void BuzzerSound::SetBeepHalfPeriod(const uint8_t half_period)
+{
+    beep_half_period_length_ = half_period;
+}
+
+BuzzerSound BuzzerSound::Sweep(const BuzzerSound::SoundPriority priority)
+{
+    BuzzerSound sound;
+    sound.type_ = SoundTypeSweep;
+    sound.priority_ = priority;
+    sound.active_ = true;
+    return sound;
+}
+
+BuzzerSound BuzzerSound::ConstantBeeping(const uint8_t hz, const BuzzerSound::SoundPriority priority)
+{
+    BuzzerSound sound;
+    sound.type_ = SoundTypeBeep;
+    sound.beep_half_period_length_ = 50/hz; //50 comes from 1/(10ms*2)
+    sound.priority_ = priority;
+    sound.num_beeps_left_ = 255; // 255 beeps
+    sound.active_ = true;
+    return sound;
+}
+
+void BuzzerSound::SetActive(const bool active)
+{
+    active_ = active;
+}
+
+BuzzerSound BuzzerSound::Beep(const uint8_t num_beeps, const BuzzerSound::SoundPriority priority)
+{
+    BuzzerSound sound;
+    sound.type_ = SoundTypeBeep;
+    sound.num_beeps_left_ = num_beeps;
+    sound.priority_ = priority;
+    sound.active_ = true;
+    return sound;
+}
+
+uint16_t BuzzerSound::StepSweep()
+{
+    frequency_ = frequency_ + sweep_freqz_step_;
+    if (frequency_ <= sweep_freqz_min_ || frequency_ > sweep_freqz_max_) {
+        if (sweep_freqz_step_ > 0) {
+            frequency_ = sweep_freqz_min_;
+        } else {
+            frequency_ = sweep_freqz_max_;
+        }
+    }
+    return frequency_;
+}
+
+uint16_t BuzzerSound::StepBeep()
+{
+    if (0 == num_beeps_left_) {
+        // No more beeping
+        active_ = false;
+        return 0;
+    }
+
+    if (beep_period_position_ == 0) {
+        // At the beginning of period. Change beep on or off
+
+        if (frequency_ == 0) {
+            // Set beep frequency
+            frequency_ = beep_frequency_;
+        } else {
+            // Set beep off, reduce beep counter
+            frequency_ = 0;
+            if (num_beeps_left_ != 255) {
+                // 255 signifies constant beeping
+                --num_beeps_left_;
+            }
+        }
+    } else {
+        // Not at end of beep period
+        // Keep current frequency
+    }
+
+    ++beep_period_position_;
+    beep_period_position_ %= beep_half_period_length_;
+    return frequency_;
+}

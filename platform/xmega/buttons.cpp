@@ -77,6 +77,36 @@ void Buttons::CheckState()
     }
 }
 
+Buttons::ButtonState Buttons::GetUp()
+{
+    return state_up_;
+}
+
+Buttons::ButtonState Buttons::GetCenter()
+{
+    return state_center_;
+}
+
+Buttons::ButtonState Buttons::GetDown()
+{
+    return state_down_;
+}
+
+uint8_t Buttons::GetCounterUp()
+{
+    return up_press_counter_;
+}
+
+uint8_t Buttons::GetCounterCenter()
+{
+    return center_press_counter_;
+}
+
+uint8_t Buttons::GetCounterDown()
+{
+    return down_press_counter_;
+}
+
 bool Buttons::AnyButtonPressed()
 {
     return !(port_up_->IN & pin_up_) ||
