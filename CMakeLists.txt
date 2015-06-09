@@ -29,6 +29,7 @@ ADD_EXECUTABLE(audible
     sensors.cpp sensors.hh
     altitude_manager.cpp altitude_manager.hh
     jump_data.hh
+    buzzer_sound.cpp buzzer_sound.hh
     )
     
 TARGET_LINK_LIBRARIES(audible

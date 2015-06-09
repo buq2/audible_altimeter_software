@@ -17,6 +17,7 @@ void UiConfigItemAltitudeAlarm::SetAlarmPointer(Config::AltitudeAlarm *alarm)
     altitude_.SetPointer(&(alarm->altitude));
     alarm_amplitude_.SetEnumPointer(&(alarm->amplitude));
     enabled_.SetPointer(&(alarm->enabled));
+    alarm_type_.SetEnumPointer(&alarm->type);
     alarm_ = alarm;
 }
 

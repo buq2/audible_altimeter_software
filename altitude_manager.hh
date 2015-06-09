@@ -4,8 +4,7 @@
 struct Config;
 class Sensors;
 #include <stdint.h>
-// Deal with this in platform independent way...
-#include "platform/xmega/buzzer.hh"
+#include "buzzer_sound.hh"
 
 class AltitudeManager
 {

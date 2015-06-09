@@ -29,11 +29,12 @@ private:
     QGraphicsView *view_;
     QGraphicsPixmapItem *graphics_pixmap_;
     QGraphicsScene *scene_;
+    Config config_;
+    Sensors sensors_;
+    AltitudeManager alt_manager_;
     UiMain ui_main_;
     DisplayBuffer display_buffer_;
-    Sensors sensors_;
     MiscInformation misc_;
-    Config config_;
     friend void UpdateConfig(Config *conf);
 };
 

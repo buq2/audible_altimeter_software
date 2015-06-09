@@ -12,14 +12,15 @@ MainWindow *mainwin;
 void UpdateConfig(Config *conf)
 {
     mainwin->display_buffer_.SetRotation(conf->display_orientation);
-    mainwin->ui_main_.GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode_);
+    mainwin->ui_main_.GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     qt_ui(new Ui::MainWindow),
     view_(new QGraphicsView(this)),
-    ui_main_(&config_, &sensors_, &misc_),
+    alt_manager_(&sensors_, &config_),
+    ui_main_(&config_, &sensors_, &misc_, &alt_manager_),
     display_buffer_(128,128)
 {
     sensors_.SetMiscInformation(&misc_);
