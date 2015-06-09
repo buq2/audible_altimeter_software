@@ -99,8 +99,10 @@ struct Config
 
         AltitudeAlarm alarms_freefall[3];
         AltitudeAlarm alarms_canopy[3];
-        BeepOption at_freefall;
+        BeepOption at_plane;
         BeepOption climb_altitude;
+        BeepOption at_freefall;
+        BeepOption at_canopy;
         BeepOption at_ground;
     };
 

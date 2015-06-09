@@ -15,7 +15,7 @@ class UiAlarmsMenu
  private:
     UiConfigItemAltitudeAlarm freefall_[3];
     UiConfigItemAltitudeAlarm canopy_[3];
-    UiConfigItemBeepOption options_[3];
+    UiConfigItemBeepOption options_[5];
 }; //class UiAlarmsMenu
 
 #endif //ifndef UI_ALARMS_MENU

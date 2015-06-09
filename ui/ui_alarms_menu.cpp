@@ -15,9 +15,11 @@ UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
                UiConfigItemAltitudeAlarm(this, "Canopy 3")
                }),
       options_({
-               UiConfigItemBeepOption(this,"Beep freefall"),
-               UiConfigItemBeepOption(this,"Beep clmb alt"),
-               UiConfigItemBeepOption(this,"Beep ground")
+               UiConfigItemBeepOption(this,"Beep at plane"),
+               UiConfigItemBeepOption(this,"Beep at 500m"),
+               UiConfigItemBeepOption(this,"Beep at freefall"),
+               UiConfigItemBeepOption(this,"Beep at canopy"),
+               UiConfigItemBeepOption(this,"Beep at ground"),
                })
 {
     Config *conf = GetConfig();
@@ -27,9 +29,11 @@ UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
     canopy_[0].SetAlarmPointer(&(conf->beeper.alarms_canopy[0]));
     canopy_[1].SetAlarmPointer(&(conf->beeper.alarms_canopy[1]));
     canopy_[2].SetAlarmPointer(&(conf->beeper.alarms_canopy[2]));
-    options_[0].SetOptionPointer(&(conf->beeper.at_freefall));
+    options_[0].SetOptionPointer(&(conf->beeper.at_plane));
     options_[1].SetOptionPointer(&(conf->beeper.climb_altitude));
-    options_[2].SetOptionPointer(&(conf->beeper.at_ground));
+    options_[2].SetOptionPointer(&(conf->beeper.at_freefall));
+    options_[3].SetOptionPointer(&(conf->beeper.at_canopy));
+    options_[4].SetOptionPointer(&(conf->beeper.at_ground));
 }
 
 const char *UiAlarmsMenu::GetLabel()

@@ -231,7 +231,7 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface3;
+    return 0xbadface4;
 }
 
 
@@ -244,9 +244,9 @@ uint8_t GetVolume(const Config::AltitudeAlarm::AlarmAmplitude amp)
     case Config::AltitudeAlarm::AlarmAmplitudeWeak:
         return 20;
     case Config::AltitudeAlarm::AlarmAmplitudeMedium:
-        return 20;
+        return 127;
     case Config::AltitudeAlarm::AlarmAmplitudeStrong:
     default:
-        return 20;
+        return 255;
     }
 }

@@ -35,7 +35,7 @@ class UiMenu
 
     class MenuItemArray {
      public:
-        #define MAX_NUM_ITEM_ARRAY 10
+        #define MAX_NUM_ITEM_ARRAY 15
         MenuItemArray()
             :
               num_items_(0)

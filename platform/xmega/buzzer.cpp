@@ -101,6 +101,7 @@ void Buzzer::Tick10ms()
 void Buzzer::Beep(const uint8_t num_beeps)
 {
     current_sound_ = BuzzerSound::Beep(num_beeps);
+    SetVolume(current_sound_.GetVolume());
 }
 
 void Buzzer::SetSound(const BuzzerSound sound)

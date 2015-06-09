@@ -78,9 +78,10 @@ void AltitudeManager::SetPlaySoundFunction(AltitudeManager::play_sound_fun fun)
 
 void AltitudeManager::CheckForModeChange()
 {
-    static AltitudeMode prev_mode = AltitudeModeGround;
+    static AltitudeModeSimple prev_mode = AltitudeModeSimpleGround;
     CalculateCurrentMode();
-    const bool change = prev_mode != current_mode_;
+    const AltitudeModeSimple current_mode = GetCurrentModeSimple();
+    const bool change = prev_mode != current_mode;
 
     if (!change) {
         return;
@@ -91,11 +92,32 @@ void AltitudeManager::CheckForModeChange()
     }
 
     // Beep to aknowledge the change in mode
-    BuzzerSound sound = BuzzerSound::Beep(2);
-    sound.SetVolume(GetVolume(Config::AltitudeAlarm::AlarmAmplitudeMedium));;
-    sound.SetBeepHalfPeriod(50); // Quite long beeps
-    sound.SetPriority(BuzzerSound::SoundPriorityMedium);
-    SetSound(sound);
+    if (current_mode == AltitudeModeSimplePlane && config_->beeper.at_plane.enabled) {
+        BuzzerSound sound = BuzzerSound::Beep(2);
+        sound.SetVolume(GetVolume(config_->beeper.at_plane.amplitude));
+        sound.SetBeepHalfPeriod(30); // Quite long and slow beeps
+        sound.SetPriority(BuzzerSound::SoundPriorityHigh);
+        SetSound(sound);
+    } else if (current_mode == AltitudeModeSimpleFreefall && config_->beeper.at_freefall.enabled) {
+        BuzzerSound sound = BuzzerSound::Beep(2);
+        sound.SetVolume(GetVolume(config_->beeper.at_freefall.amplitude));
+        sound.SetBeepHalfPeriod(30); // Quite long and slow beeps
+        sound.SetPriority(BuzzerSound::SoundPriorityHigh);
+        SetSound(sound);
+    } else if (current_mode == AltitudeModeSimpleCanopy && config_->beeper.at_canopy.enabled) {
+        BuzzerSound sound = BuzzerSound::Beep(2);
+        sound.SetVolume(GetVolume(config_->beeper.at_canopy.amplitude));
+        sound.SetBeepHalfPeriod(30); // Quite long and slow beeps
+        sound.SetPriority(BuzzerSound::SoundPriorityHigh);
+        SetSound(sound);
+    } else if (current_mode == AltitudeModeSimpleGround && config_->beeper.at_ground.enabled) {
+        BuzzerSound sound = BuzzerSound::Beep(2);
+        sound.SetVolume(GetVolume(config_->beeper.at_ground.amplitude));
+        sound.SetBeepHalfPeriod(30); // Quite long and slow beeps
+        sound.SetPriority(BuzzerSound::SoundPriorityHigh);
+        SetSound(sound);
+    }
+    prev_mode = current_mode;
 }
 
 
@@ -179,13 +201,10 @@ void AltitudeManager::CheckFreefallAlarms()
     const float altitude_m = sensors_->GetAltitudeMeters();
 
     const uint8_t num_alarms = sizeof(config_->beeper.alarms_freefall)/sizeof(Config::AltitudeAlarm);
-    int16_t lowest_altitude = INT16_MAX;
     BuzzerSound sound;
     for (uint8_t i = 0; i < num_alarms; ++i) {
         const auto &alarm = config_->beeper.alarms_freefall[i];
-        if (alarm.enabled && lowest_altitude > alarm.altitude) {
-            lowest_altitude = alarm.altitude;
-
+        if (alarm.enabled) {
             if (alarm.altitude > prev_altitude || alarm.altitude < altitude_m ) {
                 // This alarm has already been triggered, or it should not be
                 // triggered yet
@@ -194,7 +213,12 @@ void AltitudeManager::CheckFreefallAlarms()
 
             switch(alarm.type) {
             case Config::AltitudeAlarm::AlarmTypeFreefallBeeps:
-                sound = BuzzerSound::Beep(3, BuzzerSound::SoundPriorityMedium);
+                sound = BuzzerSound::Beep(2, BuzzerSound::SoundPriorityHigh);
+                sound.SetBeepBuzzFrequency(4000);
+                break;
+            case Config::AltitudeAlarm::AlarmTypeUntilOpen:
+                sound = BuzzerSound::ConstantBeeping(5,BuzzerSound::SoundPriorityHigh);
+                sound.SetBeepBuzzFrequency(4000);
                 break;
             default:
             case Config::AltitudeAlarm::AlarmTypeLastChange:
@@ -211,6 +235,7 @@ void AltitudeManager::CheckFreefallAlarms()
 
 void AltitudeManager::CheckCanopyAlarms()
 {
+    static float prev_altitude = 0;
     const float altitude_m = sensors_->GetAltitudeMeters();
 
     const uint8_t num_alarms = sizeof(config_->beeper.alarms_canopy)/sizeof(Config::AltitudeAlarm);
@@ -232,23 +257,25 @@ void AltitudeManager::CheckCanopyAlarms()
                 continue;
             }
 
-            if (alarm.altitude > altitude_m) {
-                // This alarm has already been triggered
-                // Replace with silence
-                sound = BuzzerSound();
-                sound.SetPriority(BuzzerSound::SoundPriorityMedium);
-                sound.SetType(BuzzerSound::SoundTypeOff);
-                sound.SetActive(true);
+            if (alarm.altitude > altitude_m && prev_altitude > alarm.altitude) {
+                // Just passed the target altitude. Change beep sound
+                sound = BuzzerSound::Beep(2, BuzzerSound::SoundPriorityHigh);
+                sound.SetBeepHalfPeriod(20);
+                sound.SetBeepBuzzFrequency(4000);
+                sound.SetVolume(GetVolume(alarm.amplitude));
+                continue;
+            } else if (alarm.altitude > altitude_m) {
+                // This alarm has already been fully triggered
                 continue;
             }
 
             const uint8_t diff_meters = altitude_m-alarm.altitude;
-            sound = BuzzerSound::ConstantBeeping(30-diff_meters, BuzzerSound::SoundPriorityMedium);
-
+            sound = BuzzerSound::ConstantBeeping(10-diff_meters/3, BuzzerSound::SoundPriorityHigh);
             sound.SetVolume(GetVolume(alarm.amplitude));
         }
     }
     SetSound(sound);
+    prev_altitude = altitude_m;
 }
 
 void AltitudeManager::CheckPlaneAlarms()
@@ -261,8 +288,7 @@ void AltitudeManager::CheckPlaneAlarms()
         BuzzerSound sound = BuzzerSound::Beep(2);
 
         sound.SetVolume(GetVolume(config_->beeper.climb_altitude.amplitude));
-
-        sound.SetBeepHalfPeriod(50); // Quite long beeps
+        sound.SetBeepBuzzFrequency(4000);
         SetSound(sound);
     }
     prev_altitude = altitude_m;
