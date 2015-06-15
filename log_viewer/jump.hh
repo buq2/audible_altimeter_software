@@ -18,6 +18,8 @@ class Jump
                   const double value);
     std::vector<std::string> GetDataNames();
     time_series GetData(const std::string &name);
+
+    void SaveToCsv(const std::string out_fname);
  private:
 
 

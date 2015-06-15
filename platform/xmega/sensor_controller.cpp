@@ -196,6 +196,12 @@ void SensorController::QuickErase()
     mem_control_->QuickErase();
 }
 
+void SensorController::QuickEraseJumps()
+{
+    StopSavingData();
+    mem_control_->QuickEraseJumps();
+}
+
 void SensorController::FullErase()
 {
     StopSavingData();

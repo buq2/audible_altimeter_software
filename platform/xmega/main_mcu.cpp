@@ -186,6 +186,7 @@ void PrintSerialHelp()
                           "altitude<CR>\n\r"
                           "get_jump<CR>#<CR>\n\r"
                           "erase<CR>\n\r"
+                          "erase_jumps<CR>\n\r"
                           "full_erase<CR>\n\r"
                           "print_data<CR>#<CR>\n\r"
                           "use_fake_data<CR>#<CR> (bool)\n\r"
@@ -291,6 +292,10 @@ void HandleSerialInput()
                 global_sensor_ctrl->QuickErase();
                 global_config->log_save_mode = Config::DataSaveOff;
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Quick erase run.\n\rSaving disabled\n\r");
+            } else if (0 == strcmp(input_buffer, "erase_jumps")) {
+                global_sensor_ctrl->QuickEraseJumps();
+                global_config->log_save_mode = Config::DataSaveOff;
+                CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Quick erase jumps run.\n\rSaving disabled\n\r");
             } else if (0 == strcmp(input_buffer, "full_erase")) {
                 CDC_Device_SendString(&VirtualSerial_CDC_Interface, "Please wait. This can take about one minute\n\r");
                 global_sensor_ctrl->FullErase();

@@ -4,12 +4,15 @@
 #include <QHBoxLayout>
 #include <QSizePolicy>
 #include <QPen>
+#include <QFileDialog>
 
-JumpViewer::JumpViewer()
+JumpViewer::JumpViewer(LogFetcher *fetcher)
     :
       QMainWindow(0),
       list_selection_(new QListWidget(this)),
-      plot_(new QwtPlot(this))
+      plot_(new QwtPlot(this)),
+      spin_selected_jump_(new QSpinBox(this)),
+      log_fetcher_(fetcher)
 {
     QWidget *central_widget = new QWidget(this);
     setCentralWidget(central_widget);
@@ -17,9 +20,24 @@ JumpViewer::JumpViewer()
 
     QSplitter *splitter = new QSplitter(central_widget);
     central_widget->layout()->addWidget(splitter);
-    splitter->addWidget(list_selection_);
 
-    splitter->addWidget(list_selection_);
+    QWidget *left_side = new QWidget(this);
+    splitter->addWidget(left_side);
+
+    QVBoxLayout *layout_left = new QVBoxLayout(left_side);
+
+    layout_left->addWidget(list_selection_);
+
+    spin_selected_jump_->setMinimum(0);
+    layout_left->addWidget(spin_selected_jump_);
+
+    QPushButton *button_fetch_jump = new QPushButton;
+    button_fetch_jump->setText("Fetch jump");
+    layout_left->addWidget(button_fetch_jump);
+
+    QPushButton *button_csv = new QPushButton;
+    button_csv->setText("Save to CSV");
+    layout_left->addWidget(button_csv);
 
     QSizePolicy sizep;
     sizep.setHorizontalStretch(10);
@@ -31,6 +49,8 @@ JumpViewer::JumpViewer()
     splitter->addWidget(plot_);
 
     connect(list_selection_, SIGNAL(itemSelectionChanged()), this, SLOT(CurveSelectionChanged()));
+    connect(button_fetch_jump, &QPushButton::clicked, this, &JumpViewer::FetchSelectedJump);
+    connect(button_csv, &QPushButton::clicked, this, &JumpViewer::WriteJumpToCsv);
 }
 
 void JumpViewer::Clear()
@@ -43,6 +63,11 @@ void JumpViewer::SetJump(const Jump &jump)
 {
     jump_ = jump;
     RebuildPlot();
+}
+
+void JumpViewer::SetNumberOfJumps(int number_of_jumps)
+{
+    spin_selected_jump_->setMaximum(number_of_jumps-1);
 }
 
 void JumpViewer::RebuildPlot()
@@ -87,4 +112,26 @@ void JumpViewer::ClearCurves()
         delete c;
     }
     curves_.clear();
+}
+
+void JumpViewer::FetchSelectedJump()
+{
+    const int jump_idx = spin_selected_jump_->value();
+    jump_ = log_fetcher_->GetJump(jump_idx);
+    RebuildPlot();
+}
+
+void JumpViewer::WriteJumpToCsv()
+{
+    QString fname = GetOutputFilename();
+    if (fname.isEmpty()) {
+        return;
+    }
+
+    jump_.SaveToCsv(fname.toStdString().c_str());
+}
+
+QString JumpViewer::GetOutputFilename()
+{
+    return QFileDialog::getSaveFileName(this, "Output filename");
 }

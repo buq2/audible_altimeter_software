@@ -45,6 +45,9 @@ class MemoryController
     /// Fully erase the flash chip
     void FullErase();
 
+    /// Quick erase jumps. Configs are saved
+    void QuickEraseJumps();
+
     /// Get number of jumps in the flash choå
     uint32_t GetNumberOfJumps();
 

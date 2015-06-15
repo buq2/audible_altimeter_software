@@ -101,14 +101,28 @@ void MemoryController::QuickErase()
     // By erasing first two sectors we overwrite configuration data and
     // First sector of first jump log. Other jumps will not be found
     flash_->Erase4k(0);
-    flash_->Erase4k(GetSectorLength());
     flash_->WaitUntilReady();
+    QuickEraseJumps();
 }
 
 void MemoryController::FullErase()
 {
     flash_->FullErase();
     flash_->WaitUntilReady();
+}
+
+void MemoryController::QuickEraseJumps()
+{
+    uint32_t sec = GetFirstPossibleJumpSector();
+    uint32_t sec_len = GetSectorLength();
+    while(true) {
+        if (!IsJumpSector(sec)) {
+            return;
+        }
+        flash_->Erase4k(sec);
+        flash_->WaitUntilReady();
+        sec += sec_len;
+    }
 }
 
 uint32_t MemoryController::GetNumberOfJumps()

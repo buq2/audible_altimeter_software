@@ -13,10 +13,9 @@ int main(int argc, char *argv[])
     }
     const size_t num_jumps = log.GetNumberOfJumps();
     if (num_jumps > 0) {
-        auto j = log.GetJump(num_jumps-1);
 
-        JumpViewer viewer;
-        viewer.SetJump(j);
+        JumpViewer viewer(&log);
+        viewer.SetNumberOfJumps(num_jumps);
         viewer.show();
 
         return app.exec();

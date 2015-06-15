@@ -54,6 +54,9 @@ class SensorController
     /// Quick erase the flash memory
     void QuickErase();
 
+    /// Quick erase jumps memory
+    void QuickEraseJumps();
+
     /// Fully erase the flash memory
     void FullErase();
 

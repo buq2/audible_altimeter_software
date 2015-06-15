@@ -1,5 +1,6 @@
-
 #include "jump.hh"
+#include <iostream>
+#include <fstream>
 
 Jump::Jump()
 {
@@ -29,4 +30,16 @@ Jump::time_series Jump::GetData(const std::string &name)
     }
 
     return it->second;
+}
+
+void Jump::SaveToCsv(const std::string out_fname)
+{
+    std::ofstream file(out_fname.c_str());
+    for(auto graph : data_) {
+        const std::string name = graph.first;
+        for (auto point : graph.second) {
+            file << name << '\t' << point.first << '\t' << point.second << std::endl;
+        }
+    }
+    file.close();
 }
