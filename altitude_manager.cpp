@@ -283,8 +283,8 @@ void AltitudeManager::CheckPlaneAlarms()
     static float prev_altitude = 0;
     const float altitude_m = sensors_->GetAltitudeMeters();
 
-    if (config_->beeper.climb_altitude.enabled && altitude_m >= 500 && prev_altitude < 500) {
-        // Give 500m beep
+    if (config_->beeper.climb_altitude.enabled && altitude_m >= 300 && prev_altitude < 300) {
+        // Give 300m beep
         BuzzerSound sound = BuzzerSound::Beep(2);
 
         sound.SetVolume(GetVolume(config_->beeper.climb_altitude.amplitude));

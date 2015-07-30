@@ -6,12 +6,14 @@
 #include "axlib/displays/display_buffer.hh"
 #include "altitude_manager.hh"
 
+class Config;
+
 class UiAltimeter
         :
         public UiBase
 {
  public:
-    UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager);
+    UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager, Config *config);
     void Render(axlib::DisplayBuffer *buffer);
     void KeyPress(const UiBase::KeyCode key, const bool down);
     void Tick100ms();
@@ -48,6 +50,7 @@ class UiAltimeter
     Sensors *sensors_;
     AltimeterUiMode mode_;
     AltitudeManager *alt_manager_;
+    Config *config_;
 };
 
 #endif //ifndef UI_ALTIMETER_HH

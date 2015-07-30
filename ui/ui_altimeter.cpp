@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "axlib/core/core.hh"
+#include "config.hh"
+#include <math.h>
 
 int16_t UiAltimeter::MAX_UI_ALTITUDE = 32767;
 int16_t UiAltimeter::MIN_UI_ALTITUDE = -9999;
@@ -15,11 +17,12 @@ int16_t UiAltimeter::MIN_UI_TEMPERATURE = -999;
 
 using namespace axlib;
 
-UiAltimeter::UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager)
+UiAltimeter::UiAltimeter(Sensors *sensors, AltitudeManager *alt_manager, Config *config)
     :
       sensors_(sensors),
       mode_(ALTIMETER_UI_MODE_COMPLEX),
-      alt_manager_(alt_manager)
+      alt_manager_(alt_manager),
+      config_(config)
 {
 
 }
@@ -59,7 +62,7 @@ void UiAltimeter::RenderComplex(DisplayBuffer *buffer)
     RenderAltitude(buffer, &y);
     //RenderAltitudeLong(buffer, &y);
     RenderAltitudeChangeLong(buffer, &y);
-    RenderTemperatureLong(buffer, &y);
+    //RenderTemperatureLong(buffer, &y);
     RenderMisc(buffer, &y);
 }
 
@@ -83,7 +86,23 @@ void UiAltimeter::RenderAltitude(DisplayBuffer *buffer, uint8_t *row)
     // Clamp altitude to range that fits to the altitude string
 
     alt = MAX(MIN_UI_ALTITUDE,MIN(MAX_UI_ALTITUDE, alt));
-    sprintf(str,"%.1f",alt);
+
+    switch (config_->display_round_mode) {
+    case Config::AltitudeDisplayRoundMode1:
+        sprintf(str,"%.0f",ceil(alt-0.5f));
+        break;
+    case Config::AltitudeDisplayRoundMode5:
+        sprintf(str,"%.0f",ceil(alt/5.0f-0.5f)*5.0f);
+        break;
+    case Config::AltitudeDisplayRoundMode10:
+        sprintf(str,"%.0f",ceil(alt/10.0f-0.5f)*10.0f);
+        break;
+    default:
+    case Config::AltitudeDisplayRoundModeNone:
+        sprintf(str,"%.1f",alt);
+        break;
+    }
+
 
     const uint8_t xpos = buffer->GetWidth()/2;
     const uint8_t scale_x = 1;
@@ -118,8 +137,8 @@ void UiAltimeter::RenderAltitudeChangeLong(DisplayBuffer *buffer, uint8_t *row)
     float change = sensors_->GetAltitudeChangeRateMetresPerS();
     change = MAX(MIN_UI_ALTITUDE_RATE,MIN(MAX_UI_ALTITUDE_RATE, change));
 
-    const char *str_desc = "Descent:";
-    const char *str_climb = "Climb:";
+    const char *str_desc = "Desc:";
+    const char *str_climb = "Clmb:";
     const char *str_front = str_desc;
 
     sprintf(str, "%0.1f m/s", change);

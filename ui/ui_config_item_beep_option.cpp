@@ -3,7 +3,7 @@
 UiConfigItemBeepOption::UiConfigItemBeepOption(UiMenu *parent, const char *label)
     :
       UiMenu(parent),
-      alarm_amplitude_(this, "Alarm volume"),
+      alarm_amplitude_(this, "Alrm vol"),
       enabled_(this, "Enabled"),
       label_(label)
 {

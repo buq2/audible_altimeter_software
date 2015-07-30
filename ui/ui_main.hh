@@ -34,6 +34,7 @@ class UiMain
     MainMenu menu_;
     UiSelection ui_selection_;
     ConfigSaveFunction config_save_;
+    Config *config_;
 }; //class UiMain
 
 #endif //ifndef UI_MAIN_HH

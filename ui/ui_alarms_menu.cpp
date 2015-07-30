@@ -15,11 +15,11 @@ UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
                UiConfigItemAltitudeAlarm(this, "Canopy 3")
                }),
       options_({
-               UiConfigItemBeepOption(this,"Beep at plane"),
-               UiConfigItemBeepOption(this,"Beep at 500m"),
-               UiConfigItemBeepOption(this,"Beep at freefall"),
-               UiConfigItemBeepOption(this,"Beep at canopy"),
-               UiConfigItemBeepOption(this,"Beep at ground"),
+               UiConfigItemBeepOption(this,"Bp at pln"),
+               UiConfigItemBeepOption(this,"Bp at 300m"),
+               UiConfigItemBeepOption(this,"Bp at free"),
+               UiConfigItemBeepOption(this,"Bp at cnpy"),
+               UiConfigItemBeepOption(this,"Bp at gnd"),
                })
 {
     Config *conf = GetConfig();

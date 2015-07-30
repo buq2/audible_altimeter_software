@@ -1,17 +1,20 @@
 #include "ui_main.hh"
+#include "config.hh"
 
 UiMain::UiMain(Config *config, Sensors *sensors, MiscInformation *misc, AltitudeManager *alt_manager)
     :
-      altimeter_(sensors,alt_manager),
+      altimeter_(sensors,alt_manager, config),
       menu_(config, misc),
       ui_selection_(UI_SELECTION_ALTIMETER),
-      config_save_(0)
+      config_save_(0),
+      config_(config)
 {
 
 }
 
 void UiMain::Render(DisplayBuffer *buffer)
 {
+    buffer->SetInvertColors(config_->invert_colors);
     switch(ui_selection_) {
     case UI_SELECTION_MENU:
         menu_.Render(buffer);

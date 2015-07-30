@@ -3,6 +3,7 @@
 
 #include "ui_menu.hh"
 #include "ui_config_item_enum.hh"
+#include "ui_config_item_bool.hh"
 
 class UiDisplayMenu
         :
@@ -13,6 +14,7 @@ class UiDisplayMenu
     const char *GetLabel();
  private:
     UiConfigItemEnum<Config::AltitudeDisplayUnitMode> altitude_;
+    UiConfigItemEnum<Config::AltitudeDisplayRoundMode> altitude_rounding_;
     UiConfigItemEnum<Config::SpeedDisplayUnitMode> speed_;
     UiConfigItemEnum<Config::TemperatureMode> temperature_;
     UiConfigItemEnum<axlib::DisplayBuffer::Rotation> orientation_;
@@ -21,6 +23,7 @@ class UiDisplayMenu
     UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_freefall_mode_;
     UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_canopy_mode_;
     UiConfigItemEnum<UiAltimeter::AltimeterUiMode> altimeter_climb_mode_;
+    UiConfigItemBool invert_colors_;
 }; //class UiDisplayMenu
 
 #endif //ifndef UI_DISPLAY_MENU

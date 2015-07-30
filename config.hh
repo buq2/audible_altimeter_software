@@ -19,6 +19,15 @@ struct Config
 
     typedef enum
     {
+        AltitudeDisplayRoundModeNone = 0,
+        AltitudeDisplayRoundMode1 = 1,
+        AltitudeDisplayRoundMode5 = 2,
+        AltitudeDisplayRoundMode10 = 3,
+        AltitudeDisplayRoundModeNumberOfEnums = 4
+    } AltitudeDisplayRoundMode;
+
+    typedef enum
+    {
         SpeedUnitModeMetersPerSecond = 0,
         SpeedUnitModeKilometersPerHour = 1,
         SpeedUnitModeFeetsPerSecond = 2,
@@ -181,7 +190,8 @@ struct Config
           freefall_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_FREE_FALL),
           canopy_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
           climb_altimeter_ui_mode(UiAltimeter::ALTIMETER_UI_MODE_COMPLEX),
-          log_save_mode(DataSaveOff)
+          log_save_mode(DataSaveOff),
+          display_round_mode(AltitudeDisplayRoundMode5)
     {
     }
 
@@ -207,6 +217,8 @@ struct Config
     UiAltimeter::AltimeterUiMode canopy_altimeter_ui_mode;
     UiAltimeter::AltimeterUiMode climb_altimeter_ui_mode;
     DataSaveMode log_save_mode;
+    AltitudeDisplayRoundMode display_round_mode;
+    bool invert_colors;
 }; //struct Config
 
 template<typename T>
@@ -246,6 +258,9 @@ const char *ToString(const UiAltimeter::AltimeterUiMode en);
 template<>
 const char *ToString(const Config::DataSaveMode en);
 
+template<>
+const char *ToString(const Config::AltitudeDisplayRoundMode en);
+
 template<typename T>
 T NextEnum(const T en)
 {
@@ -278,6 +293,9 @@ UiAltimeter::AltimeterUiMode NextEnum(const UiAltimeter::AltimeterUiMode en);
 
 template<>
 Config::DataSaveMode NextEnum(const Config::DataSaveMode en);
+
+template<>
+Config::AltitudeDisplayRoundMode NextEnum(const Config::AltitudeDisplayRoundMode en);
 
 uint8_t GetVolume(const Config::AltitudeAlarm::AlarmAmplitude amp);
 

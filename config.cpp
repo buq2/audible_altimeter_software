@@ -8,7 +8,7 @@ const char *ToString(const UiAltimeter::AltimeterUiMode en)
     default:
     case UiAltimeter::ALTIMETER_UI_MODE_COMPLEX:
     {
-        static const char str[] = "Complex";
+        static const char str[] = "Compx";
         return str;
     }
     case UiAltimeter::ALTIMETER_UI_MODE_FREE_FALL:
@@ -117,18 +117,18 @@ const char *ToString(const Config::FontSize en)
     switch(en) {
     case Config::FontSizeSmall:
     {
-        static const char str[] = "Small";
+        static const char str[] = "Sma";
         return str;
     }
     case Config::FontSizeMedium:
     {
-        static const char str[] = "Medium";
+        static const char str[] = "Med";
         return str;
     }
     default:
     case Config::FontSizeLarge:
     {
-        static const char str[] = "Large";
+        static const char str[] = "Lar";
         return str;
     }
     }
@@ -145,13 +145,13 @@ const char *ToString(const Config::AltitudeAlarm::AlarmAmplitude en)
     }
     case Config::AltitudeAlarm::AlarmAmplitudeMedium:
     {
-        static const char str[] = "Medium";
+        static const char str[] = "Med";
         return str;
     }
     default:
     case Config::AltitudeAlarm::AlarmAmplitudeStrong:
     {
-        static const char str[] = "Strong";
+        static const char str[] = "Strng";
         return str;
     }
     }
@@ -163,12 +163,12 @@ const char *ToString(const Config::AltitudeAlarm::AlarmType en)
     switch(en) {
     case Config::AltitudeAlarm::AlarmTypeCanopyAltitude:
     {
-        static const char str[] = "Canopy";
+        static const char str[] = "Cnpy";
         return str;
     }
     case Config::AltitudeAlarm::AlarmTypeFreefallBeeps:
     {
-        static const char str[] = "Beeps";
+        static const char str[] = "Beep";
         return str;
     }
     case Config::AltitudeAlarm::AlarmTypeUntilOpen:
@@ -179,7 +179,7 @@ const char *ToString(const Config::AltitudeAlarm::AlarmType en)
     default:
     case Config::AltitudeAlarm::AlarmTypeLastChange:
     {
-        static const char str[] = "LastChng";
+        static const char str[] = "Last";
         return str;
     }
     }
@@ -198,6 +198,34 @@ const char *ToString(const Config::DataSaveMode en)
     case Config::DataSaveAll:
     {
         static const char str[] = "All";
+        return str;
+    }
+    }
+}
+
+template<>
+const char *ToString(const Config::AltitudeDisplayRoundMode en)
+{
+    switch(en) {
+    case Config::AltitudeDisplayRoundMode1:
+    {
+        static const char str[] = "1m";
+        return str;
+    }
+    case Config::AltitudeDisplayRoundMode5:
+    {
+        static const char str[] = "5m";
+        return str;
+    }
+    case Config::AltitudeDisplayRoundMode10:
+    {
+        static const char str[] = "10m";
+        return str;
+    }
+    default:
+    case Config::AltitudeDisplayRoundModeNone:
+    {
+        static const char str[] = "Off";
         return str;
     }
     }
@@ -223,6 +251,7 @@ ENUM_MACRO(Config::AltitudeAlarm::AlarmAmplitude, Config::AltitudeAlarm::AlarmAm
 ENUM_MACRO(Config::AltitudeAlarm::AlarmType, Config::AltitudeAlarm::AlarmTypeNumberOfEnums);
 ENUM_MACRO(UiAltimeter::AltimeterUiMode, UiAltimeter::ALTIMETER_UI_MODE_NUM_ENUMS);
 ENUM_MACRO(Config::DataSaveMode, Config::DataSaveNumberOfEnums);
+ENUM_MACRO(Config::AltitudeDisplayRoundMode, Config::AltitudeDisplayRoundModeNumberOfEnums);
 
 fontStyle_t *Config::GetIntChangeFont() const
 {
@@ -231,7 +260,7 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface4;
+    return 0xbadface5;
 }
 
 
