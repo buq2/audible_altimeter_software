@@ -12,7 +12,7 @@ SensorController::SensorController(Sensors *sensors, MemoryController *mem_contr
       mem_control_(mem_control),
       clock_(clock),
       alt1_(PORT_C),
-      alt2_(PORT_C),
+      //alt2_(PORT_C),
       misc_(0),
       flash_current_memory_address_(0),
       use_fake_data_(false),
@@ -28,7 +28,7 @@ void SensorController::Setup()
     alt1_.SetMode(as_altimeter);
     alt1_.SetOversampleRate(AltimeterMPl3114A2::OversampleRate128);
     STOP_IF_ERROR(alt1_.Setup());
-    STOP_IF_ERROR(alt2_.Setup());
+    //STOP_IF_ERROR(alt2_.Setup());
 }
 
 void SensorController::RequestDataUpdate()

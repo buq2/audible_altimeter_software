@@ -104,7 +104,7 @@ class SensorController
 
     // Altimeters
     axlib::AltimeterMPl3114A2 alt1_;
-    axlib::AltimeterMS5805_02BA01 alt2_;
+    //axlib::AltimeterMS5805_02BA01 alt2_;
 
     // Misc information which should be updated
     MiscInformation *misc_;
