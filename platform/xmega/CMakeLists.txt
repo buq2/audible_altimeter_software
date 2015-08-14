@@ -32,6 +32,14 @@ ADD_LIBRARY(Platform STATIC
     memory.hh memory.cpp
     sensor_controller.hh sensor_controller.cpp
     buzzer.hh buzzer.cpp
+    usb.hh usb.cpp
+
+    components.hh components.cpp
+    setup.hh setup.cpp
+    interrupts.hh interrupts.cpp
+    power.hh power.cpp
+
+    cpp.hh
     main_mcu.cpp
     )
 

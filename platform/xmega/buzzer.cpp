@@ -1,5 +1,4 @@
 #include "buzzer.hh"
-#include <avr/interrupt.h>
 
 uint16_t GetPeriod(const TC_CLKSEL_t prescale_enum, const uint32_t hz)
 {
@@ -49,22 +48,12 @@ void SetFrequency_int(T *tc, const uint32_t hz, const TC_CLKSEL_t clocksel)
     tc->INTFLAGS = 0x00; //clear the interrupt flag
 }
 
-Buzzer *global_buzzer_  = 0;
-
-
 // This should be made from main_mcu.cpp
 void SetBuzzerModulationTC(Buzzer *buzzer)
 {
-    global_buzzer_ = buzzer;
     GetTimerCounter0(axlib::PORT_E)->INTCTRLA |= TC_OVFINTLVL_LO_gc;
     SetFrequency_int(GetTimerCounter0(axlib::PORT_E), 100, TC_CLKSEL_DIV256_gc);
 }
-
-ISR(TCE0_OVF_vect)
-{
-    global_buzzer_->Tick10ms();
-}
-
 
 Buzzer::Buzzer(const axlib::Port buzzer_port, const axlib::Pin buzzer_pin, axlib::DigipotMcp4017T *digipot)
     :

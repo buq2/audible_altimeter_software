@@ -3,17 +3,6 @@
 
 using namespace axlib;
 
-
-
-Buttons *global_buttons_obj = 0;
-
-ISR(TCD0_OVF_vect)
-{
-    if (0 != global_buttons_obj) {
-        global_buttons_obj->UpdateButtonCounters();
-    }
-}
-
 void Buttons::StopCounter()
 {
     TCD0.CTRLA = TC_CLKSEL_OFF_gc;
@@ -53,8 +42,6 @@ Buttons::Buttons(const Port port_up, const Pin pin_up,
       pin_center_((uint8_t)pin_center),
       pin_down_((uint8_t)pin_down)
 {
-    global_buttons_obj = this;
-
     // Set button pins to inputs
     port_up_->DIRCLR = pin_up_;
     port_center_->DIRCLR = pin_center_;
