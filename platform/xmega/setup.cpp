@@ -7,6 +7,7 @@
 #include <LUFA/Drivers/USB/USB.h>
 #include "axlib/core/io.hh"
 #include "components.hh"
+#include "interrupts.hh"
 
 void SetupClockInterrupts()
 {
@@ -63,4 +64,5 @@ void SetupHardware(void)
     SetupButtonInterrupts();
     SetupRtc();
     GlobalInterruptEnable();
+    InitializeInterrupts();
 }

@@ -80,3 +80,11 @@ ISR(TCD0_OVF_vect)
         buttons->UpdateButtonCounters();
     }
 }
+
+void InitializeInterrupts()
+{
+    // NOP on purpose
+
+    // Seems to be required, as otherwise actual interrupt
+    // functions will be optimized out of the binary
+}
