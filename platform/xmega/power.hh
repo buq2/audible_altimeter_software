@@ -1,6 +1,13 @@
 #ifndef AUDIBLEA_POWER_HH
 #define AUDIBLEA_POWER_HH
 
-void TestSleep();
+class Power
+{
+ public:
+    Power();
+    void MainLoop();
+ private:
+
+};
 
 #endif //ifndef AUDIBLEA_POWER_HH

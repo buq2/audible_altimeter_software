@@ -14,6 +14,7 @@
 #include "buzzer.hh"
 #include "axlib/sensors/digipot_mcp4017t.hh"
 #include "altitude_manager.hh"
+#include "power.hh"
 
 class Components
 {
@@ -34,6 +35,7 @@ class Components
     FlashS25Fl216K *GetFlash();
     Buzzer *GetBuzzer();
     AltitudeManager *GetAltitudeManager();
+    Power *GetPower();
  private:
     UiMain ui_main_;
     DisplayBuffer display_buffer_;
@@ -49,6 +51,7 @@ class Components
     FlashS25Fl216K flash_;
     Buzzer buzzer_;
     AltitudeManager alt_manager_;
+    Power power_;
 }; //class Components
 
 Components *GetComponents();

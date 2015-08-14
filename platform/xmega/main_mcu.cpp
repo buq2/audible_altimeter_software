@@ -94,7 +94,10 @@ int main()
     UpdateFromConfig(components.GetConfig());
     UpdateFromConfigAfterSave(components.GetConfig());
 
-    while (1) {
-
+    Power *power = components.GetPower();
+    while(1)
+    {
+        power->MainLoop();
     }
+
 }

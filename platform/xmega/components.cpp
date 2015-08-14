@@ -110,3 +110,8 @@ AltitudeManager *Components::GetAltitudeManager()
 {
     return &alt_manager_;
 }
+
+Power *Components::GetPower()
+{
+    return &power_;
+}
