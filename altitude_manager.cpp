@@ -40,7 +40,7 @@ AltitudeManager::AltitudeModeSimple AltitudeManager::GetCurrentModeSimple()
     }
 }
 
-void AltitudeManager::Tick200ms()
+void AltitudeManager::Tick()
 {
     const float altitude_m = sensors_->GetAltitudeMeters();
     const float change_ms = sensors_->GetAltitudeChangeRateMetresPerS();

@@ -93,6 +93,11 @@ void BuzzerSound::SetActive(const bool active)
     active_ = active;
 }
 
+bool BuzzerSound::IsActive() const
+{
+    return active_;
+}
+
 void BuzzerSound::SetBeepBuzzFrequency(const uint16_t freq)
 {
     beep_frequency_ = freq;

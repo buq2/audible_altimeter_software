@@ -29,6 +29,9 @@ class Buzzer
 
     /// Set current sound
     void SetSound(const BuzzerSound sound);
+
+    /// \return True if deep sleep is allowed by Buzzer
+    bool AllowDeepSleep();
  private:
     /// Set volume / dipot value
     /// \param[in] Volume.

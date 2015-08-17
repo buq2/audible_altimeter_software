@@ -41,7 +41,7 @@ class AltitudeManager
     AltitudeModeSimple GetCurrentModeSimple();
 
     /// This functions should be called once 200ms
-    void Tick200ms();
+    void Tick();
 
     typedef void(*play_sound_fun)(BuzzerSound);
     void SetPlaySoundFunction(play_sound_fun fun);

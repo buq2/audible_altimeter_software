@@ -106,6 +106,11 @@ void Buttons::SetButtonStateChangedFunction(Buttons::button_state_change_fun fun
     state_changed_fun_ = fun;
 }
 
+bool Buttons::AllowDeepSleep()
+{
+    return !AnyButtonPressed();
+}
+
 bool Buttons::UpdateButtonState(PORT_t *port, uint8_t pin,
                                 Buttons::ButtonState *state, uint8_t *counter)
 {

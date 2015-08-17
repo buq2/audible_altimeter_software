@@ -2,6 +2,7 @@
 
 #include <avr/power.h>
 #include <avr/sleep.h>
+#include "components.hh"
 
 Power::Power()
 {
@@ -15,6 +16,17 @@ Power::Power()
 
 void Power::MainLoop()
 {
+    Components *comp = GetComponents();
+
+    const bool buttons_ok = comp->GetButtons()->AllowDeepSleep();
+    const bool buzzer_ok = comp->GetBuzzer()->AllowDeepSleep();
+
+    if (buttons_ok && buzzer_ok) {
+        set_sleep_mode(SLEEP_SMODE_PSAVE_gc);
+    } else {
+        set_sleep_mode(SLEEP_SMODE_IDLE_gc);
+    }
+
     // Withoutusing sleep 28mA
     sleep_cpu();
 }

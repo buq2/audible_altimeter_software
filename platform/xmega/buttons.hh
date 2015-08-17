@@ -49,6 +49,9 @@ class Buttons
     /// Set function which will be called if button state changes
     /// \param[in] fun Function which will be called if change happens
     void SetButtonStateChangedFunction(button_state_change_fun fun);
+
+    /// \return True if deep sleep is allowed by Buttons
+    bool AllowDeepSleep();
  private:
     /// Update button state
     /// \param[in] port Location of the button pin

@@ -68,6 +68,9 @@ class BuzzerSound
     /// \param[in] active If true, sound could be played
     void SetActive(const bool active);
 
+    /// \return True if active (playing)
+    bool IsActive() const;
+
     /// Set beep buzz frequency
     void SetBeepBuzzFrequency(const uint16_t freq);
  private:

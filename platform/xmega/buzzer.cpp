@@ -99,6 +99,11 @@ void Buzzer::SetSound(const BuzzerSound sound)
     SetVolume(current_sound_.GetVolume());
 }
 
+bool Buzzer::AllowDeepSleep()
+{
+    return !current_sound_.IsActive();
+}
+
 void Buzzer::SetVolume(const uint8_t volume)
 {
     if (current_volume_ == volume) {
