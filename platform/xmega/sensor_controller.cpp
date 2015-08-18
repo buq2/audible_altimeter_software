@@ -26,7 +26,7 @@ void SensorController::Setup()
 {
     const bool as_altimeter = true;
     alt1_.SetMode(as_altimeter);
-    alt1_.SetOversampleRate(AltimeterMPl3114A2::OversampleRate128);
+    alt1_.SetOversampleRate(AltimeterMPl3114A2::OversampleRate32);//32osr -> 130ms between samples
     STOP_IF_ERROR(alt1_.Setup());
     //STOP_IF_ERROR(alt2_.Setup());
 }
