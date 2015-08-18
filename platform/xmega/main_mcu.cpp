@@ -46,6 +46,36 @@ void UpdateFromConfig(Config *conf)
 {  
     GetComponents()->GetDisplayBuffer()->SetRotation(conf->display_orientation);
     GetComponents()->GetUiMain()->GetAltimeterUi()->SetUiMode(conf->default_altimeter_ui_mode);
+
+
+    AltimeterMPl3114A2 *alt1 = GetComponents()->GetSensorController()->GetAltimeter1();;
+    switch(conf->oversample_rate) {
+    case Config::AltitudeSensorOversampleRate1:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate1);
+        break;
+    case Config::AltitudeSensorOversampleRate2:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate2);
+        break;
+    case Config::AltitudeSensorOversampleRate4:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate4);
+        break;
+    case Config::AltitudeSensorOversampleRate8:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate8);
+        break;
+    case Config::AltitudeSensorOversampleRate16:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate16);
+        break;
+    case Config::AltitudeSensorOversampleRate32:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate32);
+        break;
+    case Config::AltitudeSensorOversampleRate64:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate64);
+        break;
+    default:
+    case Config::AltitudeSensorOversampleRate128:
+        alt1->SetOversampleRate(AltimeterMPl3114A2::OversampleRate128);
+        break;
+    }
 }
 
 void UpdateFromConfigAfterSave(Config *conf)

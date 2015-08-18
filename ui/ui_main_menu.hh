@@ -8,6 +8,7 @@
 #include "ui_dz_menu.hh"
 #include "ui_log_admin_menu.hh"
 #include "ui_time_date_menu.hh"
+#include "ui_advanced_menu.hh"
 
 class MainMenu
         :
@@ -31,6 +32,7 @@ class MainMenu
     UiDzMenu dz_;
     UiLogAdminMenu log_admin_;
     UiTimeDateMenu time_date_;
+    UiAdvancedMenu advanced_;
     ConfigChangedFunction config_apply_fun_;
 }; //class MainMenu
 

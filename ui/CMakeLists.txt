@@ -13,6 +13,7 @@ ADD_LIBRARY(Ui STATIC
     ui_dz_menu.cpp ui_dz_menu.hh
     ui_display_menu.cpp ui_display_menu.hh
     ui_log_admin_menu.cpp ui_log_admin_menu.hh
+    ui_advanced_menu.hh ui_advanced_menu.cpp
 
     ui_config_item_enum.cpp ui_config_item_enum.hh
     ui_config_item_altitude_alarm.cpp ui_config_item_altitude_alarm.hh

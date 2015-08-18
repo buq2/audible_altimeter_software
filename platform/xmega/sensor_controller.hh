@@ -86,6 +86,9 @@ class SensorController
     /// \param[in] demo Demo to be run
     /// \note After the call fake data will be used
     void RunDemo(const DemoType demo);
+
+    /// \return Altimeter 1
+    axlib::AltimeterMPl3114A2 *GetAltimeter1();
  private:
     /// Update demo values
     void UpdateDemo();

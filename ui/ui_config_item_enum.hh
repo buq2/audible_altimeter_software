@@ -23,8 +23,8 @@ class UiConfigItemEnum
     UiConfigItemEnum(UiMenu *parent, const char *label)
         :
           UiConfigItemEnumBase(parent),
-          label_(label),
-          ptr_(0)
+          ptr_(0),
+          label_(label)
     {
     }
 

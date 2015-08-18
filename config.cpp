@@ -231,6 +231,54 @@ const char *ToString(const Config::AltitudeDisplayRoundMode en)
     }
 }
 
+template<>
+const char *ToString(const Config::AltitudeSensorOversampleRate en)
+{
+    switch(en) {
+    case Config::AltitudeSensorOversampleRate1:
+    {
+        static const char str[] = "1";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate2:
+    {
+        static const char str[] = "2";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate4:
+    {
+        static const char str[] = "4";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate8:
+    {
+        static const char str[] = "8";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate16:
+    {
+        static const char str[] = "16";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate32:
+    {
+        static const char str[] = "32";
+        return str;
+    }
+    case Config::AltitudeSensorOversampleRate64:
+    {
+        static const char str[] = "64";
+        return str;
+    }
+    default:
+    case Config::AltitudeSensorOversampleRate128:
+    {
+        static const char str[] = "128";
+        return str;
+    }
+    }
+}
+
 #define ENUM_MACRO(T,MAXNUM) \
 template<> \
 T NextEnum(const T en)\
@@ -252,6 +300,7 @@ ENUM_MACRO(Config::AltitudeAlarm::AlarmType, Config::AltitudeAlarm::AlarmTypeNum
 ENUM_MACRO(UiAltimeter::AltimeterUiMode, UiAltimeter::ALTIMETER_UI_MODE_NUM_ENUMS);
 ENUM_MACRO(Config::DataSaveMode, Config::DataSaveNumberOfEnums);
 ENUM_MACRO(Config::AltitudeDisplayRoundMode, Config::AltitudeDisplayRoundModeNumberOfEnums);
+ENUM_MACRO(Config::AltitudeSensorOversampleRate, Config::AltitudeSensorOversampleRateNumberOfEnums);
 
 fontStyle_t *Config::GetIntChangeFont() const
 {
@@ -260,7 +309,7 @@ fontStyle_t *Config::GetIntChangeFont() const
 
 uint32_t Config::GetValidMagic()
 {
-    return 0xbadface5;
+    return 0xbadface6;
 }
 
 

@@ -10,6 +10,7 @@ MainMenu::MainMenu(Config *config, MiscInformation *misc)
       dz_(this),
       log_admin_(this),
       time_date_(this),
+      advanced_(this),
       config_apply_fun_(0)
 {
 }

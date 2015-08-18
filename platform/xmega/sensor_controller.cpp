@@ -249,3 +249,8 @@ void SensorController::RunDemo(const SensorController::DemoType demo)
     }
     demo_ = demo;
 }
+
+AltimeterMPl3114A2 *SensorController::GetAltimeter1()
+{
+    return &alt1_;
+}
