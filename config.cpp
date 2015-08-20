@@ -16,6 +16,11 @@ const char *ToString(const UiAltimeter::AltimeterUiMode en)
         static const char str[] = "FreeF";
         return str;
     }
+    case UiAltimeter::ALTIMETER_UI_MODE_CANOPY:
+    {
+        static const char str[] = "Canop";
+        return str;
+    }
     }
 }
 

@@ -38,6 +38,9 @@ void UiAltimeter::Render(DisplayBuffer *buffer)
     default:
         RenderSimpleFreeFall(buffer);
         break;
+    case ALTIMETER_UI_MODE_CANOPY:
+        RenderSimpleCanopy(buffer);
+        break;
     }
 }
 
@@ -72,6 +75,42 @@ void UiAltimeter::RenderSimpleFreeFall(DisplayBuffer *buffer)
     char str[6];
     sprintf(str,"%d.%d",alt/1000, ABS((alt/100)%10) );
     const uint8_t scale_x = 2;
+    const uint8_t scale_y = 2;
+    const uint8_t xpos = buffer->GetWidth()/2;
+    const uint8_t ypos = buffer->GetHeight()/2 - DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact_huge, scale_y, str)/2;
+    buffer->RenderText_AlignCenter(FontStyle_impact_huge, xpos,
+                                   ypos, scale_x, scale_y, str);
+}
+
+void UiAltimeter::RenderSimpleCanopy(DisplayBuffer *buffer)
+{
+    int16_t alt = sensors_->GetAltitudeMeters();
+    char str[8]; //"-9999.0" + null
+
+    switch (config_->display_round_mode) {
+    case Config::AltitudeDisplayRoundMode1:
+        sprintf(str,"%.0f",ceil(alt-0.5f));
+        break;
+    case Config::AltitudeDisplayRoundMode5:
+        sprintf(str,"%.0f",ceil(alt/5.0f-0.5f)*5.0f);
+        break;
+    case Config::AltitudeDisplayRoundMode10:
+        sprintf(str,"%.0f",ceil(alt/10.0f-0.5f)*10.0f);
+        break;
+    default:
+    case Config::AltitudeDisplayRoundModeNone:
+        sprintf(str,"%.1f",alt);
+        break;
+    }
+
+    uint8_t scale_x = 2;
+    const uint8_t data_width = DisplayBuffer::CalculateTextWidthPixels(FontStyle_impact_huge,scale_x,str);
+    if (data_width > 128 || alt > 1199) {
+        // Does not fit, scale down
+        // (1199 limit makes sure that
+        // there is no flickering)
+        scale_x = 1;
+    }
     const uint8_t scale_y = 2;
     const uint8_t xpos = buffer->GetWidth()/2;
     const uint8_t ypos = buffer->GetHeight()/2 - DisplayBuffer::CalculateTextHeightPixels(FontStyle_impact_huge, scale_y, str)/2;

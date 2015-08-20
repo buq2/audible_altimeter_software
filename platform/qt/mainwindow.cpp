@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_(new QGraphicsView(this)),
     alt_manager_(&sensors_, &config_),
     ui_main_(&config_, &sensors_, &misc_, &alt_manager_),
-    display_buffer_(96,96)
+    display_buffer_(128,128)
 {
     sensors_.SetMiscInformation(&misc_);
     ui_main_.SetConfigChangedFunction(UpdateConfig);

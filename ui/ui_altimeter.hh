@@ -22,7 +22,8 @@ class UiAltimeter
     {
         ALTIMETER_UI_MODE_FREE_FALL = 0,
         ALTIMETER_UI_MODE_COMPLEX = 1,
-        ALTIMETER_UI_MODE_NUM_ENUMS = 2
+        ALTIMETER_UI_MODE_CANOPY = 2,
+        ALTIMETER_UI_MODE_NUM_ENUMS = 3
     } AltimeterUiMode;
 
     void SetUiMode(const AltimeterUiMode mode);
@@ -36,6 +37,7 @@ class UiAltimeter
  private:
     void RenderComplex(axlib::DisplayBuffer *buffer);
     void RenderSimpleFreeFall(axlib::DisplayBuffer *buffer);
+    void RenderSimpleCanopy(axlib::DisplayBuffer *buffer);
 
     void RenderAltitude(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderAltitudeLong(axlib::DisplayBuffer *buffer, uint8_t *row);

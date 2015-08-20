@@ -3,7 +3,7 @@
 
 Sensors::Sensors()
     :
-      altitude_m_(990),
+      altitude_m_(1000),
       temperature_c_(21),
       update_rate_(0),
       misc_(0)
