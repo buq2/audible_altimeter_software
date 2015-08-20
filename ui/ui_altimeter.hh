@@ -46,6 +46,7 @@ class UiAltimeter
     void RenderUpdateRate(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderAltitudeMode(axlib::DisplayBuffer *buffer, uint8_t *row);
     void RenderMemoryUsage(axlib::DisplayBuffer *buffer, uint8_t *row);
+    void RenderBatteryUsage(axlib::DisplayBuffer *buffer, uint8_t *row);
  private:
     Sensors *sensors_;
     AltimeterUiMode mode_;

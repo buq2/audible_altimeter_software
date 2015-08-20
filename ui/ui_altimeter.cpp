@@ -186,6 +186,7 @@ void UiAltimeter::RenderMisc(DisplayBuffer *buffer, uint8_t *row)
     RenderAltitudeMode(buffer,row);
     *row = row_cur;
     RenderMemoryUsage(buffer, row);
+    RenderBatteryUsage(buffer,row);
 }
 
 void UiAltimeter::RenderUpdateRate(DisplayBuffer *buffer, uint8_t *row)
@@ -246,6 +247,25 @@ void UiAltimeter::RenderMemoryUsage(DisplayBuffer *buffer, uint8_t *row)
 
     char str[10]; //"4294967296"
     sprintf(str,"%ld", misc->current_memory_usage);
+
+    float xpos = 3;
+    const uint8_t scale_x = 1;
+    const uint8_t scale_y = 1;
+    buffer->RenderText(FontStyle_vcr_tiny, xpos,
+                       *row, scale_x, scale_y, str);
+
+    *row += DisplayBuffer::CalculateTextHeightPixels(FontStyle_vcr_tiny, scale_y, str);
+}
+
+void UiAltimeter::RenderBatteryUsage(DisplayBuffer *buffer, uint8_t *row)
+{
+    MiscInformation *misc = sensors_->GetMiscInformation();
+    if (NULL == misc) {
+        return;
+    }
+
+    char str[17]; //"Bat: 3.33V/3.33V"
+    sprintf(str,"Bat: %0.2fV/3.33V", misc->current_battery_voltage);
 
     float xpos = 3;
     const uint8_t scale_x = 1;

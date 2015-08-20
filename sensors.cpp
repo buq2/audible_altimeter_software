@@ -93,6 +93,7 @@ void Sensors::SetMiscInformation(MiscInformation *misc)
 
 MiscInformation::MiscInformation()
     :
-      current_memory_usage(0)
+      current_memory_usage(0),
+      current_battery_voltage(0)
 {
 }

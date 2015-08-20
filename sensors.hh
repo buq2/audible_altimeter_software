@@ -9,6 +9,7 @@ class MiscInformation
     MiscInformation();
 
     uint32_t current_memory_usage;
+    float current_battery_voltage;
 };
 
 

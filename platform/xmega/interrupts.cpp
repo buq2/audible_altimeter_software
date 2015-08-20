@@ -35,6 +35,9 @@ void UpdateSensors(float update_seconds)
     sensorctrl->DataUpdate(update_seconds);
     // Update altimeters
     sensorctrl->RequestDataUpdate();
+
+    // Read battery voltage to misc information
+    GetComponents()->GetMiscInformation()->current_battery_voltage = GetComponents()->GetPower()->GetVccVoltage();
 }
 
 // buzzer timer

@@ -6,6 +6,7 @@ class Power
  public:
     Power();
     void MainLoop();
+    float GetVccVoltage();
  private:
 
 };
