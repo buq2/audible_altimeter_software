@@ -67,7 +67,8 @@ struct Config
     {
         DataSaveOff = 0,
         DataSaveAll = 1,
-        DataSaveNumberOfEnums = 2
+        DataSaveNormal = 2,
+        DataSaveNumberOfEnums = 3
     } DataSaveMode;
 
     struct AltitudeAlarm

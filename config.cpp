@@ -200,6 +200,9 @@ const char *ToString(const Config::DataSaveMode en)
         static const char str[] = "All";
         return str;
     }
+    case Config::DataSaveNormal:
+        static const char str[] = "Normal";
+        return str;
     }
 }
 

@@ -7,6 +7,7 @@
 AltitudeManager::AltitudeManager(Sensors *sensors, Config *config)
     :
       play_sound_function_(0),
+      mode_changed_(0),
       sensors_(sensors),
       config_(config),
       current_mode_(AltitudeModeGround),
@@ -76,6 +77,11 @@ void AltitudeManager::SetPlaySoundFunction(AltitudeManager::play_sound_fun fun)
     play_sound_function_ = fun;
 }
 
+void AltitudeManager::SetAltitudeModeChanged(AltitudeManager::altitude_mode_changed_fun fun)
+{
+    mode_changed_ = fun;
+}
+
 void AltitudeManager::CheckForModeChange()
 {
     static AltitudeModeSimple prev_mode = AltitudeModeSimpleGround;
@@ -118,6 +124,11 @@ void AltitudeManager::CheckForModeChange()
         SetSound(sound);
     }
     prev_mode = current_mode;
+
+    if (NULL != mode_changed_) {
+        // Call cb
+        mode_changed_();
+    }
 }
 
 

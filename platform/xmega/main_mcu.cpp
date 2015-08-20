@@ -10,6 +10,31 @@ void PlaySound(BuzzerSound sound)
     GetComponents()->GetBuzzer()->SetSound(sound);
 }
 
+void CheckIfDataShouldBeSaved_Normal()
+{
+    Components *c = GetComponents();
+    AltitudeManager *am = c->GetAltitudeManager();
+    AltitudeManager::AltitudeModeSimple mode = am->GetCurrentModeSimple();
+
+    SensorController *sensc = c->GetSensorController();
+    if (mode == AltitudeManager::AltitudeModeSimpleGround) {
+        sensc->StopSavingData();
+    } else {
+        // If already saving does not start new one
+        sensc->StartSavingData();
+    }
+}
+
+void AltitudeModeChanged()
+{
+    Components *c = GetComponents();
+    Config *conf = c->GetConfig();
+
+    if (conf->log_save_mode == Config::DataSaveNormal) {
+        CheckIfDataShouldBeSaved_Normal();
+    }
+}
+
 void ButtonStateChangedCallback()
 {
     Buttons *buttons = GetComponents()->GetButtons();
@@ -116,6 +141,7 @@ int main()
     components.GetDisplay()->Clear();
     components.GetSensors()->SetMiscInformation(components.GetMiscInformation());
     components.GetAltitudeManager()->SetPlaySoundFunction(PlaySound);
+    components.GetAltitudeManager()->SetAltitudeModeChanged(AltitudeModeChanged);
     components.GetButtons()->SetButtonStateChangedFunction(ButtonStateChangedCallback);
 
     SetupHardware();

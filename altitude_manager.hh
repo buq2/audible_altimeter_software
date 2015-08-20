@@ -45,6 +45,9 @@ class AltitudeManager
 
     typedef void(*play_sound_fun)(BuzzerSound);
     void SetPlaySoundFunction(play_sound_fun fun);
+
+    typedef void(*altitude_mode_changed_fun)(void);
+    void SetAltitudeModeChanged(altitude_mode_changed_fun fun);
  private:
     /// \return True if the altimeter is in a plane
     bool InPlane();
@@ -82,6 +85,9 @@ class AltitudeManager
  private:
     // Function pointer which is called when sound should be played
     play_sound_fun play_sound_function_;
+
+    // Function pointer which is called when mode changes
+    altitude_mode_changed_fun mode_changed_;
 
     Sensors *sensors_;
     Config *config_;
