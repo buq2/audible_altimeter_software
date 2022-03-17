@@ -4,23 +4,23 @@
 UiAlarmsMenu::UiAlarmsMenu(UiMenu *parent)
     :
       UiMenu(parent),
-      freefall_({
+      freefall_{
                UiConfigItemAltitudeAlarm(this, "Freefall 1"),
                UiConfigItemAltitudeAlarm(this, "Freefall 2"),
                UiConfigItemAltitudeAlarm(this, "Freefall 3")
-               }),
-      canopy_({
+               },
+      canopy_{
                UiConfigItemAltitudeAlarm(this, "Canopy 1"),
                UiConfigItemAltitudeAlarm(this, "Canopy 2"),
                UiConfigItemAltitudeAlarm(this, "Canopy 3")
-               }),
-      options_({
+               },
+      options_{
                UiConfigItemBeepOption(this,"Bp at pln"),
                UiConfigItemBeepOption(this,"Bp at 300m"),
                UiConfigItemBeepOption(this,"Bp at free"),
                UiConfigItemBeepOption(this,"Bp at cnpy"),
                UiConfigItemBeepOption(this,"Bp at gnd"),
-               })
+               }
 {
     Config *conf = GetConfig();
     freefall_[0].SetAlarmPointer(&(conf->beeper.alarms_freefall[0]));

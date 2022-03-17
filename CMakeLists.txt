@@ -1,5 +1,8 @@
-cmake_minimum_required (VERSION 2.8.11)
+cmake_minimum_required (VERSION 3.5)
 PROJECT(audible C CXX)
+
+include(cmake/conan_config.cmake)
+include(cmake/output_paths.cmake)
 
 OPTION(USE_MCU "If true, project will be compiled for MCU and not for AMD64 (qt)" OFF)
 IF (USE_MCU)
@@ -7,8 +10,10 @@ IF (USE_MCU)
 ENDIF()
 
 ADD_DEFINITIONS(-std=c++11)
-ADD_DEFINITIONS(-Wall -Wextra)
-ADD_DEFINITIONS(-fshort-enums)
+if (NOT MSVC)
+    ADD_DEFINITIONS(-Wall -Wextra)
+    ADD_DEFINITIONS(-fshort-enums)
+endif()
 
 INCLUDE_DIRECTORIES(.)
 INCLUDE_DIRECTORIES(
