@@ -12,3 +12,9 @@ More information at http://buq2.com/
 cmake -S . -B build
 cmake --build build --parallel 12 --config Release
 ```
+
+# Docker build
+
+```
+docker build . -t audible_altimeter_software
+```
